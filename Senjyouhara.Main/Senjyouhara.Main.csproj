@@ -26,8 +26,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>
+      <!-- Prevent default XML and PDB files copied to output in RELEASE. 
+           Only *.allowedextension files will be included, which doesn't exist in my case.
+       -->
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions> 
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -117,6 +123,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj">
+      <Project>{76cf8c6d-e8cd-4f02-bb7a-f8b8a4c5518f}</Project>
+      <Name>Senjyouhara.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Senjyouhara.UI\Senjyouhara.UI.csproj">
+      <Project>{559cd974-47ad-40a4-bba5-1cc58ffaae09}</Project>
+      <Name>Senjyouhara.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
