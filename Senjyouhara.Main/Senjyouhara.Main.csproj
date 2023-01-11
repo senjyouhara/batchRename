@@ -31,7 +31,7 @@
            Only *.allowedextension files will be included, which doesn't exist in my case.
        -->
       .allowedextension
-    </AllowedReferenceRelatedFileExtensions> 
+    </AllowedReferenceRelatedFileExtensions>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
@@ -84,6 +84,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -121,18 +122,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj">
-      <Project>{76cf8c6d-e8cd-4f02-bb7a-f8b8a4c5518f}</Project>
-      <Name>Senjyouhara.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Senjyouhara.UI\Senjyouhara.UI.csproj">
-      <Project>{559cd974-47ad-40a4-bba5-1cc58ffaae09}</Project>
-      <Name>Senjyouhara.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

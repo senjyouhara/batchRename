@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Senjyouhara.Main"
-        xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
         AllowsTransparency="True"
         WindowStyle="None"
@@ -14,8 +15,8 @@
         <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="-1" ResizeBorderThickness="5"></WindowChrome>
     </WindowChrome.WindowChrome>
     <Grid>
-        
-        
+
+        <TextBlock Text="Hello World!" FontSize="36"></TextBlock>
         
     </Grid>
 </Window>

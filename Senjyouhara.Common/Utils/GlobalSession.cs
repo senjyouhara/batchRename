@@ -1,4 +1,4 @@
-﻿using Senjyouhara.Model.UserModel;
+﻿using Senjyouhara.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace Senjyouhara.Common.Utils
 {
     public class GlobalSession
     {
-        public static UserInfo UserInfo = null;
+        public static UserModel UserInfo = null;
     }
 }
