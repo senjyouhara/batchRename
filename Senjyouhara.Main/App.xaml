@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:Senjyouhara.Main"
              xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Senjyouhara.UI;component/Styles/Index.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

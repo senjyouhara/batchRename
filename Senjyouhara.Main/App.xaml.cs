@@ -20,9 +20,6 @@ namespace Senjyouhara.Main
     {
         protected override Window CreateShell()
         {
-
-            Debug.WriteLine("CreateShell");
-
             return Container.Resolve<MainWindow>();
         }
 
@@ -36,6 +33,5 @@ namespace Senjyouhara.Main
            
         }
 
-
-        }
+    }
 }

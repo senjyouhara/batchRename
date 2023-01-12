@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Senjyouhara.Main"
+        xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
@@ -12,11 +13,21 @@
         Title="MainWindow" Height="450" Width="800">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="-1" ResizeBorderThickness="5"></WindowChrome>
+        <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="-1" ResizeBorderThickness="0"></WindowChrome>
     </WindowChrome.WindowChrome>
     <Grid>
 
-        <TextBlock Text="Hello World!" FontSize="36"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Title="批量重命名工具" Background="#0074ff" Foreground="#fff" VerticalAlignment="Top"></ui:TitleBar>
+        
+        <TextBlock Grid.Row="1" Text="Hello World!" FontSize="36"></TextBlock>
+
+
+      
         
     </Grid>
 </Window>

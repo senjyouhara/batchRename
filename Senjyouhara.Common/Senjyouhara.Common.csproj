@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Senjyouhara.Common</RootNamespace>
     <AssemblyName>Senjyouhara.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -112,8 +112,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Impl\BaseService.cs" />
     <Compile Include="Services\IBaseService.cs" />
+    <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\GlobalSession.cs" />
     <Compile Include="Utils\HttpClientService.cs" />
+    <Compile Include="Utils\NotifycationObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

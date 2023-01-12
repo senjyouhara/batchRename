@@ -5,26 +5,21 @@
 
     <Style x:Key="buttonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="44" />
-        <Setter Property="Height" Value="44" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="Foreground">
             <Setter.Value>
                 <SolidColorBrush Color="#FFFFFF" />
             </Setter.Value>
         </Setter>
         <Setter Property="Background" Value="Transparent" />
-        <!--<Setter Property="HoverBackground">
-            <Setter.Value>
-                <SolidColorBrush Color="#15FFFFFF" />
-            </Setter.Value>
-        </Setter>-->
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}">
+                    <Border x:Name="LayoutRoot" Background="{TemplateBinding Background}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="#15FFFFFF" />
@@ -37,18 +32,13 @@
 
     <Style x:Key="buttonStyleHoverRed" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="44" />
-        <Setter Property="Height" Value="44" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="Foreground">
             <Setter.Value>
                 <SolidColorBrush Color="#FFFFFF" />
             </Setter.Value>
         </Setter>
         <Setter Property="Background" Value="Transparent" />
-        <!--<Setter Property="HoverBackground">
-            <Setter.Value>
-                <SolidColorBrush Color="#15FFFFFF" />
-            </Setter.Value>
-        </Setter>-->
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
@@ -69,6 +59,7 @@
 
     <Style TargetType="{x:Type controls:TitleBar}">
         <Setter Property="Padding" Value="16" />
+        <Setter Property="Height" Value="45" />
         <Setter Property="Background" Value="#000" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -77,7 +68,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:TitleBar}">
                     <Grid
-                        x:Name="RootGrid"
+                        Height="{TemplateBinding Height}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         Background="{TemplateBinding Background}">
@@ -85,8 +76,11 @@
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-
+               
                         <Grid
                             x:Name="TitleGrid"
                             Margin="{TemplateBinding Padding}"
@@ -110,6 +104,7 @@
                                 FontFamily="microsoft Yahei"
                                 FontSize="20"
                                 FontWeight="Bold"
+                                Foreground="{TemplateBinding Foreground}"
                                 Text="{TemplateBinding Title}" />
                         </Grid>
 
@@ -119,80 +114,75 @@
                             VerticalAlignment="Center"
                             Content="{TemplateBinding OverrideTitle}" />
 
-                        <StackPanel
+                        <Grid
                             Grid.Column="2"
-                            Margin="0,0,0,15"
+                            VerticalAlignment="Center"
                             HorizontalAlignment="Right"
-                            Orientation="Horizontal">
+                            >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <Grid x:Name="ExtendButtons">
                                 <ContentPresenter Content="{TemplateBinding ExtendButtons}" />
                             </Grid>
-                            <Button
+                            
+                            <Button Grid.Column="1"
                                 x:Name="ButtonMinimize"
-                                Width="44"
-                                Height="44"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="minimize"
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyle}">
-                                <Button.Content>
                                     <Viewbox
-                                        Width="20"
-                                        Height="20"
+                                        Width="13"
+                                        Height="13"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         RenderOptions.BitmapScalingMode="HighQuality">
                                         <ContentControl Content="{DynamicResource UiIconMinimize}" />
                                     </Viewbox>
-                                </Button.Content>
                             </Button>
 
-                            <Button
+                            <Button Grid.Column="2"
                                 x:Name="ButtonMaximize"
-                                Width="44"
-                                Height="44"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="maximize"
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyle}">
-                                <Button.Content>
                                     <Viewbox
-                                        Width="20"
-                                        Height="20"
+                                        Width="13"
+                                        Height="13"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         RenderOptions.BitmapScalingMode="HighQuality">
                                         <ContentControl x:Name="ButtonMaximizeIcon" Content="{DynamicResource UiIconMaximize}" />
                                     </Viewbox>
-                                </Button.Content>
                             </Button>
 
-                            <Button
+                            <Button Grid.Column="3"
                                 x:Name="ButtonClose"
-                                Width="44"
-                                Height="44"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="close"
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyleHoverRed}">
-                                <Button.Content>
                                     <Viewbox
-                                        Width="20"
-                                        Height="20"
+                                        Width="13"
+                                        Height="13"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         RenderOptions.BitmapScalingMode="HighQuality">
                                         <ContentControl Content="{DynamicResource UiIconClose}" />
                                     </Viewbox>
-                                </Button.Content>
                             </Button>
-                        </StackPanel>
+                        </Grid>
                     </Grid>
 
                     <ControlTemplate.Triggers>

@@ -42,6 +42,7 @@ typeof(int), typeof(TitleBar), new PropertyMetadata(null));
         public static readonly DependencyProperty IsOverrideTitleProperty = DependencyProperty.Register(nameof(IsOverrideTitle),
 typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
 
+
         public string Title
         {
             get => (string)GetValue(TitleProperty);
@@ -83,8 +84,7 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
             get
             {
                 var value = (int)GetValue(HeightProperty);
-                Debug.WriteLine(value, "value");
-                return value > 10 ? value - 10 : value;
+                return value;
             }
         }
 
@@ -112,25 +112,24 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
 
             if (RootGrid != null)
             {
-                RootGrid.MouseMove += (s, e) =>
-                {
-                    if (e.LeftButton == MouseButtonState.Pressed)
-                    {
-                        ParentWindow.DragMove();
-                    }
-                };
+                //RootGrid.MouseMove += (s, e) =>
+                //{
+                //    if (e.LeftButton == MouseButtonState.Pressed)
+                //    {
+                //        ParentWindow.DragMove();
+                //    }
+                //};
 
-                RootGrid.MouseDown += (s, e) =>
-                {
-                    Debug.WriteLine(e.ClickCount);
-                    if (e.ClickCount == 2)
-                    {
-                        if (ParentWindow.WindowState == WindowState.Normal)
-                            ParentWindow.WindowState = WindowState.Maximized;
-                        else
-                            ParentWindow.WindowState = WindowState.Normal;
-                    }
-                };
+                //RootGrid.MouseDown += (s, e) =>
+                //{
+                //    if (e.ClickCount == 2)
+                //    {
+                //        if (ParentWindow.WindowState == WindowState.Normal)
+                //            ParentWindow.WindowState = WindowState.Maximized;
+                //        else
+                //            ParentWindow.WindowState = WindowState.Normal;
+                //    }
+                //};
             }
         }
 
@@ -169,6 +168,8 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
         private void TemplateButton_OnClick(TitleBar titleBar, object parameter)
         {
             string command = parameter as string;
+
+            Console.WriteLine("params" + parameter);
 
             switch (command)
             {
