@@ -1,0 +1,60 @@
+﻿<Window
+    x:Class="Senjyouhara.Main.Views.StartLoadingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Senjyouhara.Main.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="win"
+    Title="StartLoading"
+    Width="854"
+    Height="480"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Loaded="Window_Loaded"
+    Opacity="0"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <!--<WindowChrome.WindowChrome>
+        <WindowChrome
+            GlassFrameThickness="-1"
+            NonClientFrameEdges="None"
+            ResizeBorderThickness="0" />
+    </WindowChrome.WindowChrome>-->
+    <Window.Resources>
+        <Storyboard x:Key="hideMe">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                To="0.0"
+                Duration="00:00:1.5" />
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="00:00:1.5" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+
+
+    <Grid x:Name="mainPanel">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <MediaElement
+            x:Name="video"
+            LoadedBehavior="Manual"
+            MediaEnded="MediaElement_MediaEnded"
+            MediaOpened="video_MediaOpened"
+            Stretch="Fill" />
+    </Grid>
+</Window>
