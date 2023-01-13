@@ -1,6 +1,5 @@
-﻿using DryIoc;
-using Prism.DryIoc;
-using Prism.Ioc;
+﻿using Prism.Ioc;
+using Prism.Unity;
 using Senjyouhara.Main.ViewModels;
 using Senjyouhara.Main.Views;
 using System;
@@ -18,6 +17,7 @@ namespace Senjyouhara.Main
     /// </summary>
     public partial class App : PrismApplication
     {
+
         protected override Window CreateShell()
         {
             return Container.Resolve<MainWindow>();
@@ -25,13 +25,29 @@ namespace Senjyouhara.Main
 
         protected override void OnInitialized()
         {
+
+#if (!DEBUG)
+
+#else
+if (Container.Resolve<StartLoadingView>().ShowDialog() == false)
+{
+    Application.Current?.Shutdown();
+    return;
+}
+else
+#endif
+
             base.OnInitialized();
+        }
+
+        protected override void InitializeShell(Window shell)
+        {
+            base.InitializeShell(shell);
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-           
+            containerRegistry.RegisterForNavigation<MainWindow, MainWindowViewModel>();
         }
-
     }
 }

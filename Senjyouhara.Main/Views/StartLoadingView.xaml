@@ -50,6 +50,9 @@
         <Grid.RowDefinitions>
             <RowDefinition />
         </Grid.RowDefinitions>
+
+     
+
         <MediaElement
             x:Name="video"
             LoadedBehavior="Manual"

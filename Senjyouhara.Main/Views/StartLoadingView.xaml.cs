@@ -35,7 +35,7 @@ namespace Senjyouhara.Main.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            video.Source = new Uri(System.Environment.CurrentDirectory + @"/Videos/loading.mp4", UriKind.Absolute);
+            video.Source = new Uri("pack://siteoforigin:,,,/Videos/loading.mp4");
             video.Play();
         }
 

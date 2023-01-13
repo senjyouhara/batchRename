@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using RestSharp;
+﻿using RestSharp;
 using RestSharp.Serializers.Json;
 using Senjyouhara.Common.Models;
+using Swifter.Json;
+using Swifter.RW;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,19 +24,19 @@ namespace Senjyouhara.Common.Utils
         private string domain = "http://localhost:8080/";
         private RestClient client;
         private HttpClientOptions clientOptions = new HttpClientOptions();
-        private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
+        private JsonFormatter jsonFormatter = new JsonFormatter(JsonFormatterOptions.Indented);
+       
         public HttpClientService()
         {
             this.client = new RestClient(domain);
+            jsonFormatter.SetDateTimeFormat("yyyy-MM-dd HH:mm:ss");
         }
 
         public HttpClientService(string domain)
         {
             this.domain = domain;
             this.client = new RestClient(domain);
+            jsonFormatter.SetDateTimeFormat("yyyy-MM-dd HH:mm:ss");
         }
 
         public Dictionary<string, string> getAuth()
@@ -80,7 +80,7 @@ namespace Senjyouhara.Common.Utils
 
             if (baseRequest.Data != null)
             {
-                string jsonObject = JsonConvert.SerializeObject(baseRequest.Data, Formatting.Indented, jsonSerializerSettings);
+                string jsonObject = jsonFormatter.Serialize(baseRequest.Data);
                 request.AddParameter("", jsonObject, ParameterType.RequestBody);
             }
 
@@ -175,7 +175,7 @@ namespace Senjyouhara.Common.Utils
             if (resp.StatusCode.Equals(HttpStatusCode.OK))
             {
 
-                var obj = JsonConvert.DeserializeObject<ResBase<T>>(resp.Content, jsonSerializerSettings);
+                var obj = jsonFormatter.Deserialize<ResBase<T>>(resp.Content);
                 if (obj == null)
                 {
                     res.Msg = "服务器出错！";
