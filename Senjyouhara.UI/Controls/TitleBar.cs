@@ -14,33 +14,86 @@ using System.Windows.Media;
 namespace Senjyouhara.UI.Controls
 {
 
-        public class TitleBar : UserControl
+    public class TitleBar : UserControl
     {
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+            nameof(Title),
+            typeof(string),
+            typeof(TitleBar),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title),
-      typeof(string), typeof(TitleBar), new PropertyMetadata(null));
+        public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
+            nameof(Icon),
+            typeof(ImageSource),
+            typeof(TitleBar),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon),
-   typeof(ImageSource), typeof(TitleBar), new PropertyMetadata(null));
+        public static readonly DependencyProperty ExtendButtonsProperty =
+            DependencyProperty.Register(
+                nameof(ExtendButtons),
+                typeof(object),
+                typeof(TitleBar),
+                new PropertyMetadata(null)
+            );
 
-        public static readonly DependencyProperty ExtendButtonsProperty = DependencyProperty.Register(nameof(ExtendButtons),
-typeof(object), typeof(TitleBar), new PropertyMetadata(null));
+        public static readonly DependencyProperty OverrideTitleProperty =
+            DependencyProperty.Register(
+                nameof(OverrideTitle),
+                typeof(object),
+                typeof(TitleBar),
+                new PropertyMetadata(null)
+            );
 
-        public static readonly DependencyProperty OverrideTitleProperty = DependencyProperty.Register(nameof(OverrideTitle),
-typeof(object), typeof(TitleBar), new PropertyMetadata(null));
+        public static readonly DependencyProperty ButtonCommandProperty =
+            DependencyProperty.Register(
+                nameof(ButtonCommand),
+                typeof(ICommand),
+                typeof(TitleBar),
+                new PropertyMetadata(null)
+            );
 
-        public static readonly DependencyProperty ButtonCommandProperty = DependencyProperty.Register(nameof(ButtonCommand),
-typeof(ICommand), typeof(TitleBar), new PropertyMetadata(null));
+        public static readonly DependencyProperty IsMaximizedProperty = DependencyProperty.Register(
+            nameof(IsMaximized),
+            typeof(bool),
+            typeof(TitleBar),
+            new PropertyMetadata(false)
+        );
+
+        public static readonly DependencyProperty IsOverrideTitleProperty =
+            DependencyProperty.Register(
+                nameof(IsOverrideTitle),
+                typeof(bool),
+                typeof(TitleBar),
+                new PropertyMetadata(false)
+            );
 
 
-        public static readonly DependencyProperty IsMaximizedProperty = DependencyProperty.Register(nameof(IsMaximized),
-    typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
 
-        public static new readonly DependencyProperty HeightProperty = DependencyProperty.Register(nameof(Height),
-typeof(int), typeof(TitleBar), new PropertyMetadata(null));
+        public bool ShowMinBtn
+        {
+            get { return (bool)GetValue(ShowMinBtnProperty); }
+            set { SetValue(ShowMinBtnProperty, value); }
+        }
 
-        public static readonly DependencyProperty IsOverrideTitleProperty = DependencyProperty.Register(nameof(IsOverrideTitle),
-typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
+        // Using a DependencyProperty as the backing store for ShowMinBtn.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowMinBtnProperty =
+            DependencyProperty.Register("ShowMinBtn", typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
+
+
+
+        public bool ShowMaxBtn
+        {
+            get { return (bool)GetValue(ShowMaxBtnProperty); }
+            set { SetValue(ShowMaxBtnProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ShowMaxBtn.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowMaxBtnProperty =
+            DependencyProperty.Register("ShowMaxBtn", typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
+
+
 
 
         public string Title
@@ -72,21 +125,7 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
             set => SetValue(IsOverrideTitleProperty, value);
         }
 
-        public new int Height
-        {
-            get => (int)GetValue(HeightProperty);
-            set => SetValue(HeightProperty, value);
-        }
 
-
-        public int ButtonHeight
-        {
-            get
-            {
-                var value = (int)GetValue(HeightProperty);
-                return value;
-            }
-        }
 
         public ICommand ButtonCommand
         {
@@ -109,32 +148,36 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
             var closeBtn = (Button)Template.FindName("ButtonClose", this);
             IsOverrideTitle = OverrideTitle != null;
             var RootGrid = (Grid)Template.FindName("RootGrid", this);
-
             if (RootGrid != null)
             {
-                //RootGrid.MouseMove += (s, e) =>
-                //{
-                //    if (e.LeftButton == MouseButtonState.Pressed)
-                //    {
-                //        ParentWindow.DragMove();
-                //    }
-                //};
+                RootGrid.MouseMove += (s, e) =>
+                {
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        ParentWindow.DragMove();
+                    }
+                };
 
-                //RootGrid.MouseDown += (s, e) =>
-                //{
-                //    if (e.ClickCount == 2)
-                //    {
-                //        if (ParentWindow.WindowState == WindowState.Normal)
-                //            ParentWindow.WindowState = WindowState.Maximized;
-                //        else
-                //            ParentWindow.WindowState = WindowState.Normal;
-                //    }
-                //};
+                RootGrid.MouseDown += (s, e) =>
+                {
+                    if (e.ClickCount == 2)
+                    {
+                        MaximizeWindow();
+                    }
+                };
             }
+
+            if (ParentWindow != null)
+            {
+                ParentWindow.MaxHeight = SystemParameters.WorkArea.Height;
+            }
+
+            Console.WriteLine(ShowMinBtn);
+            Console.WriteLine(ShowMaxBtn);
         }
 
         public TitleBar()
-        {
+        {           
             SetValue(ButtonCommandProperty, new RelayCommand(o => TemplateButton_OnClick(this, o)));
             Loaded += TitleBar_loaded;
         }
@@ -185,7 +228,6 @@ typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
                     MaximizeWindow();
                     break;
             }
-
         }
     }
 }

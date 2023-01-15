@@ -22,7 +22,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="#15FFFFFF" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="#25FFFFFF" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -60,6 +60,7 @@
     <Style TargetType="{x:Type controls:TitleBar}">
         <Setter Property="Padding" Value="16" />
         <Setter Property="Height" Value="45" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Background" Value="#000" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -68,6 +69,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:TitleBar}">
                     <Grid
+                        x:Name="RootGrid"
                         Height="{TemplateBinding Height}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}"
@@ -80,7 +82,7 @@
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-               
+
                         <Grid
                             x:Name="TitleGrid"
                             Margin="{TemplateBinding Padding}"
@@ -102,7 +104,7 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 FontFamily="microsoft Yahei"
-                                FontSize="20"
+                                FontSize="{TemplateBinding FontSize}"
                                 FontWeight="Bold"
                                 Foreground="{TemplateBinding Foreground}"
                                 Text="{TemplateBinding Title}" />
@@ -114,22 +116,18 @@
                             VerticalAlignment="Center"
                             Content="{TemplateBinding OverrideTitle}" />
 
-                        <Grid
+
+                        <StackPanel
                             Grid.Column="2"
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Right"
-                            >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+
                             <Grid x:Name="ExtendButtons">
                                 <ContentPresenter Content="{TemplateBinding ExtendButtons}" />
                             </Grid>
-                            
-                            <Button Grid.Column="1"
+
+                            <Button
                                 x:Name="ButtonMinimize"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="minimize"
@@ -137,17 +135,17 @@
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyle}">
-                                    <Viewbox
-                                        Width="13"
-                                        Height="13"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        RenderOptions.BitmapScalingMode="HighQuality">
-                                        <ContentControl Content="{DynamicResource UiIconMinimize}" />
-                                    </Viewbox>
+                                <Viewbox
+                                    Width="13"
+                                    Height="13"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    RenderOptions.BitmapScalingMode="HighQuality">
+                                    <ContentControl Content="{DynamicResource UiIconMinimize}" />
+                                </Viewbox>
                             </Button>
 
-                            <Button Grid.Column="2"
+                            <Button
                                 x:Name="ButtonMaximize"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="maximize"
@@ -155,17 +153,17 @@
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyle}">
-                                    <Viewbox
-                                        Width="13"
-                                        Height="13"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        RenderOptions.BitmapScalingMode="HighQuality">
-                                        <ContentControl x:Name="ButtonMaximizeIcon" Content="{DynamicResource UiIconMaximize}" />
-                                    </Viewbox>
+                                <Viewbox
+                                    Width="13"
+                                    Height="13"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    RenderOptions.BitmapScalingMode="HighQuality">
+                                    <ContentControl x:Name="ButtonMaximizeIcon" Content="{DynamicResource UiIconMaximize}" />
+                                </Viewbox>
                             </Button>
 
-                            <Button Grid.Column="3"
+                            <Button
                                 x:Name="ButtonClose"
                                 Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 CommandParameter="close"
@@ -173,16 +171,17 @@
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
                                 Style="{StaticResource buttonStyleHoverRed}">
-                                    <Viewbox
-                                        Width="13"
-                                        Height="13"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        RenderOptions.BitmapScalingMode="HighQuality">
-                                        <ContentControl Content="{DynamicResource UiIconClose}" />
-                                    </Viewbox>
+                                <Viewbox
+                                    Width="13"
+                                    Height="13"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    RenderOptions.BitmapScalingMode="HighQuality">
+                                    <ContentControl Content="{DynamicResource UiIconClose}" />
+                                </Viewbox>
                             </Button>
-                        </Grid>
+                        </StackPanel>
+
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -200,10 +199,23 @@
                         <Trigger Property="IsMaximized" Value="True">
                             <Setter TargetName="ButtonMaximizeIcon" Property="Content" Value="{DynamicResource UiIconRestore}" />
                         </Trigger>
+
+                        <Trigger Property="ShowMinBtn" Value="True">
+                            <Setter TargetName="ButtonMinimize" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="ShowMinBtn" Value="False">
+                            <Setter TargetName="ButtonMinimize" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowMaxBtn" Value="True">
+                            <Setter TargetName="ButtonMaximize" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="ShowMaxBtn" Value="False">
+                            <Setter TargetName="ButtonMaximize" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
                         <Trigger Property="IsOverrideTitle" Value="True">
                             <Setter TargetName="TitleGrid" Property="Visibility" Value="Hidden" />
                         </Trigger>
-
                         <Trigger Property="IsOverrideTitle" Value="False">
                             <Setter TargetName="TitleGrid" Property="Visibility" Value="Visible" />
                         </Trigger>

@@ -1,16 +1,20 @@
-﻿using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Senjyouhara.Common.Utils;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Senjyouhara.Main.ViewModels
 {
-    public class MainWindowViewModel:BindableBase
+    public class MainWindowViewModel: NotifycationObject
     {
 
 
+        private string name;
+
+        public string Name
+        {
+            get { return  name; }
+            set {  name = value; RaisePropertyChanged(nameof(Name)); }
+        }
 
     }
 }

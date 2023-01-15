@@ -1,6 +1,4 @@
-﻿using Prism.Ioc;
-using Prism.Unity;
-using Senjyouhara.Main.ViewModels;
+﻿using Senjyouhara.Main.ViewModels;
 using Senjyouhara.Main.Views;
 using System;
 using System.Configuration;
@@ -15,39 +13,46 @@ namespace Senjyouhara.Main
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
-    public partial class App : PrismApplication
+    public partial class App : Application
     {
 
-        protected override Window CreateShell()
+
+
+        public App()
         {
-            return Container.Resolve<MainWindow>();
+            InitializeComponent();
         }
 
-        protected override void OnInitialized()
+
+        private void OpenMainWindow()
         {
+            var mwin = new MainWindow();
+            mwin.Show();
+        }
 
-#if (!DEBUG)
-
+        protected override void OnStartup(StartupEventArgs e)
+        {
+#if (DEBUG)
+            base.OnStartup(e);
+            OpenMainWindow();
 #else
-if (Container.Resolve<StartLoadingView>().ShowDialog() == false)
-{
-    Application.Current?.Shutdown();
-    return;
-}
-else
+
+            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            StartLoadingView window = new StartLoadingView();
+            bool? dialogResult = window.ShowDialog();
+            if (dialogResult == true)
+            {
+                base.OnStartup(e);
+                OpenMainWindow();
+                Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            }
+            else
+            {
+                Shutdown();
+            }
+
 #endif
 
-            base.OnInitialized();
-        }
-
-        protected override void InitializeShell(Window shell)
-        {
-            base.InitializeShell(shell);
-        }
-
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.RegisterForNavigation<MainWindow, MainWindowViewModel>();
         }
     }
 }
