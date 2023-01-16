@@ -57,6 +57,9 @@
   <ItemGroup>
     <Compile Include="Common\IRelayCommand.cs" />
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Controls\LayoutColumn.cs" />
+    <Compile Include="Controls\ListViewLayoutManager.cs" />
+    <Compile Include="Controls\RangeColumn.cs" />
     <Compile Include="Controls\TitleBar.cs" />
     <Compile Include="Extensions\PasswordExtensions.cs" />
   </ItemGroup>
@@ -84,10 +87,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Styles\Button.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\Icons\TitleBarBtn.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
