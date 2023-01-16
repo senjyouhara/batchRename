@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace Senjyouhara.Main
         {
             var mwin = new MainWindow();
             mwin.Show();
+
         }
 
         protected override void OnStartup(StartupEventArgs e)
