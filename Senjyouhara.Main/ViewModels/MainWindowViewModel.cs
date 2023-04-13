@@ -1,56 +1,33 @@
 ﻿using Microsoft.Win32;
+using PropertyChanged;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Input;
 
 namespace Senjyouhara.Main.ViewModels
 {
-    public class MainWindowViewModel: NotifycationObject
+
+    [AddINotifyPropertyChangedInterface]
+    public class MainWindowViewModel
     {
 
 
-        private string name;
-
-        public string Name
-        {
-            get { return  name; }
-            set {  name = value; RaisePropertyChanged(nameof(Name)); }
-        }
-
-        private string tips;
-
-        public string Tips
-        {
-            get { return tips; }
-            set { tips = value; RaisePropertyChanged(nameof(Tips)); }
-        }
-
-        private ObservableCollection<FileNameItem> fileNameItems = new ObservableCollection<FileNameItem>();
-
-        public ObservableCollection<FileNameItem> FileNameItems
-        {
-            get { return fileNameItems; }
-            set { fileNameItems = value; RaisePropertyChanged(nameof(FileNameItems)); }
-        }
+        public string Name { get; set; }
+        public string Tips { get; set; }
+        public ObservableCollection<FileNameItem> FileNameItems { get; set; }
 
 
-        private string rename;
 
-        public string Rename
-        {
-            get { return rename; }
-            set { rename = value; RaisePropertyChanged(nameof(Rename)); FileNameItemsHandle();  }
-        }
+        [OnChangedMethod(nameof(FileNameItemsHandle))]
+        public string Rename { get; set; }
+
 
         private void FileNameItemsHandle()
         {
-
             for (int i = 0; i < FileNameItems.Count; i++)
             {
                 var item = FileNameItems[i];
