@@ -88,14 +88,20 @@ namespace Senjyouhara.Main.Views
                     var list = source.ToList();
                     list.Sort(delegate (FileNameItem a, FileNameItem b)
                         {
-                            var matchesA = new Regex(@"[0-9]+").Matches(a.FileName);
-                            var matchesB = new Regex(@"[0-9]+").Matches(b.FileName);
+                            var matchesA = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(a.FileName);
+                            var matchesB = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(b.FileName);
 
 
                             if (matchesA.Count < matchesB.Count)
                             {
                                 (matchesA, matchesB) = (matchesB, matchesA);
                             }
+                            var arrA = new object[matchesA.Count];
+                            matchesA.CopyTo(arrA, 0);
+
+                            var arrB = new object[matchesB.Count];
+                            matchesB.CopyTo(arrB, 0);
+                            Debug.WriteLine($"matchesA: {arrA.Select(v => v.ToString())}, matchesB: {arrB.Select(v => v.ToString())}");
 
                             for (int i = 0; i < matchesA.Count; i++)
                             {
@@ -104,7 +110,7 @@ namespace Senjyouhara.Main.Views
 
                                 Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
 
-                                if (bValue != "")
+                                if (bValue == "" || bValue == null)
                                 {
                                     break;
                                 }
@@ -114,20 +120,26 @@ namespace Senjyouhara.Main.Views
 
                                 Debug.WriteLine($"aDouble : {aDouble}, bDouble : {bDouble}");
 
-                                if (Math.Abs(aDouble - bDouble) <= 2 && Math.Abs(aDouble - bDouble) > 0)
+                           
+
+                                if (Math.Abs(aDouble - bDouble) <= 300 && Math.Abs(aDouble - bDouble) > 0)
                                 {
                                     Debug.WriteLine($"Abs aDouble : {aDouble}, bDouble : {bDouble}");
                                     return aDouble - bDouble;
                                 }
 
+             
+
+
                             }
 
                             Debug.WriteLine(11111);
-                            return 1;
+                            return -1;
                         });
 
 
                     //var fileList;
+                    listView1.ItemsSource = new ObservableCollection<FileNameItem>(list);
                     Console.WriteLine(list.ToString());
                 }
 
@@ -176,6 +188,23 @@ namespace Senjyouhara.Main.Views
 
         private void listView1_PreviewDragOver(object sender, DragEventArgs e)
         {
+
+        }
+
+        private void listView1_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+
+            if(e.Key == Key.Delete)
+            {
+                var source = listView1.ItemsSource as ObservableCollection<FileNameItem>;
+                var items = listView1.SelectedItems;
+                var newArr = new FileNameItem[items.Count];
+                items.CopyTo(newArr, 0);
+                foreach (FileNameItem item in newArr) {
+                    source.Remove(item);
+                }
+                listView1.SelectedItem = null;
+            }
 
         }
     }

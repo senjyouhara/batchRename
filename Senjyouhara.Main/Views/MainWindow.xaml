@@ -57,8 +57,10 @@
             </Grid>
 
             <ListView
+                Keyboard.PreviewKeyUp="listView1_PreviewKeyUp"
                 x:Name="listView1"
                 Drop="listView1_Drop"
+                FocusVisualStyle="{x:Null}"
                 PreviewDragOver="listView1_PreviewDragOver"
                 PreviewMouseMove="listView1_MouseMove"
                 AllowDrop="True" SelectionMode="Extended" 
