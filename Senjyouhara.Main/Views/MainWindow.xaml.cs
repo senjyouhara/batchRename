@@ -69,6 +69,7 @@ namespace Senjyouhara.Main.Views
             if(FileDrop != null)
             {
 
+
                 var FileNames = new List<string>(FileDrop);
                 var FilterFile = FileNames.Select(v =>
                 {
@@ -83,10 +84,14 @@ namespace Senjyouhara.Main.Views
                     ObservableCollection<FileNameItem> source = listView1.ItemsSource as ObservableCollection<FileNameItem>;
                     FilterFile.ForEach(v =>
                     {
-                        source.Add(new FileNameItem() { FilePath = v.FullName, FileName = v.Name, PreviewFileName = "", SubtitleFileName = "" });
+                        Debug.WriteLine(v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : "");
+                        source.Add(new FileNameItem() { FilePath = v.FullName, FileName = v.Name, PreviewFileName = "", SubtitleFileName = "", SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : "" });
                     });
                     var list = source.ToList();
-                    list.Sort(delegate (FileNameItem a, FileNameItem b)
+                    try
+                    {
+                        //list.Sort();
+                        list.Sort(delegate (FileNameItem a, FileNameItem b)
                         {
                             var matchesA = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(a.FileName);
                             var matchesB = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(b.FileName);
@@ -106,31 +111,33 @@ namespace Senjyouhara.Main.Views
                             for (int i = 0; i < matchesA.Count; i++)
                             {
                                 var aValue = matchesA[i].Value;
-                                var bValue = matchesB[i]?.Value;
+
+                                var bValue = "";
+
+                                if (matchesB.Count <= i)
+                                {
+                                } else
+                                {
+                                    bValue = matchesB[i]?.Value;
+                                }
+
 
                                 Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
 
-                                if (bValue == "" || bValue == null)
+                                if (string.IsNullOrEmpty(bValue))
                                 {
                                     break;
                                 }
+                                if (aValue == bValue) continue;
 
-                                Int32 aDouble = Int16.Parse((Double.Parse(aValue) * 100).ToString());
-                                Int32 bDouble = Int16.Parse((Double.Parse(bValue) * 100).ToString());
+                                Int32 aDouble = Int32.Parse((Double.Parse(aValue) * 100).ToString());
+                                Int32 bDouble = Int32.Parse((Double.Parse(bValue) * 100).ToString());
 
                                 Debug.WriteLine($"aDouble : {aDouble}, bDouble : {bDouble}");
 
-                           
 
-                                if (Math.Abs(aDouble - bDouble) <= 300 && Math.Abs(aDouble - bDouble) > 0)
-                                {
-                                    Debug.WriteLine($"Abs aDouble : {aDouble}, bDouble : {bDouble}");
+                                Debug.WriteLine($"Abs aDouble : {aDouble}, bDouble : {bDouble}");
                                     return aDouble - bDouble;
-                                }
-
-             
-
-
                             }
 
                             Debug.WriteLine(11111);
@@ -138,9 +145,13 @@ namespace Senjyouhara.Main.Views
                         });
 
 
-                    //var fileList;
-                    listView1.ItemsSource = new ObservableCollection<FileNameItem>(list);
-                    Console.WriteLine(list.ToString());
+                        listView1.ItemsSource = new ObservableCollection<FileNameItem>(list);
+                        Console.WriteLine(list.ToString());
+                    } catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                    
                 }
 
             } else
