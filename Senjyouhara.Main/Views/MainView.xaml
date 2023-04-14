@@ -52,7 +52,7 @@
                 cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)]; 
                 [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];
                 [Event PreviewDragOver] = [Action OnListViewPreviewDragOver($source, $eventArgs)];
-                [Event Keyboard.PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
+                [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
                 SelectionMode="Extended">
 
                 <ListView.Resources />
