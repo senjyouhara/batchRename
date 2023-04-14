@@ -1,0 +1,119 @@
+﻿<UserControl 
+    x:Class="Senjyouhara.Main.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:Senjyouhara.Main"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DesignHeight="450" d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Grid Background="#ffffff">
+
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+
+
+            <Grid x:Name="gridContainer">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="30" />
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="col1" Grid.Column="0" />
+                <Grid x:Name="col2" Grid.Column="1" />
+                <Grid x:Name="col3" Grid.Column="2" />
+            </Grid>
+
+            <Border
+                Height="40"
+                VerticalAlignment="Top"
+                Background="LightGray" />
+
+            <ListView
+                x:Name="FileNameItems"
+                Margin="0"
+                Padding="0"
+                ui:ListViewLayoutManager.Enabled="True"
+                AllowDrop="True"
+                Background="Transparent"
+                BorderBrush="Black"
+                BorderThickness="1"
+                FocusVisualStyle="{x:Null}"
+                cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)]; 
+                [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];
+                [Event PreviewDragOver] = [Action OnListViewPreviewDragOver($source, $eventArgs)];
+                [Event Keyboard.PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
+                SelectionMode="Extended">
+
+                <ListView.Resources />
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            Width="{Binding ElementName=col1, Path=ActualWidth}"
+                            ui:RangeColumn.MinWidth="100"
+                            DisplayMemberBinding="{Binding FileName}"
+                            Header="文件名" />
+                        <!--<GridViewColumn ui:RangeColumn.MinWidth="100" Header="字幕" Width="{Binding ElementName=col2, Path=ActualWidth}" DisplayMemberBinding="{Binding SubtitleFileName}" />-->
+                        <GridViewColumn
+                            Width="{Binding ElementName=col2, Path=ActualWidth}"
+                            ui:RangeColumn.MinWidth="100"
+                            DisplayMemberBinding="{Binding PreviewFileName}"
+                            Header="结果" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+
+            <TextBlock
+                Grid.Row="1"
+                Margin="8 2"
+                Height="24"
+                VerticalAlignment="Top"
+                FontSize="16"
+                Foreground="IndianRed"
+                x:Name="Tips" />
+            <WrapPanel Grid.Row="2" Margin="6">
+                <TextBox
+                    x:Name="Rename"
+                    Width="300"
+                    Height="36"
+                    hc:InfoElement.Title="重命名名称："
+                    hc:InfoElement.TitlePlacement="Left"
+                    FontSize="14"
+                    Style="{StaticResource TextBoxExtend}" />
+                <Button
+                    Width="80"
+                    Height="36"
+                    Margin="10,0,0,0"
+                    cal:Message.Attach="[Event Click] = [Action RenameFileHandle]"
+                    Content="重命名"
+                    Style="{StaticResource ButtonPrimary}" />
+                <Button
+                    Width="80"
+                    Height="36"
+                    Margin="10,0,0,0"
+                    cal:Message.Attach="[Event Click] = [Action SelectFileHandle]"
+                    Content="选择文件" />
+                <Button
+                    Width="80"
+                    Height="36"
+                    Margin="10,0,0,0"
+                    cal:Message.Attach="[Event Click] = [Action ClearListHandle]"
+                    Content="清空列表" />
+            </WrapPanel>
+
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -1,20 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Senjyouhara.Main.Views
 {
@@ -58,7 +45,8 @@ namespace Senjyouhara.Main.Views
 
         private void HideWindow(object sender, ElapsedEventArgs e)
         {
-            win.Dispatcher.Invoke(() => {
+            win.Dispatcher.Invoke(() =>
+            {
                 Storyboard storyboard = (FindResource("hideMe") as System.Windows.Media.Animation.Storyboard);
                 storyboard.Completed += (o, a) => { DialogResult = true; };
                 storyboard.Begin(this);
