@@ -1,9 +1,13 @@
 ﻿using Caliburn.Micro;
+using HandyControl.Controls;
+using HandyControl.Tools;
 using Microsoft.Win32;
 using PropertyChanged;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.models;
+using Senjyouhara.Main.Views;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,8 +16,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace Senjyouhara.Main.ViewModels
 {
@@ -21,8 +27,7 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen
     {
-
-
+        public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
         public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
 
@@ -30,22 +35,62 @@ namespace Senjyouhara.Main.ViewModels
         [OnChangedMethod(nameof(FileNameItemsHandle))]
         public string Rename { get; set; }
 
+        private GenerateRuleViewModel genetateRuleViewModel;
+
         private void FileNameItemsHandle()
         {
-            
-            for (int i = 0; i < FileNameItems.Count; i++)
+
+            var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
+            var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
+
+            for (int i = 0; i < otherList.Count; i++)
             {
-                var item = FileNameItems[i];
+                var item = otherList[i];
                 var f = new FileInfo(item.FilePath);
                 var name = Rename;
                 if (name.IndexOf("#") != -1)
                 {
-                    var count = FileNameItems.Count + "";
-                    var buqi = count.Substring(0, count.Length - (i + 1 + "").Length);
-                    name = name.Replace("#", $"{"".PadLeft(buqi.Length, '0')}{i + 1}");
+                    var count = otherList.Count + "";
+                    var tmp = count.Substring(0, count.Length - (i + 1 + "").Length);
+                    name = name.Replace("#", $"{"".PadLeft(tmp.Length, '0')}{i + 1}");
                 }
                 item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
                 item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
+            }
+
+
+            var Count = 0;
+            for (int i = 0; i < subList.Count; i++)
+            {
+                var prevItemNumber = "";
+                var prevlist = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", subList[i - 1]?.FileName);
+                if(prevlist.Count > 0)
+                {
+                    prevItemNumber = prevlist[0];
+                }
+
+                var itemNumber = "";
+                var item = subList[i];
+                var list = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", item.FileName);
+                if (list.Count > 0)
+                {
+                   itemNumber = list[0];
+                }
+
+                var name = Rename;
+                var f = new FileInfo(item.FilePath);
+                if (name.IndexOf("#") != -1)
+                {
+                    var count = subList.Count + "";
+                    var tmp = count.Substring(0, count.Length - (i + 1 + "").Length);
+                    name = name.Replace("#", $"{"".PadLeft(tmp.Length, '0')}{Count + 1}");
+                }
+                item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
+                item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
+                if (!itemNumber.Equals(prevItemNumber))
+                {
+                    Count++;
+                }
             }
         }
 
@@ -56,8 +101,8 @@ namespace Senjyouhara.Main.ViewModels
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
-
-
+            genetateRuleViewModel = new GenerateRuleViewModel();
+            genetateRuleViewModel.Parent = this;
         }
 
 
@@ -72,35 +117,153 @@ namespace Senjyouhara.Main.ViewModels
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == true)
             {
-
-                var list = new List<string>(openFileDialog.FileNames);
-                list.ForEach(file =>
-                {
-                    var v = new FileInfo(file);
-                    FileNameItems.Add(new FileNameItem()
-                    {
-                        FilePath = v.FullName,
-                        FileName = v.Name,
-                        PreviewFileName = "",
-                        SubtitleFileName = "",
-                        SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : ""
-                    });
-                });
-
+                var FileList = new List<string>(openFileDialog.FileNames);
+                AddFilesHandle(FileList);
             }
         }
 
         public void ClearListHandle()
         {
-            //_windowManager.ShowDialogAsync(IoC.Get<StartLoadingViewModel>());
-
             Tips = "";
             FileNameItems.Clear();
         }
 
+        public static string[] SUB_FILE_SUBFIX_LIST = new string[] { "ass", "ssa", "srt" };
+        public static string[] VIDEO_SUBFIX_LIST = new string[] { "mkv", "mp4", "flv", "f4v", "avi", "rm", "rmvb", "mov", "wmv" };
+        private void AddFilesHandle(List<string> files)
+        {
+            files.ForEach(file =>
+            {
+                var v = new FileInfo(file);
+                var flag = Directory.Exists(file);
+                if (flag)
+                {
+                    return;
+                }
+
+                FileNameItems.Add(new FileNameItem()
+                {
+                    FilePath = v.FullName,
+                    FileName = v.Name,
+                    PreviewFileName = "",
+                    SubtitleFileName = "",
+                    SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : ""
+                });
+            });
+
+            var group = FileNameItems.GroupBy((item) =>
+            {
+                return item.SuffixName.ToLower();
+            });
+
+            var sortList = new List<FileNameItem>();
+            foreach (var groupItem in group)
+            {
+                var key = groupItem.Key;
+                var groupList = groupItem.ToList();
+                groupList.Sort(MySort);
+                sortList = sortList.Concat(groupList).ToList();
+            }
+
+            Debug.WriteLine(group);
+
+            if (IsSubMergeVideo)
+            {
+
+                try
+                {
+
+                    var subList = sortList.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
+                    var otherList = sortList.Where(v => !subList.Contains(v)).ToList();
+                    var newList = new List<FileNameItem>();
+                    foreach (var item in otherList)
+                    {
+                        if (VIDEO_SUBFIX_LIST.Contains(item.SuffixName.ToLower()))
+                        {
+                            newList.Add(item);
+                            var FilterSub = subList.Where(v =>
+                            {
+                                var matchesA = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", item.FileName);
+                                var matchesB = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", v.FileName);
+
+                                if (matchesA.Count < matchesB.Count)
+                                {
+                                    (matchesA, matchesB) = (matchesB, matchesA);
+                                }
+                           
+                                var unionData = matchesA.Intersect(matchesB).ToList();
+
+                                //if (unionData.Count > 1)
+                                //{
+                                //    var m = unionData.Where(v => (v as string).Length <= 2).FirstOrDefault();
+                                //    return m[0] == ;
+                                //}
+
+
+                                for (int i = 0; i < matchesA.Count; i++)
+                                {
+                
+                                    var aValue = matchesA[i].Replace(" ", "").Replace("[", "").Replace("]", "");
+
+                                    var bValue = "";
+
+                                    if (matchesB[i] != null)
+                                    {
+                                        bValue = matchesB[i];
+                                    }
+
+                                    bValue = bValue.Replace(" ", "").Replace("[", "").Replace("]", "");
+
+                                    Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
+
+                                    if (string.IsNullOrEmpty(bValue))
+                                    {
+                                        break;
+                                    }
+                                    if (aValue.Equals(bValue)) return true;
+                                }
+
+                                return false;
+                            }).ToList();
+                            if (FilterSub.Count > 0)
+                            {
+                                newList = newList.Concat(FilterSub.Select(v=>
+                                {
+                                    v.FileName = " └─  " + v.FileName;
+                                    return v;
+                                })).ToList();
+                            }
+                        }
+                        else
+                        {
+                            newList.Add(item);
+                        }
+                    }
+                    FileNameItems = new ObservableCollection<FileNameItem>(newList);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
+            }
+            else
+            {
+                FileNameItems = new ObservableCollection<FileNameItem>(sortList);
+            }
+        }
+
         public void RenameFileHandle()
         {
+
             var count = FileNameItems.Count;
+
+            if (count <= 0)
+            {
+                return;
+            }
+
             foreach (var item in FileNameItems)
             {
                 var f = new FileInfo(item.FilePath);
@@ -123,7 +286,7 @@ namespace Senjyouhara.Main.ViewModels
                         }
                         else
                         {
-                            MessageBox.Show(ex.Message);
+                            System.Windows.MessageBox.Show(ex.Message);
                         }
                     }
 
@@ -137,6 +300,56 @@ namespace Senjyouhara.Main.ViewModels
             Tips = "重命名成功!";
         }
 
+        private int MySort (FileNameItem a, FileNameItem b)
+        {
+            var matchesA = new Regex(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])").Matches(a.FileName);
+            var matchesB = new Regex(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])").Matches(b.FileName);
+
+
+            if (matchesA.Count < matchesB.Count)
+            {
+                (matchesA, matchesB) = (matchesB, matchesA);
+            }
+            var arrA = new object[matchesA.Count];
+            matchesA.CopyTo(arrA, 0);
+
+            var arrB = new object[matchesB.Count];
+            matchesB.CopyTo(arrB, 0);
+            Debug.WriteLine($"matchesA: {arrA.Select(v => v.ToString())}, matchesB: {arrB.Select(v => v.ToString())}");
+
+            for (int i = 0; i < matchesA.Count; i++)
+            {
+                var aValue = matchesA[i].Value.Replace(" ", "").Replace("[", "").Replace("]", "");
+
+                var bValue = "";
+
+                if (matchesB.Count <= i)
+                {
+                }
+                else
+                {
+                    bValue = matchesB[i]?.Value;
+                }
+
+                bValue = bValue.Replace(" ", "").Replace("[", "").Replace("]", "");
+                Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
+
+                if (string.IsNullOrEmpty(bValue))
+                {
+                    break;
+                }
+                if (aValue == bValue) continue;
+
+                int aDouble = int.Parse((double.Parse(aValue) * 100).ToString());
+                int bDouble = int.Parse((double.Parse(bValue) * 100).ToString());
+
+                Debug.WriteLine($"aDouble : {aDouble}, bDouble : {bDouble}");
+
+                return aDouble - bDouble;
+            }
+
+            return -1;
+        }
 
         public void OnListViewDrop(object sender, DragEventArgs e)
         {
@@ -146,93 +359,8 @@ namespace Senjyouhara.Main.ViewModels
 
             if (FileDrop != null)
             {
-
-
                 var FileNames = new List<string>(FileDrop);
-                var FilterFile = FileNames.Select(v =>
-                {
-
-                    var flag = Directory.Exists(v);
-                    var file = new FileInfo(v);
-                    return flag ? null : file;
-                }).Where(v => v != null).ToList();
-
-                if (FilterFile.Count > 0)
-                {
-                    FilterFile.ForEach(v =>
-                    {
-                        Debug.WriteLine(v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : "");
-                        FileNameItems.Add(new FileNameItem() { FilePath = v.FullName, FileName = v.Name, PreviewFileName = "", SubtitleFileName = "", SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : "" });
-                    });
-                    var list = FileNameItems.ToList();
-                    try
-                    {
-                        //list.Sort();
-                        list.Sort(delegate (FileNameItem a, FileNameItem b)
-                        {
-                            var matchesA = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(a.FileName);
-                            var matchesB = new Regex(@"[0-9]+\.[0-9]+|[0-9]+").Matches(b.FileName);
-
-
-                            if (matchesA.Count < matchesB.Count)
-                            {
-                                (matchesA, matchesB) = (matchesB, matchesA);
-                            }
-                            var arrA = new object[matchesA.Count];
-                            matchesA.CopyTo(arrA, 0);
-
-                            var arrB = new object[matchesB.Count];
-                            matchesB.CopyTo(arrB, 0);
-                            Debug.WriteLine($"matchesA: {arrA.Select(v => v.ToString())}, matchesB: {arrB.Select(v => v.ToString())}");
-
-                            for (int i = 0; i < matchesA.Count; i++)
-                            {
-                                var aValue = matchesA[i].Value;
-
-                                var bValue = "";
-
-                                if (matchesB.Count <= i)
-                                {
-                                }
-                                else
-                                {
-                                    bValue = matchesB[i]?.Value;
-                                }
-
-
-                                Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
-
-                                if (string.IsNullOrEmpty(bValue))
-                                {
-                                    break;
-                                }
-                                if (aValue == bValue) continue;
-
-                                Int32 aDouble = Int32.Parse((Double.Parse(aValue) * 100).ToString());
-                                Int32 bDouble = Int32.Parse((Double.Parse(bValue) * 100).ToString());
-
-                                Debug.WriteLine($"aDouble : {aDouble}, bDouble : {bDouble}");
-
-
-                                Debug.WriteLine($"Abs aDouble : {aDouble}, bDouble : {bDouble}");
-                                return aDouble - bDouble;
-                            }
-
-                            Debug.WriteLine(11111);
-                            return -1;
-                        });
-
-
-                        listView1.ItemsSource = new ObservableCollection<FileNameItem>(list);
-                        Console.WriteLine(list.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-
-                }
-
+                AddFilesHandle(FileNames);
             }
             else
             {
@@ -326,6 +454,11 @@ namespace Senjyouhara.Main.ViewModels
         {
 
 
+        }
+
+        public void ShowGenerateRuleModal()
+        {
+            _windowManager.ShowDialogAsync(genetateRuleViewModel);
         }
     }
 

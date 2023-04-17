@@ -35,4 +35,9 @@
     <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj" />
     <ProjectReference Include="..\Senjyouhara.UI\Senjyouhara.UI.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Videos\loading.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

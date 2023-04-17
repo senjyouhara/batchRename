@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Senjyouhara.Main.ViewModels
 {
-    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
+    public class ShellViewModel : Conductor<IScreen>
     {
 
         private IEventAggregator _eventAggregator;
-        public ShellViewModel()
+        public ShellViewModel(IWindowManager windowManager)
         {
             _eventAggregator = new EventAggregator();
             _eventAggregator.SubscribeOnUIThread(this);

@@ -98,19 +98,32 @@
                     Margin="10,0,0,0"
                     cal:Message.Attach="[Event Click] = [Action RenameFileHandle]"
                     Content="重命名"
+                    FocusVisualStyle="{x:Null}"
                     Style="{StaticResource ButtonPrimary}" />
                 <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
+                    FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action SelectFileHandle]"
                     Content="选择文件" />
                 <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
+                    FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action ClearListHandle]"
                     Content="清空列表" />
+
+                <Button
+                    Width="80"
+                    Height="36"
+                    Margin="10,0,0,0"
+                    FocusVisualStyle="{x:Null}"
+                    cal:Message.Attach="[Event Click] = [Action ShowGenerateRuleModal]"
+                    Content="生成规则" />
+
+                <CheckBox Margin="10,10,0,0" Content="字幕是否归并到视频下" x:Name="IsSubMergeVideo" />
             </WrapPanel>
 
         </Grid>

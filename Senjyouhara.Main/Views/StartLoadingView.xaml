@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Senjyouhara.Main.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="http://www.caliburnproject.org"
     x:Name="win"
     Title="StartLoading"
     Width="854"
@@ -56,8 +57,8 @@
         <MediaElement
             x:Name="video"
             LoadedBehavior="Manual"
-            MediaEnded="MediaElement_MediaEnded"
-            MediaOpened="video_MediaOpened"
+            cal:Message.Attach="[Event MediaOpened] = [Action VideoMediaOpened($source, $eventArgs)];
+            [Event MediaEnded] = [Action VideoMediaEnded($source, $eventArgs)]"
             Stretch="Fill" />
     </Grid>
 </Window>

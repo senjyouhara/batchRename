@@ -4,7 +4,7 @@ using Senjyouhara.Common.Utils;
 namespace Senjyouhara.Main.models
 {
     [AddINotifyPropertyChangedInterface]
-    public class FileNameItem : NotifycationObject
+    public class FileNameItem
     {
         public string FilePath { get; set; }
         public string FileName { get; set; }

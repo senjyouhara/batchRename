@@ -24,13 +24,19 @@ namespace Senjyouhara.Main
             container.Singleton<IWindowManager, WindowManager>();
             
             container.PerRequest<ShellViewModel>();
-            container.PerRequest<MainViewModel>();
             container.PerRequest<StartLoadingViewModel>();
+            container.PerRequest<MainViewModel>();
+            container.PerRequest<GenerateRuleViewModel>();
         }
 
         protected override async void OnStartup(object sender, StartupEventArgs e)
         {
+#if (DEBUG)
             await DisplayRootViewForAsync<ShellViewModel>();
+#else
+            await DisplayRootViewForAsync<StartLoadingViewModel>();
+#endif
+
         }
 
         protected override object GetInstance(Type service, string key)
