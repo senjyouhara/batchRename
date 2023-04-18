@@ -27,10 +27,13 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen
     {
+
+        private static readonly ILog Log = LogManager.GetLog(typeof(Screen));
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
         public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
 
+        public string FileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])";
 
         [OnChangedMethod(nameof(FileNameItemsHandle))]
         public string Rename { get; set; }
@@ -58,25 +61,27 @@ namespace Senjyouhara.Main.ViewModels
                 item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
             }
 
-
             var Count = 0;
             for (int i = 0; i < subList.Count; i++)
             {
                 var prevItemNumber = "";
-                var prevlist = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", subList[i - 1]?.FileName);
-                if(prevlist.Count > 0)
+                var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{FileSortPattern}", subList[i - 1].FileName) : new List<string>();
+                if (prevlist.Count > 0)
                 {
                     prevItemNumber = prevlist[0];
                 }
 
                 var itemNumber = "";
                 var item = subList[i];
-                var list = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", item.FileName);
+                var list = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
                 if (list.Count > 0)
                 {
                    itemNumber = list[0];
                 }
-
+                if (!string.IsNullOrEmpty(prevItemNumber) && !itemNumber.Equals(prevItemNumber))
+                {
+                    Count++;
+                }
                 var name = Rename;
                 var f = new FileInfo(item.FilePath);
                 if (name.IndexOf("#") != -1)
@@ -87,10 +92,6 @@ namespace Senjyouhara.Main.ViewModels
                 }
                 item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
                 item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
-                if (!itemNumber.Equals(prevItemNumber))
-                {
-                    Count++;
-                }
             }
         }
 
@@ -183,8 +184,8 @@ namespace Senjyouhara.Main.ViewModels
                             newList.Add(item);
                             var FilterSub = subList.Where(v =>
                             {
-                                var matchesA = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", item.FileName);
-                                var matchesB = PatternUtil.GetPatternResult(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])", v.FileName);
+                                var matchesA = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
+                                var matchesB = PatternUtil.GetPatternResult(@$"{FileSortPattern}", v.FileName);
 
                                 if (matchesA.Count < matchesB.Count)
                                 {
@@ -302,42 +303,33 @@ namespace Senjyouhara.Main.ViewModels
 
         private int MySort (FileNameItem a, FileNameItem b)
         {
-            var matchesA = new Regex(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])").Matches(a.FileName);
-            var matchesB = new Regex(@"(\s[0-9]+\.[0-9]+|[0-9]+\s)|(\[[0-9]+\.[0-9]+|[0-9]+\])").Matches(b.FileName);
+            var matchesA = PatternUtil.GetPatternResult(@$"{FileSortPattern}", a.FileName);
+            var matchesB = PatternUtil.GetPatternResult(@$"{FileSortPattern}", b.FileName);
 
 
             if (matchesA.Count < matchesB.Count)
             {
                 (matchesA, matchesB) = (matchesB, matchesA);
             }
-            var arrA = new object[matchesA.Count];
-            matchesA.CopyTo(arrA, 0);
-
-            var arrB = new object[matchesB.Count];
-            matchesB.CopyTo(arrB, 0);
-            Debug.WriteLine($"matchesA: {arrA.Select(v => v.ToString())}, matchesB: {arrB.Select(v => v.ToString())}");
 
             for (int i = 0; i < matchesA.Count; i++)
             {
-                var aValue = matchesA[i].Value.Replace(" ", "").Replace("[", "").Replace("]", "");
+                var aValue = matchesA[i].Replace(" ", "").Replace("[", "").Replace("]", "");
 
                 var bValue = "";
 
-                if (matchesB.Count <= i)
+                if (!string.IsNullOrEmpty(matchesB[i]))
                 {
+                    bValue = matchesB[i];
                 }
                 else
                 {
-                    bValue = matchesB[i]?.Value;
-                }
-
-                bValue = bValue.Replace(" ", "").Replace("[", "").Replace("]", "");
-                Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
-
-                if (string.IsNullOrEmpty(bValue))
-                {
                     break;
                 }
+
+                bValue = bValue?.Replace(" ", "").Replace("[", "").Replace("]", "");
+                Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
+
                 if (aValue == bValue) continue;
 
                 int aDouble = int.Parse((double.Parse(aValue) * 100).ToString());
@@ -425,12 +417,12 @@ namespace Senjyouhara.Main.ViewModels
         public void OnListViewPreviewMouseMove(object sender, MouseEventArgs e)
         {
 
-            var listView1 = sender as ListView;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                var pos = e.GetPosition(listView1);  // 获取位置
+                var listView1 = sender as ListView;
 
                 #region 源位置
+                var pos = e.GetPosition(listView1);  // 获取位置
                 HitTestResult result = VisualTreeHelper.HitTest(listView1, pos);  //根据位置得到result
                 if (result == null)
                 {
@@ -441,10 +433,11 @@ namespace Senjyouhara.Main.ViewModels
                 {
                     return;
                 }
+                DataObject dataObj = new DataObject(listBoxItem.Content as FileNameItem);
                 #endregion
 
 
-                DataObject dataObj = new DataObject(listBoxItem.Content as FileNameItem);
+                //DataObject dataObj = new DataObject(sender as FileNameItem);
                 DragDrop.DoDragDrop(listView1, dataObj, DragDropEffects.Move);  //调用方法
             }
 

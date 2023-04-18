@@ -25,6 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

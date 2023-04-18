@@ -21,6 +21,7 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class GenerateRuleViewModel: Screen
     {
+        private static readonly ILog Log = LogManager.GetLog(typeof(Screen));
 
         public string FirstNumber { get; set; }
         public string Step { get; set; }
