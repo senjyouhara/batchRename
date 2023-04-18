@@ -328,14 +328,12 @@ namespace Senjyouhara.Main.ViewModels
                 }
 
                 bValue = bValue?.Replace(" ", "").Replace("[", "").Replace("]", "");
-                Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
-
+                Log.Info($"aValue : {aValue}, bValue : {bValue}");
                 if (aValue == bValue) continue;
 
                 int aDouble = int.Parse((double.Parse(aValue) * 100).ToString());
                 int bDouble = int.Parse((double.Parse(bValue) * 100).ToString());
-
-                Debug.WriteLine($"aDouble : {aDouble}, bDouble : {bDouble}");
+                Log.Info($"aDouble : {aDouble}, bDouble : {bDouble}");
 
                 return aDouble - bDouble;
             }

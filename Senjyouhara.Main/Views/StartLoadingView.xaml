@@ -11,12 +11,14 @@
     Width="854"
     Height="480"
     WindowStyle="None"
+    Opacity="0"
     AllowsTransparency="True"
     Loaded="Window_Loaded"
-    Opacity="0"
+    Background="Transparent"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+
     <!--<WindowChrome.WindowChrome>
         <WindowChrome
             GlassFrameThickness="-1"
@@ -52,13 +54,20 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-     
+        <Image Source="/Resources/loading.png" x:Name="img"
+               Margin="20"
+               Loaded="MediaLoaded"
+               >
+            <Image.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0.15" Color="DimGray" Opacity="0.5"></DropShadowEffect>
+            </Image.Effect>
+        </Image>
 
-        <MediaElement
+        <!--<MediaElement
             x:Name="video"
             LoadedBehavior="Manual"
             cal:Message.Attach="[Event MediaOpened] = [Action VideoMediaOpened($source, $eventArgs)];
             [Event MediaEnded] = [Action VideoMediaEnded($source, $eventArgs)]"
-            Stretch="Fill" />
+            Stretch="Fill" />-->
     </Grid>
 </Window>
