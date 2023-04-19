@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
@@ -31,15 +32,17 @@ namespace Senjyouhara.Main.Views
 
         public async void MediaLoaded(object sender, RoutedEventArgs e)
         {
-            double lastTime = 1.5 * 1000;
+            double lastTime = 2 * 1000;
             System.Timers.Timer t = new System.Timers.Timer(lastTime);//实例化Timer类，设置间隔时间为200毫秒；   
             t.AutoReset = false;//设置是执行一次（false）还是一直执行(true)；    
             t.Enabled = true;  //是否执行System.Timers.Timer.Elapsed事件；  ,调用start()方法也可以将其设置为true
+
             t.Elapsed += new System.Timers.ElapsedEventHandler((o, e) =>
             {
                 App.Current.Dispatcher.Invoke((() =>
                 {
-                    Storyboard storyboard = (FindResource("hideMe") as Storyboard);
+                    win.OpacityMask = Resources["ClosedBrush"] as LinearGradientBrush;
+                    Storyboard storyboard = (Resources["hideMe"] as Storyboard);
                     storyboard.Completed += (o, a) =>
                     {
                         var ctx = DataContext as StartLoadingViewModel;

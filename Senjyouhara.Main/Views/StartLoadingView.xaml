@@ -11,7 +11,6 @@
     Width="854"
     Height="480"
     WindowStyle="None"
-    Opacity="0"
     AllowsTransparency="True"
     Loaded="Window_Loaded"
     Background="Transparent"
@@ -26,22 +25,33 @@
             ResizeBorderThickness="0" />
     </WindowChrome.WindowChrome>-->
     <Window.Resources>
-        <Storyboard x:Key="hideMe">
-            <DoubleAnimation
-                Storyboard.TargetProperty="Opacity"
-                To="0.0"
-                Duration="00:00:1.5" />
+        <LinearGradientBrush x:Key="ClosedBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#FF000000" Offset="0"/>
+            <GradientStop Color="#FF000000" Offset="1"/>
+            <GradientStop Color="#FF000000" Offset="1"/>
+        </LinearGradientBrush>
+        <Storyboard x:Key="hideMe" Storyboard.TargetName="win">
+            <DoubleAnimation From="1" To="0" Duration="0:0:1" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[1].Offset"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.7" BeginTime="0:0:0.4" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Offset"/>
+            <ColorAnimation To="#00000000" Duration="0" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Color"/>
         </Storyboard>
     </Window.Resources>
+
+    <Window.OpacityMask>
+        <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+            <GradientStop Color="#00000000" Offset="0"/>
+            <GradientStop Color="#00000000" Offset="1"/>
+            <GradientStop Color="#00000000" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.OpacityMask>
+    
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
                 <Storyboard>
-                    <DoubleAnimation
-                        Storyboard.TargetProperty="Opacity"
-                        From="0"
-                        To="1"
-                        Duration="00:00:1.5" />
+                    <DoubleAnimation From="1" To="0" Duration="0:0:1" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[1].Offset"/>
+                    <DoubleAnimation From="1" To="0" Duration="0:0:0.7" BeginTime="0:0:0.4" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Offset"/>
+                    <ColorAnimation To="#FF000000" Duration="0" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Color"/>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
