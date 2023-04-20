@@ -15,7 +15,7 @@ namespace Senjyouhara.Common.Log
 
         public long CurrentFileSize { get; set; }
 
-        public string CurrentDateStr { get; set; }
+        public string CurrentLogFileName { get; set; }
 
         public string CurrentLogFilePath { get; set; }
 

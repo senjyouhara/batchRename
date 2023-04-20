@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Senjyouhara.Common.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,64 +10,19 @@ namespace Senjyouhara.Common.Log
     /// <summary>
     /// 写日志类
     /// </summary>
-    public class LogUtil
+    internal class LogUtil
     {
         #region 字段
 
-        private static LogWriter _infoWriter;
-
-        private static LogWriter _debugWriter;
-
-        private static LogWriter _errorWriter;
-
-        private static LogWriterMutex _infoWriterMutex;
-
-        private static LogWriterMutex _debugWriterMutex;
-
-        private static LogWriterMutex _errorWriterMutex;
-
-        private static bool _supportMultiProcess = false;
-
-        public static bool IsWriteFile { get; set; } = false;
-
-        /// <summary>
-        /// 是否支持多进程
-        /// </summary>
-        public static bool SupportMultiProcess
-        {
-            get
-            {
-                return _supportMultiProcess;
-            }
-            set
-            {
-                _supportMultiProcess = value;
-
-                if (_supportMultiProcess)
-                {
-                    _infoWriter?.Dispose();
-                    _debugWriter?.Dispose();
-                    _errorWriter?.Dispose();
-
-                    _infoWriter = null;
-                    _debugWriter = null;
-                    _errorWriter = null;
-
-                    _infoWriterMutex = new LogWriterMutex(LogType.Info);
-                    _debugWriterMutex = new LogWriterMutex(LogType.Debug);
-                    _errorWriterMutex = new LogWriterMutex(LogType.Error);
-                }
-            }
-        }
+        private static LogWriter _logWriter = new LogWriter();
 
         #endregion
+
 
         #region 静态构造函数
         static LogUtil()
         {
-            _infoWriter = new LogWriter(LogType.Info);
-            _debugWriter = new LogWriter(LogType.Debug);
-            _errorWriter = new LogWriter(LogType.Error);
+            //_logWriter = new LogWriter();
         }
         #endregion
 
@@ -74,31 +30,9 @@ namespace Senjyouhara.Common.Log
         /// <summary>
         /// 写操作日志
         /// </summary>
-        public static void Log(string log)
-        {
-            if (_supportMultiProcess)
-            {
-                _infoWriterMutex.WriteLog(log);
-            }
-            else
-            {
-                _infoWriter.WriteLog(log);
-            }
-        }
-
-        /// <summary>
-        /// 写操作日志
-        /// </summary>
         public static void Info(string log)
         {
-            if (_supportMultiProcess)
-            {
-                _infoWriterMutex.WriteLog(log);
-            }
-            else
-            {
-                _infoWriter.WriteLog(log);
-            }
+            _logWriter.WriteLog(LogType.Info, log);
         }
         #endregion
 
@@ -108,14 +42,7 @@ namespace Senjyouhara.Common.Log
         /// </summary>
         public static void Debug(string log)
         {
-            if (_supportMultiProcess)
-            {
-                _debugWriterMutex.WriteLog(log);
-            }
-            else
-            {
-                _debugWriter.WriteLog(log);
-            }
+            _logWriter.WriteLog(LogType.Debug, log);
         }
         #endregion
 
@@ -133,27 +60,14 @@ namespace Senjyouhara.Common.Log
         /// </summary>
         public static void Error(string log)
         {
-            if (_supportMultiProcess)
-            {
-                _errorWriterMutex.WriteLog(log);
-            }
-            else
-            {
-                _errorWriter.WriteLog(log);
-            }
+            _logWriter.WriteLog(LogType.Error, log);
         }
         #endregion
 
         #region Dispose
         public static void Dispose()
         {
-            _infoWriter?.Dispose();
-            _debugWriter?.Dispose();
-            _errorWriter?.Dispose();
-
-            _infoWriterMutex?.Dispose();
-            _debugWriterMutex?.Dispose();
-            _errorWriterMutex?.Dispose();
+            _logWriter?.Dispose();
         }
         #endregion
 

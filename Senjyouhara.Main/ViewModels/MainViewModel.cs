@@ -4,6 +4,7 @@ using HandyControl.Tools;
 using Microsoft.Win32;
 using PropertyChanged;
 using Senjyouhara.Common.Exceptions;
+using Senjyouhara.Common.Log;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
@@ -15,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -127,14 +129,35 @@ namespace Senjyouhara.Main.ViewModels
             public string Content { get; set; }
             public List<string> List { get; set; }
         }
-
         public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager)
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
             genetateRuleViewModel = new GenerateRuleViewModel();
             genetateRuleViewModel.Parent = this;
-            Test();
+            //Test();
+            //Test2();
+
+
+
+        }
+
+        private void Test2()
+        {
+                Task.Run(() =>
+                {
+                    Parallel.For(0, 10, (i) =>
+                    {
+                        Log.Info($"测试任务  序号 {i + 1}");
+                    });
+
+                });
+            Log.Info($"测试任务 执行完成");
+        }
+
+        public void AddLog()
+        {
+            Log.Info($"添加日志~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
 
         private void Test()

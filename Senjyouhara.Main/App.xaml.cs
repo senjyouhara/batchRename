@@ -1,5 +1,9 @@
-﻿using Senjyouhara.Main.Views;
+﻿using Senjyouhara.Common.Log;
+using Senjyouhara.Main.Views;
+using System;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Senjyouhara.Main
 {
@@ -10,43 +14,77 @@ namespace Senjyouhara.Main
     {
 
 
-
         public App()
         {
-            //InitializeComponent();
+            //Task线程内未捕获异常处理事件
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;//Task异常 
+
+            //UI线程未捕获异常处理事件（UI主线程）
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+
+            //非UI线程未捕获异常处理事件(例如自己创建的一个子线程)
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
-
-        private void OpenMainWindow()
+        private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            //var mwin = new MainWindow();
-            //mwin.Show();
-
+            try
+            {
+                var exception = e.Exception as Exception;
+                if (exception != null)
+                {
+                    Log.Error(null, exception);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(null, ex);
+            }
+            finally
+            {
+                e.SetObserved();
+            }
         }
 
-        //        protected override void OnStartup(StartupEventArgs e)
-        //        {
-        //#if (DEBUG)
-        //            base.OnStartup(e);
-        //            //OpenMainWindow();
-        //#else
+        //非UI线程未捕获异常处理事件(例如自己创建的一个子线程)      
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                var exception = e.ExceptionObject as Exception;
+                if (exception != null)
+                {
+                    Log.Error(null, exception);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(null, ex);
+            }
+            finally
+            {
+                //ignore
+            }
+        }
 
-        //            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-        //            StartLoadingView window = new StartLoadingView();
-        //            bool? dialogResult = window.ShowDialog();
-        //            if (dialogResult == true)
-        //            {
-        //                base.OnStartup(e);
-        //                OpenMainWindow();
-        //                Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
-        //            }
-        //            else
-        //            {
-        //                Shutdown();
-        //            }
 
-        //#endif
 
-        //        }
+        //UI线程未捕获异常处理事件（UI主线程）
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                Log.Error(null, e.Exception);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(null, ex);
+            }
+            finally
+            {
+                e.Handled = true;
+            }
+
+        }
     }
 }

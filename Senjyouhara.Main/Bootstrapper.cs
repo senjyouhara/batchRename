@@ -3,6 +3,8 @@ using Senjyouhara.Main.ViewModels;
 using System.Collections.Generic;
 using System;
 using System.Windows;
+using Senjyouhara.Common.Utils;
+using System.Windows.Threading;
 
 namespace Senjyouhara.Main
 {
@@ -15,6 +17,7 @@ namespace Senjyouhara.Main
         {
             Initialize();
         }
+
 
 
         protected override void Configure()
