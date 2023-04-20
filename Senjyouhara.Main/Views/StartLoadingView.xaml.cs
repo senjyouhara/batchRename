@@ -30,7 +30,7 @@ namespace Senjyouhara.Main.Views
             //new Uri("pack://application:,,,/Resources/loading.png");
         }
 
-        public async void MediaLoaded(object sender, RoutedEventArgs e)
+        public void MediaLoaded(object sender, RoutedEventArgs e)
         {
             double lastTime = 2 * 1000;
             System.Timers.Timer t = new System.Timers.Timer(lastTime);//实例化Timer类，设置间隔时间为200毫秒；   

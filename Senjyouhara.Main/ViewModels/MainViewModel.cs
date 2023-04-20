@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using HandyControl.Controls;
 using HandyControl.Tools;
+using JsonFx.Json;
 using Microsoft.Win32;
 using PropertyChanged;
 using Senjyouhara.Common.Utils;
@@ -98,12 +99,111 @@ namespace Senjyouhara.Main.ViewModels
 
         private IEventAggregator _eventAggregator;
         private IWindowManager _windowManager;
+
+        class Person
+        {
+            public string UserName { get; set; } = "的数据ad酒店服务IQ恶化";
+            public int Age { get; set; } = 176876546;
+            public DateTime Date { get; set; } = DateTime.Now;
+            public bool Bool { get; set; } = true;
+        }
+
+        class Dewater
+        {
+            public int ApplicationNo { get; set; }
+            public int CaseNumber { get; set; }
+            public int SerialNumber { get; set; }
+            public string ToCollectParts { get; set; }
+            public string ClinicalDiagnosis { get; set; }
+            public string InspectOffice { get; set; }
+            public string WaxBlockNo { get; set; }
+            public string TaskSource { get; set; }
+            public string BasedSite { get; set; }
+            public string WoodBlocks { get; set; }
+            public string SpecialHandl { get; set; }
+            public string Node { get; set; }
+            public string NumberSlices { get; set; }
+            public string Recorder { get; set; }
+            public DateTime BasedOnTime { get; set; }
+            public string Level { get; set; }
+            public string Content { get; set; }
+            public List<string> List { get; set; }
+        }
+
         public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager)
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
             genetateRuleViewModel = new GenerateRuleViewModel();
             genetateRuleViewModel.Parent = this;
+
+
+    //        var dict = new Dictionary<string, object>();
+    //        dict["a"] = "asdas";
+    //        dict["b"] = "当前为多无群";
+    //        dict["UserName"] = 123123;
+    //        dict["c"] = 123123;
+    //        dict["d"] = true;
+    //        dict["f"] = "duwq4234328432";
+    //        dict["g"] = new string[] { "duwq4234328432" };
+    //        dict["h"] = new int[] { 12312312,321321321,432432 };
+    //        dict["i"] = DateTime.Now;
+    //        dict["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
+    //        var dict2 = new Dictionary<string, object>();
+    //        dict2["a"] = "asdas";
+    //        dict2["b"] = "当前为多无群";
+    //        dict2["UserName"] = 123123;
+    //        dict2["c"] = 123123;
+    //        dict2["d"] = true;
+    //        dict2["f"] = "duwq4234328432";
+    //        dict2["g"] = new string[] { "duwq4234328432" };
+    //        dict2["h"] = new int[] { 12312312, 321321321, 432432 };
+    //        dict2["i"] = DateTime.Now;
+    //        dict2["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
+    //        dict2["i"] = dict;
+    //        var str = JSONUtil.ToJSON(dict2);
+    //        Debug.WriteLine(str);
+    //        var jsonStr = @"[{
+    //    ""applicationNo"": 1005219342,
+    //    ""caseNumber"": 202215682,
+    //    ""serialNumber"": 1,
+    //    ""toCollectParts"": ""食管"",
+    //    ""clinicalDiagnosis"": ""食管癌肿物"",
+    //    ""inspectOffice"": ""头颈部"",
+    //    ""waxBlockNo"": ""202215682-1"",
+    //    ""taskSource"": ""常规"",
+    //    ""basedSite"": ""肿物"",
+    //    ""woodBlocks"": ""1"",
+    //    ""specialHandl"": ""无"",
+    //    ""node"": """",
+    //    ""numberSlices"": ""修淑岩"",
+    //    ""basedOnTime"": ""2022-05-18 10:42:00"",
+    //    ""recorder"": ""付红蕊"",
+    //    ""level"": ""优"",        
+    //    ""list"": [""常规"", ""肿物""],
+    //    ""content"": """"
+    //},{
+    //    ""applicationNo"": 1005219342,
+    //    ""caseNumber"": 202215682,
+    //    ""serialNumber"": 1,
+    //    ""toCollectParts"": ""食管"",
+    //    ""clinicalDiagnosis"": ""食管癌肿物"",
+    //    ""inspectOffice"": ""头颈部"",
+    //    ""waxBlockNo"": ""202215682-2"",
+    //    ""taskSource"": ""常规"",
+    //    ""basedSite"": ""肿物"",
+    //    ""woodBlocks"": ""1"",
+    //    ""specialHandl"": ""无"",
+    //    ""node"": """",
+    //    ""numberSlices"": ""修淑岩"",
+    //    ""basedOnTime"": ""2022-05-18 10:42:00"",
+    //    ""recorder"": ""付红蕊"",
+    //    ""level"": ""优"",
+    //    ""content"": """"
+    //},]";
+    //        var data = JSONUtil.ToData<List<Dewater>>(jsonStr);
+    //        Debug.WriteLine(data);
+
         }
 
 
