@@ -1,9 +1,9 @@
 ﻿using Caliburn.Micro;
 using HandyControl.Controls;
 using HandyControl.Tools;
-using JsonFx.Json;
 using Microsoft.Win32;
 using PropertyChanged;
+using Senjyouhara.Common.Exceptions;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
@@ -28,8 +28,6 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen
     {
-
-        private static readonly ILog Log = LogManager.GetLog(typeof(Screen));
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
         public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
@@ -136,74 +134,88 @@ namespace Senjyouhara.Main.ViewModels
             _windowManager = windowManager;
             genetateRuleViewModel = new GenerateRuleViewModel();
             genetateRuleViewModel.Parent = this;
+            Test();
+        }
+
+        private void Test()
+        {
+            var dict = new Dictionary<string, object>();
+            dict["a"] = "asdas";
+            dict["b"] = "当前为多无群";
+            dict["UserName"] = 123123;
+            dict["c"] = 123123;
+            dict["d"] = true;
+            dict["f"] = "duwq4234328432";
+            dict["g"] = new string[] { "duwq4234328432" };
+            dict["h"] = new int[] { 12312312, 321321321, 432432 };
+            dict["i"] = DateTime.Now;
+            dict["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
+            var dict2 = new Dictionary<string, object>();
+            dict2["a"] = "asdas";
+            dict2["b"] = "当前为多无群";
+            dict2["UserName"] = 123123;
+            dict2["c"] = 123123;
+            dict2["d"] = true;
+            dict2["f"] = "duwq4234328432";
+            dict2["g"] = new string[] { "duwq4234328432" };
+            dict2["h"] = new int[] { 12312312, 321321321, 432432 };
+            dict2["i"] = DateTime.Now;
+            dict2["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
+            dict2["i"] = dict;
+            var str = JSONUtil.ToJSON(dict2);
+            Log.Debug(str);
+            //Log.Error("", new BusinessRunTimeException("自定义异常22"));
+
+            //throw new BusinessRunTimeException("自定义异常");
 
 
-    //        var dict = new Dictionary<string, object>();
-    //        dict["a"] = "asdas";
-    //        dict["b"] = "当前为多无群";
-    //        dict["UserName"] = 123123;
-    //        dict["c"] = 123123;
-    //        dict["d"] = true;
-    //        dict["f"] = "duwq4234328432";
-    //        dict["g"] = new string[] { "duwq4234328432" };
-    //        dict["h"] = new int[] { 12312312,321321321,432432 };
-    //        dict["i"] = DateTime.Now;
-    //        dict["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
-    //        var dict2 = new Dictionary<string, object>();
-    //        dict2["a"] = "asdas";
-    //        dict2["b"] = "当前为多无群";
-    //        dict2["UserName"] = 123123;
-    //        dict2["c"] = 123123;
-    //        dict2["d"] = true;
-    //        dict2["f"] = "duwq4234328432";
-    //        dict2["g"] = new string[] { "duwq4234328432" };
-    //        dict2["h"] = new int[] { 12312312, 321321321, 432432 };
-    //        dict2["i"] = DateTime.Now;
-    //        dict2["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
-    //        dict2["i"] = dict;
-    //        var str = JSONUtil.ToJSON(dict2);
-    //        Debug.WriteLine(str);
-    //        var jsonStr = @"[{
-    //    ""applicationNo"": 1005219342,
-    //    ""caseNumber"": 202215682,
-    //    ""serialNumber"": 1,
-    //    ""toCollectParts"": ""食管"",
-    //    ""clinicalDiagnosis"": ""食管癌肿物"",
-    //    ""inspectOffice"": ""头颈部"",
-    //    ""waxBlockNo"": ""202215682-1"",
-    //    ""taskSource"": ""常规"",
-    //    ""basedSite"": ""肿物"",
-    //    ""woodBlocks"": ""1"",
-    //    ""specialHandl"": ""无"",
-    //    ""node"": """",
-    //    ""numberSlices"": ""修淑岩"",
-    //    ""basedOnTime"": ""2022-05-18 10:42:00"",
-    //    ""recorder"": ""付红蕊"",
-    //    ""level"": ""优"",        
-    //    ""list"": [""常规"", ""肿物""],
-    //    ""content"": """"
-    //},{
-    //    ""applicationNo"": 1005219342,
-    //    ""caseNumber"": 202215682,
-    //    ""serialNumber"": 1,
-    //    ""toCollectParts"": ""食管"",
-    //    ""clinicalDiagnosis"": ""食管癌肿物"",
-    //    ""inspectOffice"": ""头颈部"",
-    //    ""waxBlockNo"": ""202215682-2"",
-    //    ""taskSource"": ""常规"",
-    //    ""basedSite"": ""肿物"",
-    //    ""woodBlocks"": ""1"",
-    //    ""specialHandl"": ""无"",
-    //    ""node"": """",
-    //    ""numberSlices"": ""修淑岩"",
-    //    ""basedOnTime"": ""2022-05-18 10:42:00"",
-    //    ""recorder"": ""付红蕊"",
-    //    ""level"": ""优"",
-    //    ""content"": """"
-    //},]";
-    //        var data = JSONUtil.ToData<List<Dewater>>(jsonStr);
-    //        Debug.WriteLine(data);
-
+            //var jsonStr = @"[{
+            //    ""applicationNo"": 1005219342,
+            //    ""caseNumber"": 202215682,
+            //    ""serialNumber"": 1,
+            //    ""toCollectParts"": ""食管"",
+            //    ""clinicalDiagnosis"": ""食管癌肿物"",
+            //    ""inspectOffice"": ""头颈部"",
+            //    ""waxBlockNo"": ""202215682-1"",
+            //    ""taskSource"": ""常规"",
+            //    ""basedSite"": ""肿物"",
+            //    ""woodBlocks"": ""1"",
+            //    ""specialHandl"": ""无"",
+            //    ""node"": """",
+            //    ""numberSlices"": ""修淑岩"",
+            //    ""basedOnTime"": ""2022-05-18 10:42:00"",
+            //    ""recorder"": ""付红蕊"",
+            //    ""level"": ""优"",        
+            //    ""list"": [""常规"", ""肿物""],
+            //    ""content"": """"
+            //},{
+            //    ""applicationNo"": 1005219342,
+            //    ""caseNumber"": 202215682,
+            //    ""serialNumber"": 1,
+            //    ""toCollectParts"": ""食管"",
+            //    ""clinicalDiagnosis"": ""食管癌肿物"",
+            //    ""inspectOffice"": ""头颈部"",
+            //    ""waxBlockNo"": ""202215682-2"",
+            //    ""taskSource"": ""常规"",
+            //    ""basedSite"": ""肿物"",
+            //    ""woodBlocks"": ""1"",
+            //    ""specialHandl"": ""无"",
+            //    ""node"": """",
+            //    ""numberSlices"": ""修淑岩"",
+            //    ""basedOnTime"": ""2022-05-18 10:42:00"",
+            //    ""recorder"": ""付红蕊"",
+            //    ""level"": ""优"",
+            //    ""content"": """"
+            //},]";
+            //try
+            //{
+            //    var data = JSONUtil.ToData<List<Dewater>>(jsonStr);
+            //    Debug.WriteLine(data);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Error("", ex);
+            //}
         }
 
 

@@ -61,6 +61,7 @@ namespace Senjyouhara.Common.Utils
             return str;
         }
 
+        // 需要捕获异常， 有可能json格式不正确
         public static T ToData<T>(string json)
         {
             //return JsonConvert.DeserializeObject<T>(json);
