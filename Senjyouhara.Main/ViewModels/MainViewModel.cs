@@ -134,7 +134,7 @@ namespace Senjyouhara.Main.ViewModels
             _windowManager = windowManager;
             genetateRuleViewModel = new GenerateRuleViewModel();
             genetateRuleViewModel.Parent = this;
-            Test();
+            //Test();
         }
 
         private void Test()
