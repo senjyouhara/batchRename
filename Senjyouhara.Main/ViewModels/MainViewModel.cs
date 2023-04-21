@@ -157,7 +157,11 @@ namespace Senjyouhara.Main.ViewModels
 
         public void AddLog()
         {
+            var t = DateTime.Now;
+            //Debug.WriteLine(t.ToString("yyyy-MM-dd HH:mm:ss:fff"));
             Log.Info($"添加日志~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            //Debug.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff"));
+
         }
 
         private void Test()

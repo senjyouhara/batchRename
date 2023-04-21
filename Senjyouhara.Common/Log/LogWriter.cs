@@ -423,8 +423,11 @@ namespace Senjyouhara.Common.Log
             try
             {
                 log = CreateLogString(type, log);
+#if (DEBUG)
                 Debug.Write(log);
+#else
                 Console.Write(log);
+#endif
                 if (LogConfig.IsWriteFile)
                 {
                     logMsgQueue.Enqueue(log);
