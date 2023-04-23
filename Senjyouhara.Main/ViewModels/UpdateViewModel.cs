@@ -17,12 +17,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Shell;
 using System.Windows.Threading;
 
 namespace Senjyouhara.Main.ViewModels
 {
-
     [AddINotifyPropertyChangedInterface]
     internal class UpdateViewModel : Screen
     {
@@ -45,7 +45,8 @@ namespace Senjyouhara.Main.ViewModels
             Init();
         }
 
-        private  void Init()
+
+        private void Init()
         {
             Tips = "正在检查更新中，请稍后……";
             Application.Current.Dispatcher.Invoke(async () =>
@@ -93,9 +94,11 @@ namespace Senjyouhara.Main.ViewModels
         }
 
 
+        private UpdateView view;
         public void Loaded(UpdateView obj)
         {
             taskBarInfo = obj.TaskBarInfo;
+            view = obj;
         }
 
         private void TabbarProcess()
@@ -125,6 +128,7 @@ namespace Senjyouhara.Main.ViewModels
                 WebRequest request = WebRequest.Create(url);
                 response = request.GetResponse();
                 if (response == null) return false;
+
 
                 double size = response.ContentLength;
                 FileTotalSize = Math.Round(double.Parse(response.ContentLength.ToString()) / 1024 / 1024, 2);
@@ -160,13 +164,14 @@ namespace Senjyouhara.Main.ViewModels
                             });
                         }
 
-                        Thread.Sleep(50);
+                        Thread.Sleep(10);
                         realReadLen = netStream.Read(read, 0, read.Length);
                     }
 
 
                     Application.Current.Dispatcher.BeginInvoke(() => {
                         taskBarInfo.ProgressState = TaskbarItemProgressState.None;
+                        FlashWindow.Flash(view);
                     });
 
                     netStream.Close();
