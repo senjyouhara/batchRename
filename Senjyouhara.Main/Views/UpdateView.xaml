@@ -14,11 +14,12 @@
         WindowStyle="None"
         Height="280" Width="470">
 
-    <Grid Background="#ffffff" Margin="10">
 
-        <Grid.Effect>
-            <DropShadowEffect BlurRadius="20" ShadowDepth="0.15" Color="DimGray" Opacity="0.2"></DropShadowEffect>
-        </Grid.Effect>
+    <Border BorderThickness="1" Background="#fff" BorderBrush="DimGray">
+    <Grid>
+        <!--<Grid.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="0.15" Color="DimGray" Opacity="0.1"></DropShadowEffect>
+        </Grid.Effect>-->
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -64,17 +65,9 @@
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <Button Content="取  消" Margin="5 10" Width="100" Height="35"
                         x:Name="cancel"
+                        Visibility="{Binding CancelVisibility}"
                         cal:Message.Attach="[Event Click] = [Action CloseModal]"
                         >
-                    <Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsForceUpdate}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
                 </Button>
                 <Button Content="确  定" Margin="5 10" Width="100" Height="35"
                     cal:Message.Attach="[Event Click] = [Action StartUpdate]"
@@ -158,9 +151,6 @@
             <TextBlock Text="{Binding Tips}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" />
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                <Button Content="取  消" Margin="5 10" Width="100" Height="35"
-                        cal:Message.Attach="[Event Click] = [Action CloseModal]"
-                        ></Button>
                 <Button Content="确  定" Margin="5 10" Width="100" Height="35"
                     cal:Message.Attach="[Event Click] = [Action CloseModal]"
                         ></Button>
@@ -178,6 +168,6 @@
                 </Style>
             </Grid.Style>
         </Grid>
-
     </Grid>
+    </Border>
 </Window>

@@ -24,12 +24,13 @@ namespace Senjyouhara.Main.ViewModels
         private static readonly ILog Log = LogManager.GetLog(typeof(Screen));
 
         public string FirstNumber { get; set; }
+        public string DigitsNumber { get; set; }
         public string Step { get; set; }
         public string OriginName { get; set; }
         public string Replace { get; set; }
         public string PreviewReplace { get; set; }
         public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();
-
+        
         public GenerateRuleViewModel()
         {
             AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
@@ -82,6 +83,14 @@ namespace Senjyouhara.Main.ViewModels
                     item.IsCanDelete = false;
                 }
             }
+        }
+        public void OnOk()
+        {
+
+        }
+        public void OnCancel()
+        {
+
         }
     }
 }

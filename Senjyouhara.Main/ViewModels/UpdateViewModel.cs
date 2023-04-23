@@ -29,7 +29,7 @@ namespace Senjyouhara.Main.ViewModels
         public string DownloadFileName { get; set; } = "update.7z";
         public int DownloadFileNumber { get; set; } = 1;
         public string Tips { get; set; } = "文件下载失败！";
-        public bool IsForceUpdate { get; set; } = UpdateConfig.IsForceUpdate;
+        public Visibility CancelVisibility { get; set; } = UpdateConfig.IsForceUpdate ? Visibility.Collapsed : Visibility.Visible;
 
         private UpdateConfig.UpdateDataEntity _updateInfo;
 
@@ -38,18 +38,22 @@ namespace Senjyouhara.Main.ViewModels
             Init();
         }
 
-        private async void Init()
+        private  void Init()
         {
             Tips = "正在检查更新中，请稍后……";
-            _updateInfo = await UpdateConfig.GetUpdateData();
-            if (_updateInfo == null)
+            Application.Current.Dispatcher.Invoke(async () =>
             {
-                Tips = "检查更新失败！";
-            } else
-            {
-                Status = "tipsUpdate";
-                Tips = $"当前版本为{AppConfig.Version}, 最新版为{_updateInfo.Version}，需要进行更新！";
-            }
+                _updateInfo = await UpdateConfig.GetUpdateData();
+                if (_updateInfo == null)
+                {
+                    Tips = "检查更新失败！";
+                }
+                else
+                {
+                    Status = "tipsUpdate";
+                    Tips = $"当前版本为{AppConfig.Version}, 最新版为{_updateInfo.Version}，需要进行更新！";
+                }
+            });
         }
 
         public async void StartUpdate()
@@ -63,17 +67,16 @@ namespace Senjyouhara.Main.ViewModels
                 {
                     Directory.CreateDirectory(UpdateConfig.UpdateFilePath);
                 }
-                var result = await DownloadFile("https://test-1253492636.cos.ap-guangzhou.myqcloud.com/%2Fcaselib/upload/2023/4/7/455219546417081906/336.sdpc?q-sign-algorithm=sha1&q-ak=AKIDmSxjKlV4wc9V6adyscDdruvoW2Nfb073&q-sign-time=1682229839%3B1682237039&q-key-time=1682229839%3B1682237039&q-header-list=host&q-url-param-list=&q-signature=dfeb3b4ee56840c976974dadd68febf57d77003d", UpdateConfig.UpdateFilePath + @"/update.7z");
-                //await DownloadFile(updateInfo.Path, UpdateConfig.UpdateFilePath);
+                var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
                 if (result)
                 {
                     Status = "unzip";
-                    //RunUpdateExe();
+                    RunUpdateExe();
                 }
                 else
                 {
                     Status = "downloadingError";
-                    Tips = "检查更新失败！";
+                    Tips = "下载更新文件失败！";
                 }
 
             }

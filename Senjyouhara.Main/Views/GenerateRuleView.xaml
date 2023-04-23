@@ -11,12 +11,19 @@
       Width="500"
       Background="#FFF"
       Height="400">
-    <Grid Margin="0 20" VerticalAlignment="Top">
+    <Grid Margin="0 20 0 10" VerticalAlignment="Top">
+
+        <Grid.RowDefinitions>
+            <RowDefinition  />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Vertical" Margin="20 0">
                     <TextBox Style="{StaticResource TextBoxExtend}" hc:InfoElement.Title="开始序号(从1开始)" x:Name="FirstNumber" Margin="0 0 0 20" />
-                    <TextBox Style="{StaticResource TextBoxExtend}" hc:InfoElement.Title="增量" x:Name="Step" />
+                    <TextBox Style="{StaticResource TextBoxExtend}" hc:InfoElement.Title="增量(每次增加几位，默认1)" x:Name="Step" Margin="0 0 0 20" />
+                    <TextBox Style="{StaticResource TextBoxExtend}" hc:InfoElement.Title="位数(主要用来前面填充0，不填则根据文件数量自动计算)" x:Name="DigitsNumber" />
                 </StackPanel>
 
 
@@ -71,5 +78,16 @@
 
             </StackPanel>
         </ScrollViewer>
+
+        <StackPanel Orientation="Horizontal" Margin="10 5 10 0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1">
+            <Button Content="取  消" Margin="5 0" Width="100" Height="35"
+                        x:Name="cancel"
+                        cal:Message.Attach="[Event Click] = [Action OnCancel]"
+                        >
+            </Button>
+            <Button Content="确  定" Margin="5 0" Width="100" Height="35"
+                    cal:Message.Attach="[Event Click] = [Action OnOk]"
+                        ></Button>
+        </StackPanel>
     </Grid>
 </UserControl>

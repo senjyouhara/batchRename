@@ -148,19 +148,18 @@ namespace Senjyouhara.Main.ViewModels
 
             Task.Run(async () =>
             {
-                
                 if (UpdateConfig.IsEnableUpdate)
                 {
                     var _updateInfo = await UpdateConfig.GetUpdateData();
                     if (_updateInfo.Version != AppConfig.Version)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(async () =>
+                        await Application.Current.Dispatcher.BeginInvoke(async () =>
                         {
                             var update = IoC.Get<UpdateViewModel>();
                             await _windowManager.ShowDialogAsync(update);
                         });
 
-            }
+                    }
                 }
     });
         }
