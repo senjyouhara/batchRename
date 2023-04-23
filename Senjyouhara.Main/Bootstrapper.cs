@@ -25,6 +25,7 @@ namespace Senjyouhara.Main
             container = new SimpleContainer();
 
             container.Singleton<IWindowManager, WindowManager>();
+            container.Singleton<IEventAggregator, EventAggregator>();
             
             container.PerRequest<ShellViewModel>();
             container.PerRequest<StartLoadingViewModel>();

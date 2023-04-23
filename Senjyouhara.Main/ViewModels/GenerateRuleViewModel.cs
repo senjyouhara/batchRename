@@ -19,10 +19,8 @@ namespace Senjyouhara.Main.ViewModels
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class GenerateRuleViewModel: Screen
+    public class FormData
     {
-        private static readonly ILog Log = LogManager.GetLog(typeof(Screen));
-
         public string FirstNumber { get; set; }
         public string DigitsNumber { get; set; }
         public string Step { get; set; }
@@ -30,9 +28,22 @@ namespace Senjyouhara.Main.ViewModels
         public string Replace { get; set; }
         public string PreviewReplace { get; set; }
         public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();
-        
-        public GenerateRuleViewModel()
+    }
+
+    [AddINotifyPropertyChangedInterface]
+    public class GenerateRuleViewModel: Screen
+    {
+        public string FirstNumber { get; set; }
+        public string DigitsNumber { get; set; }
+        public string Step { get; set; }
+        public string OriginName { get; set; }
+        public string Replace { get; set; }
+        public string PreviewReplace { get; set; }
+        public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();
+        private IEventAggregator _eventAggregator;
+        public GenerateRuleViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
         }
 
@@ -86,11 +97,23 @@ namespace Senjyouhara.Main.ViewModels
         }
         public void OnOk()
         {
-
+           var FormData = new FormData()
+            {
+                FirstNumber = FirstNumber,
+                DigitsNumber = DigitsNumber,
+                OriginName = OriginName,
+                Step = Step,
+                Replace = Replace,
+                PreviewReplace = PreviewReplace,
+                AppendNumberList = AppendNumberList,
+            };
+            _eventAggregator.PublishOnCurrentThreadAsync(FormData);
+            TryCloseAsync();
         }
+        
         public void OnCancel()
         {
-
+            TryCloseAsync();
         }
     }
 }

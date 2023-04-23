@@ -30,7 +30,7 @@ namespace Senjyouhara.Main.ViewModels
 {
 
     [AddINotifyPropertyChangedInterface]
-    public class MainViewModel : Screen
+    public class MainViewModel : Screen, IHandle<FormData>
     {
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
@@ -41,7 +41,7 @@ namespace Senjyouhara.Main.ViewModels
         [OnChangedMethod(nameof(FileNameItemsHandle))]
         public string Rename { get; set; }
 
-        private GenerateRuleViewModel genetateRuleViewModel;
+        private FormData FormData = new();
 
         private void FileNameItemsHandle()
         {
@@ -135,8 +135,6 @@ namespace Senjyouhara.Main.ViewModels
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
-            genetateRuleViewModel = new GenerateRuleViewModel();
-            genetateRuleViewModel.Parent = this;
             //Test();
             //Test2();
 
@@ -610,7 +608,18 @@ namespace Senjyouhara.Main.ViewModels
 
         public void ShowGenerateRuleModal()
         {
-            _windowManager.ShowDialogAsync(genetateRuleViewModel);
+            var dialog = IoC.Get<GenerateRuleViewModel>();
+           _windowManager.ShowDialogAsync(dialog);
+        }
+
+        public Task HandleAsync(FormData message, CancellationToken cancellationToken)
+        {
+
+            return Task.Run(() =>
+            {
+
+            });
+
         }
     }
 
