@@ -137,7 +137,6 @@ namespace Senjyouhara.Main.ViewModels
             _windowManager = windowManager;
             //Test();
             //Test2();
-
             AddUpdateModal();
         }
 

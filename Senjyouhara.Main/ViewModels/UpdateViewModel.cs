@@ -3,6 +3,7 @@ using PropertyChanged;
 using Senjyouhara.Common.Models;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Config;
+using Senjyouhara.Main.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,13 +12,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Shell;
+using System.Windows.Threading;
 
 namespace Senjyouhara.Main.ViewModels
 {
+
     [AddINotifyPropertyChangedInterface]
     internal class UpdateViewModel : Screen
     {
@@ -32,6 +37,8 @@ namespace Senjyouhara.Main.ViewModels
         public Visibility CancelVisibility { get; set; } = UpdateConfig.IsForceUpdate ? Visibility.Collapsed : Visibility.Visible;
 
         private UpdateConfig.UpdateDataEntity _updateInfo;
+
+        private TaskbarItemInfo taskBarInfo;
 
         public UpdateViewModel()
         {
@@ -67,7 +74,10 @@ namespace Senjyouhara.Main.ViewModels
                 {
                     Directory.CreateDirectory(UpdateConfig.UpdateFilePath);
                 }
-                var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
+                
+
+                var result = await DownloadFile("https://patchwiki.biligame.com/images/re0/3/3f/h8yxnkq94sis8p5vn1i8x4lbir2fwo1.png", UpdateConfig.UpdateFilePath + @"/update.7z");
+                //var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
                 if (result)
                 {
                     Status = "unzip";
@@ -80,6 +90,25 @@ namespace Senjyouhara.Main.ViewModels
                 }
 
             }
+        }
+
+
+        public void Loaded(UpdateView obj)
+        {
+            taskBarInfo = obj.TaskBarInfo;
+        }
+
+        private void TabbarProcess()
+        {
+            var dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Interval = TimeSpan.FromSeconds(0.5);
+            dispatcherTimer.Tick += DispatcherTimer_Tick;
+            dispatcherTimer.Start();
+        }
+
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        {
+           taskBarInfo.ProgressValue = Percent / 100;
         }
 
         public void CloseModal()
@@ -108,6 +137,11 @@ namespace Senjyouhara.Main.ViewModels
                     byte[] read = new byte[1024];
                     double progressBarValue = 0;
                     int realReadLen = netStream.Read(read, 0, read.Length);
+              
+                    Application.Current.Dispatcher.BeginInvoke(() => {
+                        taskBarInfo.ProgressState = TaskbarItemProgressState.Normal;
+                        TabbarProcess();
+                    });
                     while (realReadLen > 0)
                     {
                         fileStream.Write(read, 0, realReadLen);
@@ -125,9 +159,16 @@ namespace Senjyouhara.Main.ViewModels
                                 DownloadFileSize = Math.Round(progressBarValue / 1024 / 1024, 2);
                             });
                         }
-                        
+
+                        Thread.Sleep(50);
                         realReadLen = netStream.Read(read, 0, read.Length);
                     }
+
+
+                    Application.Current.Dispatcher.BeginInvoke(() => {
+                        taskBarInfo.ProgressState = TaskbarItemProgressState.None;
+                    });
+
                     netStream.Close();
                     fileStream.Close();
 
@@ -142,11 +183,12 @@ namespace Senjyouhara.Main.ViewModels
             return false;
         }
 
+
         public void RunUpdateExe()
         {
             Debug.WriteLine(AppConfig.Name);
             Debug.WriteLine(AppConfig.Version);
-            Process.Start(Directory.GetCurrentDirectory() + @$"\update.exe --name={AppConfig.Name} --version ={AppConfig.Version}");
+            //Process.Start(Directory.GetCurrentDirectory() + @$"\update.exe --name={AppConfig.Name} --version ={AppConfig.Version}");
         }
 
     }

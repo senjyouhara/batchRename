@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Shapes;
 
 namespace Senjyouhara.Main.Views
 {
+
     /// <summary>
     /// UpdateView.xaml 的交互逻辑
     /// </summary>
@@ -23,5 +25,6 @@ namespace Senjyouhara.Main.Views
         {
             InitializeComponent();
         }
+
     }
 }
