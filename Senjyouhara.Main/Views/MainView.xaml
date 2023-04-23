@@ -123,13 +123,20 @@
                     cal:Message.Attach="[Event Click] = [Action ShowGenerateRuleModal]"
                     Content="生成规则" />
 
-                <Button
+                <!--<Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
                     FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action AddLog]"
                     Content="添加日志" />
+
+                <Button
+                    Height="36"
+                    Margin="10,0,0,0"
+                    FocusVisualStyle="{x:Null}"
+                    cal:Message.Attach="[Event Click] = [Action AddUpdateModal]"
+                    Content="打开更新弹框" />-->
 
                 <CheckBox Margin="10,10,0,0" Content="字幕是否归并到视频下" x:Name="IsSubMergeVideo" />
             </WrapPanel>

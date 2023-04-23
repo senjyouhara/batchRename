@@ -29,7 +29,9 @@ namespace Senjyouhara.Main
             container.PerRequest<ShellViewModel>();
             container.PerRequest<StartLoadingViewModel>();
             container.PerRequest<MainViewModel>();
+            container.PerRequest<UpdateViewModel>();
             container.PerRequest<GenerateRuleViewModel>();
+            
         }
 
         protected override async void OnStartup(object sender, StartupEventArgs e)

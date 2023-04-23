@@ -6,6 +6,7 @@ using PropertyChanged;
 using Senjyouhara.Common.Exceptions;
 using Senjyouhara.Common.Log;
 using Senjyouhara.Common.Utils;
+using Senjyouhara.Main.Config;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
 using System;
@@ -16,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -138,8 +140,29 @@ namespace Senjyouhara.Main.ViewModels
             //Test();
             //Test2();
 
+            AddUpdateModal();
+        }
 
+        public void AddUpdateModal()
+        {
 
+            Task.Run(async () =>
+            {
+                
+                if (UpdateConfig.IsEnableUpdate)
+                {
+                    var _updateInfo = await UpdateConfig.GetUpdateData();
+                    if (_updateInfo.Version != AppConfig.Version)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(async () =>
+                        {
+                            var update = IoC.Get<UpdateViewModel>();
+                            await _windowManager.ShowDialogAsync(update);
+                        });
+
+            }
+                }
+    });
         }
 
         private void Test2()

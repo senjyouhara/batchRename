@@ -162,7 +162,10 @@ namespace Senjyouhara.UI.Controls
                 {
                     if (e.ClickCount == 2)
                     {
-                        MaximizeWindow();
+                        if (ShowMaxBtn)
+                        {
+                            MaximizeWindow();
+                        }
                     }
                 };
             }
