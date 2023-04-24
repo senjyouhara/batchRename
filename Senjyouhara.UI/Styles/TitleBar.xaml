@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
+    xmlns:controls="clr-namespace:Senjyouhara.UI.Controls"
     >
 
     

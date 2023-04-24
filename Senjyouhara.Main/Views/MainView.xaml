@@ -1,17 +1,17 @@
-﻿<UserControl 
+﻿<UserControl
     x:Class="Senjyouhara.Main.Views.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.caliburnproject.org"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Senjyouhara.Main"
-    xmlns:cal="http://www.caliburnproject.org"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI" 
-    xmlns:dialogControl="clr-namespace:Senjyouhara.UI.Controls.DialogControl;assembly=Senjyouhara.UI"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    d:DesignHeight="450" d:DesignWidth="800"
+    xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     mc:Ignorable="d">
 
     <Grid Background="#ffffff">
@@ -19,12 +19,6 @@
 
         <Grid>
 
-    
-            
-            <!--<dialogControl:Dialog   >
-                <TextBlock Text="123"></TextBlock>
-            </dialogControl:Dialog>-->
-            
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="auto" />
@@ -52,16 +46,13 @@
                 x:Name="FileNameItems"
                 Margin="0"
                 Padding="0"
+                cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)];                  [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];                 [Event PreviewDragOver] = [Action OnListViewPreviewDragOver($source, $eventArgs)];                 [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
                 ui:ListViewLayoutManager.Enabled="True"
                 AllowDrop="True"
                 Background="Transparent"
                 BorderBrush="Black"
                 BorderThickness="1"
                 FocusVisualStyle="{x:Null}"
-                cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)]; 
-                [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];
-                [Event PreviewDragOver] = [Action OnListViewPreviewDragOver($source, $eventArgs)];
-                [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
                 SelectionMode="Extended">
 
                 <ListView.Resources />
@@ -85,13 +76,13 @@
 
 
             <TextBlock
+                x:Name="Tips"
                 Grid.Row="1"
-                Margin="8 2"
                 Height="24"
+                Margin="8,2"
                 VerticalAlignment="Top"
                 FontSize="16"
-                Foreground="IndianRed"
-                x:Name="Tips" />
+                Foreground="IndianRed" />
             <WrapPanel Grid.Row="2" Margin="6">
                 <TextBox
                     x:Name="Rename"
@@ -113,24 +104,24 @@
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
-                    FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action SelectFileHandle]"
-                    Content="选择文件" />
+                    Content="选择文件"
+                    FocusVisualStyle="{x:Null}" />
                 <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
-                    FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action ClearListHandle]"
-                    Content="清空列表" />
+                    Content="清空列表"
+                    FocusVisualStyle="{x:Null}" />
 
                 <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
-                    FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action ShowGenerateRuleModal]"
-                    Content="生成规则" />
+                    Content="生成规则"
+                    FocusVisualStyle="{x:Null}" />
 
                 <!--<Button
                     Width="80"
@@ -147,7 +138,10 @@
                     cal:Message.Attach="[Event Click] = [Action AddUpdateModal]"
                     Content="打开更新弹框" />-->
 
-                <CheckBox Margin="10,10,0,0" Content="字幕是否归并到视频下" x:Name="IsSubMergeVideo" />
+                <CheckBox
+                    x:Name="IsSubMergeVideo"
+                    Margin="10,10,0,0"
+                    Content="字幕是否归并到视频下" />
             </WrapPanel>
 
         </Grid>

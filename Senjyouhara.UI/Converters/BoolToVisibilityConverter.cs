@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Senjyouhara.UI.Converters
 {
-    internal class BoolToVisibilityConverter: IValueConverter
+    public class BoolToVisibilityConverter: IValueConverter
     {
         /// <summary>
         /// Converts <see cref="SolidColorBrush"/> to <see langword="Color"/>.
