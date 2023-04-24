@@ -7,9 +7,9 @@ using System.Windows.Input;
 
 namespace Senjyouhara.UI.Common
 {
-    public sealed class RelayCommand : IRelayCommand
+    public sealed class RelayCommand<T> : IRelayCommand
     {
-        readonly Action<object> _execute;
+        readonly Action<T> _execute;
 
         readonly Func<bool> _canExecute;
 
@@ -35,7 +35,7 @@ namespace Senjyouhara.UI.Common
         /// Creates new instance of <see cref="RelayCommand"/>.
         /// </summary>
         /// <param name="execute">Action with <see cref="object"/> parameter to be executed.</param>
-        public RelayCommand(Action<object> execute) : this(execute, null)
+        public RelayCommand(Action<T> execute): this(execute, null)
         {
             // Delegated to RelayCommand(Action<object> execute, Func<bool> canExecute)
         }
@@ -61,7 +61,7 @@ namespace Senjyouhara.UI.Common
         /// <param name="execute">Action with <see cref="object"/> parameter to be executed.</param>
         /// <param name="canExecute">Encapsulated method determining whether to execute action.</param>
         /// <exception cref="ArgumentNullException">Exception occurring when no <see cref="Action"/> is defined.</exception>
-        public RelayCommand(Action<object> execute, Func<bool> canExecute)
+        public RelayCommand(Action<T> execute, Func<bool> canExecute)
         {
             _execute = execute ?? throw new ArgumentNullException("execute");
             _canExecute = canExecute;
@@ -76,7 +76,7 @@ namespace Senjyouhara.UI.Common
         /// <inheritdoc cref="IRelayCommand.Execute" />
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            _execute((T) parameter);
         }
     }
 }

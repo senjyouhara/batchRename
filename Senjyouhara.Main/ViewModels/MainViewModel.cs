@@ -135,6 +135,7 @@ namespace Senjyouhara.Main.ViewModels
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
+            _eventAggregator.Subscribe(this);
             //Test();
             //Test2();
             AddUpdateModal();

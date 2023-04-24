@@ -181,7 +181,7 @@ namespace Senjyouhara.UI.Controls
 
         public TitleBar()
         {           
-            SetValue(ButtonCommandProperty, new RelayCommand(o => TemplateButton_OnClick(this, o)));
+            SetValue(ButtonCommandProperty, new RelayCommand<object>(o => TemplateButton_OnClick(this, o)));
             Loaded += TitleBar_loaded;
         }
 
