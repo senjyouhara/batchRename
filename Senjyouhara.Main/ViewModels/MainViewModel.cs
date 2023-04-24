@@ -9,6 +9,7 @@ using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Config;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
+using Senjyouhara.UI.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,7 +139,27 @@ namespace Senjyouhara.Main.ViewModels
             _eventAggregator.Subscribe(this);
             //Test();
             //Test2();
+
+
+            //Application.Current.Dispatcher.BeginInvoke((() => {
+
+            //    var grid = new Grid();
+            //    var text = new TextBlock();
+            //    text.Text = "asdhsakdhkasdsad";
+            //    grid.Children.Add(text) ;
+
+            //    MessageBoxHelper.Ask("叼毛开发者抛出了一个异常，请问您要跳转百度帮开发者解决一下这个问题吗？", "系统提示", callback =>
+            //    {
+            //        if (callback == MessageBoxResult.OK)
+            //        {
+            //        }
+            //    });
+
+            //}));
+            
+
             AddUpdateModal();
+
         }
 
         public void AddUpdateModal()

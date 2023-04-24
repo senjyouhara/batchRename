@@ -5,6 +5,7 @@
         <ResourceDictionary Source="pack://application:,,,/Senjyouhara.UI;component/Styles/Icons/TitleBarBtn.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Senjyouhara.UI;component/Styles/TitleBar.xaml" />
         <!--<ResourceDictionary Source="pack://application:,,,/Senjyouhara.UI;component/Styles/ListView.xaml" />-->
+        <ResourceDictionary Source="pack://application:,,,/Senjyouhara.UI;component/Styles/MessageBoxWindowStyle.xaml" />
 
     </ResourceDictionary.MergedDictionaries>
 
