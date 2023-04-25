@@ -8,7 +8,26 @@ using System.Windows.Input;
 namespace Senjyouhara.Common.Utils
 {
 
-    public class DelegateCommand : ICommand
+    public interface IDelegateCommand
+    {
+        event EventHandler CanExecuteChanged;
+
+        bool CanExecute();
+
+        void Execute();
+
+    }
+    public interface IDelegateCommand<T>
+    {
+        event EventHandler CanExecuteChanged;
+
+        bool CanExecute(T parameter);
+
+        void Execute(T parameter);
+
+    }
+
+    public class DelegateCommand: IDelegateCommand
     {
         private Action execute;                     //定义成员
 
@@ -52,12 +71,12 @@ namespace Senjyouhara.Common.Utils
             }
         }
 
-        public bool CanExecute(object parameter)            //CanExecute方法
+        public bool CanExecute()            //CanExecute方法
         {
             return this.canExecute != null && this.canExecute();
         }
 
-        public void Execute(object parameter)              //Execute方法
+        public void Execute()              //Execute方法
         {
             this.execute();
         }
@@ -82,15 +101,13 @@ namespace Senjyouhara.Common.Utils
         {
             return true;
         }
-
-
     }
 
-    public class DelegateCommand<T> : ICommand
+    public class DelegateCommand<T> : IDelegateCommand<T>
     {
         private Action<object> execute;                     //定义成员
 
-        private Predicate<object> canExecute;//Predicate：述语//定义成员
+        private Func<T, bool> canExecute;//Predicate：述语//定义成员
 
         private event EventHandler CanExecuteChangedInternal;//事件
 
@@ -99,7 +116,7 @@ namespace Senjyouhara.Common.Utils
         {
         }
 
-        public DelegateCommand(Action<object> execute, Predicate<object> canExecute)//定义
+        public DelegateCommand(Action<object> execute, Func<T, bool> canExecute)//定义
         {
             if (execute == null)
             {
@@ -130,12 +147,12 @@ namespace Senjyouhara.Common.Utils
             }
         }
 
-        public bool CanExecute(object parameter)            //CanExecute方法
+        public bool CanExecute(T parameter)            //CanExecute方法
         {
             return this.canExecute != null && this.canExecute(parameter);
         }
 
-        public void Execute(object parameter)              //Execute方法
+        public void Execute(T parameter)              //Execute方法
         {
             this.execute(parameter);
         }
@@ -156,7 +173,7 @@ namespace Senjyouhara.Common.Utils
             this.execute = _ => { return; };
         }
 
-        private static bool DefaultCanExecute(object parameter)  //DefaultCanExecute方法
+        private static bool DefaultCanExecute(T parameter)  //DefaultCanExecute方法
         {
             return true;
         }

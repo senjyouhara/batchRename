@@ -23,4 +23,8 @@
     </AllowedReferenceRelatedFileExtensions>
     <DebugType>none</DebugType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Styles\Icons\" />
+  </ItemGroup>
 </Project>

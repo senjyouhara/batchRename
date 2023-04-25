@@ -2,9 +2,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Senjyouhara.UI.Controls"
-    >
+    xmlns:icon="clr-namespace:Senjyouhara.UI.Styles">
 
-    
+
     <Style x:Key="buttonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="44" />
         <Setter Property="Height" Value="30" />
@@ -136,8 +136,8 @@
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
-                                Visibility="Collapsed"
-                                Style="{StaticResource buttonStyle}">
+                                Style="{StaticResource buttonStyle}"
+                                Visibility="Collapsed">
                                 <Viewbox
                                     Width="13"
                                     Height="13"
@@ -159,9 +159,9 @@
                                 CommandParameter="maximize"
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
-                                Visibility="Collapsed"
                                 KeyboardNavigation.IsTabStop="False"
-                                Style="{StaticResource buttonStyle}">
+                                Style="{StaticResource buttonStyle}"
+                                Visibility="Collapsed">
                                 <Viewbox
                                     Width="13"
                                     Height="13"
@@ -184,8 +184,8 @@
                                 Cursor="Hand"
                                 FocusVisualStyle="{x:Null}"
                                 KeyboardNavigation.IsTabStop="False"
-                                Visibility="Collapsed"
-                                Style="{StaticResource buttonStyle}">
+                                Style="{StaticResource buttonStyle}"
+                                Visibility="Collapsed">
                                 <Viewbox
                                     Width="13"
                                     Height="13"
@@ -264,11 +264,11 @@
                             <Setter TargetName="ButtonMinimize" Property="Visibility" Value="Visible" />
                         </Trigger>
 
-                        
+
                         <Trigger Property="IsOverrideTitle" Value="True">
                             <Setter TargetName="TitleGrid" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                       
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -15,31 +15,31 @@
     mc:Ignorable="d">
 
     <Grid Background="#ffffff">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="80" />
-                </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
 
 
-                <Grid x:Name="gridContainer">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="30" />
-                    </Grid.ColumnDefinitions>
-                    <Grid x:Name="col1" Grid.Column="0" />
-                    <Grid x:Name="col2" Grid.Column="1" />
-                    <Grid x:Name="col3" Grid.Column="2" />
-                </Grid>
+            <Grid x:Name="gridContainer">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="30" />
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="col1" Grid.Column="0" />
+                <Grid x:Name="col2" Grid.Column="1" />
+                <Grid x:Name="col3" Grid.Column="2" />
+            </Grid>
 
-                <Border
+            <Border
                 Height="40"
                 VerticalAlignment="Top"
                 Background="LightGray" />
 
-                <ListView
+            <ListView
                 x:Name="FileNameItems"
                 Margin="0"
                 Padding="0"
@@ -52,27 +52,27 @@
                 FocusVisualStyle="{x:Null}"
                 SelectionMode="Extended">
 
-                    <ListView.Resources />
+                <ListView.Resources />
 
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
                             Width="{Binding ElementName=col1, Path=ActualWidth}"
                             ui:RangeColumn.MinWidth="100"
                             DisplayMemberBinding="{Binding FileName}"
                             Header="文件名" />
-                            <!--<GridViewColumn ui:RangeColumn.MinWidth="100" Header="字幕" Width="{Binding ElementName=col2, Path=ActualWidth}" DisplayMemberBinding="{Binding SubtitleFileName}" />-->
-                            <GridViewColumn
+                        <!--<GridViewColumn ui:RangeColumn.MinWidth="100" Header="字幕" Width="{Binding ElementName=col2, Path=ActualWidth}" DisplayMemberBinding="{Binding SubtitleFileName}" />-->
+                        <GridViewColumn
                             Width="{Binding ElementName=col2, Path=ActualWidth}"
                             ui:RangeColumn.MinWidth="100"
                             DisplayMemberBinding="{Binding PreviewFileName}"
                             Header="结果" />
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
 
-                <TextBlock
+            <TextBlock
                 x:Name="Tips"
                 Grid.Row="1"
                 Height="24"
@@ -80,8 +80,8 @@
                 VerticalAlignment="Top"
                 FontSize="16"
                 Foreground="IndianRed" />
-                <WrapPanel Grid.Row="2" Margin="6">
-                    <TextBox
+            <WrapPanel Grid.Row="2" Margin="6">
+                <TextBox
                     x:Name="Rename"
                     Width="300"
                     Height="36"
@@ -89,7 +89,7 @@
                     hc:InfoElement.TitlePlacement="Left"
                     FontSize="14"
                     Style="{StaticResource TextBoxExtend}" />
-                    <Button
+                <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
@@ -97,14 +97,14 @@
                     Content="重命名"
                     FocusVisualStyle="{x:Null}"
                     Style="{StaticResource ButtonPrimary}" />
-                    <Button
+                <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
                     cal:Message.Attach="[Event Click] = [Action SelectFileHandle]"
                     Content="选择文件"
                     FocusVisualStyle="{x:Null}" />
-                    <Button
+                <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
@@ -112,7 +112,7 @@
                     Content="清空列表"
                     FocusVisualStyle="{x:Null}" />
 
-                    <Button
+                <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
@@ -120,7 +120,7 @@
                     Content="生成规则"
                     FocusVisualStyle="{x:Null}" />
 
-                    <!--<Button
+                <!--<Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
@@ -135,13 +135,14 @@
                     cal:Message.Attach="[Event Click] = [Action AddUpdateModal]"
                     Content="打开更新弹框" />-->
 
-                    <CheckBox
+                <CheckBox
                     x:Name="IsSubMergeVideo"
                     Margin="10,10,0,0"
                     Content="字幕是否归并到视频下" />
-                </WrapPanel>
-
-            </Grid>
+            </WrapPanel>
 
         </Grid>
+
+    </Grid>
+
 </UserControl>

@@ -34,6 +34,9 @@ namespace Senjyouhara.Main.ViewModels
         public string DownloadFileName { get; set; } = "update.7z";
         public int DownloadFileNumber { get; set; } = 1;
         public string Tips { get; set; } = "文件下载失败！";
+
+        public IDelegateCommand CloseCommand { get; set; }
+
         public Visibility CancelVisibility { get; set; } = UpdateConfig.IsForceUpdate ? Visibility.Collapsed : Visibility.Visible;
 
         private UpdateConfig.UpdateDataEntity _updateInfo;
@@ -42,6 +45,7 @@ namespace Senjyouhara.Main.ViewModels
 
         public UpdateViewModel()
         {
+            taskBarInfo =  ((ShellView) Application.Current.MainWindow).TaskBarInfo;
             Init();
         }
 
@@ -99,14 +103,6 @@ namespace Senjyouhara.Main.ViewModels
         }
 
 
-        public UpdateView MyView { get; private set; }
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-            MyView = (UpdateView)view;
-            taskBarInfo = MyView.TaskBarInfo;
-        }
-
         private void TabbarProcess()
         {
             var dispatcherTimer = new DispatcherTimer();
@@ -122,6 +118,7 @@ namespace Senjyouhara.Main.ViewModels
 
         public void CloseModal()
         {
+            CloseCommand?.Execute();
             TryCloseAsync();
         }
 
@@ -159,7 +156,7 @@ namespace Senjyouhara.Main.ViewModels
                         double percent = (Math.Round(progressBarValue / size, 6) * 100);
                         if (Application.Current == null)
                         {
-                            TryCloseAsync();
+                            CloseModal();
                             break;
                         } else
                         {
@@ -175,9 +172,9 @@ namespace Senjyouhara.Main.ViewModels
                     }
 
 
-                    Application.Current.Dispatcher.BeginInvoke(() => {
+                    Application.Current.Dispatcher.Invoke(() => {
                         taskBarInfo.ProgressState = TaskbarItemProgressState.None;
-                        FlashWindow.Flash(Application.Current.MainWindow, 3, 300);
+                        FlashWindow.Flash(Application.Current.MainWindow, 0);
                     });
 
                     netStream.Close();

@@ -159,7 +159,7 @@ namespace Senjyouhara.Main.ViewModels
             //}));
             
 
-            AddUpdateModal();
+            //AddUpdateModal();
 
         }
 
@@ -176,14 +176,7 @@ namespace Senjyouhara.Main.ViewModels
                     {
                         await Application.Current.Dispatcher.BeginInvoke(async () =>
                         {
-                            //await _windowManager.ShowPopupAsync(IoC.Get<TestViewModel>());
-
-                            //var d = Application.Current.MainWindow;
-                            ////var s = WindowHelper.GetActiveWindow();
                             var update = IoC.Get<UpdateViewModel>();
-                            //////var d = Dialog.Show<TestDialog>("DialogContainer");
-                            //////await Task.Delay(30 * 1000);
-                            //////d.Close();
                             await _windowManager.ShowDialogAsync(update);
                         });
                     }
@@ -453,40 +446,46 @@ namespace Senjyouhara.Main.ViewModels
                 return;
             }
 
-            foreach (var item in FileNameItems)
-            {
-                var f = new FileInfo(item.FilePath);
-                if (f.Exists)
+            Task.Factory.StartNew(() => {
+                for (int i = 0; i < FileNameItems.Count; i++)
                 {
-                    try
+                    var item = FileNameItems[i];
+                    var f = new FileInfo(item.FilePath);
+                    if (f.Exists)
                     {
-                        f.MoveTo(item.PreviewFilePath);
-                        item.FilePath = item.PreviewFilePath;
-                        item.FileName = item.PreviewFileName;
-                        item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : "";
-                        item.PreviewFileName = "成功！";
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.Message.Contains("当文件已存在时，无法创建该文件。"))
+                        try
                         {
-                            Tips = "当文件已存在时，无法重命名";
-                            return;
+                            f.MoveTo(item.PreviewFilePath);
+                            Application.Current.Dispatcher.Invoke(() => {
+                                item.FilePath = item.PreviewFilePath;
+                                item.FileName = item.PreviewFileName;
+                                item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : "";
+                                item.PreviewFileName = "成功！";
+                            });
+                            Thread.Sleep(80);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            System.Windows.MessageBox.Show(ex.Message);
+                            if (ex.Message.Contains("当文件已存在时，无法创建该文件。"))
+                            {
+                                Tips = "当文件已存在时，无法重命名";
+                                return;
+                            }
+                            else
+                            {
+                                System.Windows.MessageBox.Show(ex.Message);
+                            }
                         }
-                    }
 
+                    }
+                    else
+                    {
+                        Tips = $"文件{item.FileName}不存在！";
+                        return;
+                    }
                 }
-                else
-                {
-                    Tips = $"文件{item.FileName}不存在！";
-                    return;
-                }
-            }
-            Tips = "重命名成功!";
+                Tips = "重命名成功!";
+            });
         }
 
         private int MySort (FileNameItem a, FileNameItem b)
@@ -638,7 +637,7 @@ namespace Senjyouhara.Main.ViewModels
         public void ShowGenerateRuleModal()
         {
             var dialog = IoC.Get<GenerateRuleViewModel>();
-           _windowManager.ShowDialogAsync(dialog);
+            _windowManager.ShowDialogAsync(dialog);
         }
 
 
@@ -651,17 +650,6 @@ namespace Senjyouhara.Main.ViewModels
 
             });
 
-        }
-        private MainView mainView;
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-            mainView = (MainView)view;
-        }
-
-        public override object GetView(object context = null)
-        {
-            return mainView;
         }
     }
 

@@ -61,6 +61,14 @@ namespace Senjyouhara.UI.Controls
             new PropertyMetadata(false)
         );
 
+
+        public static readonly DependencyProperty IsCanMoveProperty = DependencyProperty.Register(
+            nameof(IsCanMove),
+            typeof(bool),
+            typeof(TitleBar),
+            new PropertyMetadata(true)
+        );
+
         public static readonly DependencyProperty IsOverrideTitleProperty =
             DependencyProperty.Register(
                 nameof(IsOverrideTitle),
@@ -79,7 +87,7 @@ namespace Senjyouhara.UI.Controls
 
         // Using a DependencyProperty as the backing store for ShowMinBtn.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowMinBtnProperty =
-            DependencyProperty.Register("ShowMinBtn", typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
+            DependencyProperty.Register(nameof(ShowMinBtn), typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
 
 
 
@@ -91,7 +99,7 @@ namespace Senjyouhara.UI.Controls
 
         // Using a DependencyProperty as the backing store for ShowMaxBtn.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowMaxBtnProperty =
-            DependencyProperty.Register("ShowMaxBtn", typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
+            DependencyProperty.Register(nameof(ShowMaxBtn), typeof(bool), typeof(TitleBar), new PropertyMetadata(true));
 
 
 
@@ -131,13 +139,17 @@ namespace Senjyouhara.UI.Controls
         {
             get => (ICommand)GetValue(ButtonCommandProperty);
         }
-
+        public bool IsCanMove
+        {
+            get => (bool)GetValue(IsCanMoveProperty);
+            internal set => SetValue(IsCanMoveProperty, value);
+        }
         public bool IsMaximized
         {
             get => (bool)GetValue(IsMaximizedProperty);
             internal set => SetValue(IsMaximizedProperty, value);
         }
-
+        
         private Window _parent;
         private Window ParentWindow => _parent = Window.GetWindow(this);
 
@@ -152,10 +164,15 @@ namespace Senjyouhara.UI.Controls
             {
                 RootGrid.MouseMove += (s, e) =>
                 {
-                    if (e.LeftButton == MouseButtonState.Pressed)
+
+                    if (IsCanMove)
                     {
-                        ParentWindow.DragMove();
+                        if (e.LeftButton == MouseButtonState.Pressed)
+                        {
+                            ParentWindow.DragMove();
+                        }
                     }
+                 
                 };
 
                 RootGrid.MouseDown += (s, e) =>
@@ -181,7 +198,7 @@ namespace Senjyouhara.UI.Controls
 
         public TitleBar()
         {           
-            SetValue(ButtonCommandProperty, new RelayCommand<object>(o => TemplateButton_OnClick(this, o)));
+            SetValue(ButtonCommandProperty, new RelayCommand<string>(TemplateButton_OnClick));
             Loaded += TitleBar_loaded;
         }
 
@@ -211,9 +228,9 @@ namespace Senjyouhara.UI.Controls
             ParentWindow.WindowState = WindowState.Minimized;
         }
 
-        private void TemplateButton_OnClick(TitleBar titleBar, object parameter)
+        private void TemplateButton_OnClick(string parameter)
         {
-            string command = parameter as string;
+            string command = parameter;
 
             Console.WriteLine("params" + parameter);
 

@@ -2,13 +2,14 @@
     x:Class="Senjyouhara.Main.Views.ShellView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Senjyouhara.Main"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI" 
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
     Width="800"
     Height="450"
     AllowsTransparency="True"
@@ -16,15 +17,13 @@
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
-    xmlns:cm="http://caliburnmicro.com"
     mc:Ignorable="d">
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="TaskBarInfo" />
     </Window.TaskbarItemInfo>
 
-    <Window.Resources >
-    </Window.Resources>
+    <Window.Resources />
 
     <Grid Background="#ffffff">
 
@@ -57,7 +56,7 @@
             </ui:TitleBar.ExtendButtons>
         </ui:TitleBar>
 
-        <ContentControl cm:View.Model="{Binding ActiveItem}" Grid.Row="1" />
+        <ContentControl Grid.Row="1" cm:View.Model="{Binding ActiveItem}" />
         <Grid Grid.Row="1">
             <hc:Drawer
                 Name="DrawerLeft"
