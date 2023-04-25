@@ -18,9 +18,9 @@ namespace Senjyouhara.Main.Views
     /// <summary>
     /// TestDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class TestDialog : Border
+    public partial class TestView : Border
     {
-        public TestDialog()
+        public TestView()
         {
             InitializeComponent();
         }

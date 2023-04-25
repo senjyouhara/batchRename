@@ -165,6 +165,8 @@ namespace Senjyouhara.Main.ViewModels
 
         public void AddUpdateModal()
         {
+
+
             Task.Run(async () =>
             {
                 if (UpdateConfig.IsEnableUpdate)
@@ -172,16 +174,17 @@ namespace Senjyouhara.Main.ViewModels
                     var _updateInfo = await UpdateConfig.GetUpdateData();
                     if (_updateInfo.Version != AppConfig.Version)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(async () =>
+                        await Application.Current.Dispatcher.BeginInvoke(async () =>
                         {
+                            //await _windowManager.ShowPopupAsync(IoC.Get<TestViewModel>());
 
-                            var d = Application.Current.MainWindow;
-                            //var s = WindowHelper.GetActiveWindow();
-                            var update = IoC.Get<UpdateViewModel>();
-                            ////var d = Dialog.Show<TestDialog>("DialogContainer");
-                            ////await Task.Delay(30 * 1000);
-                            ////d.Close();
-                            await _windowManager.ShowDialogAsync(update);
+                            //var d = Application.Current.MainWindow;
+                            ////var s = WindowHelper.GetActiveWindow();
+                            //var update = IoC.Get<UpdateViewModel>();
+                            //////var d = Dialog.Show<TestDialog>("DialogContainer");
+                            //////await Task.Delay(30 * 1000);
+                            //////d.Close();
+                            //await _windowManager.ShowDialogAsync(update);
                         });
                     }
                 }
