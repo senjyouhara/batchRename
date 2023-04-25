@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using Senjyouhara.Common.Utils;
 using System.Windows.Threading;
+using Senjyouhara.Main.Views;
 
 namespace Senjyouhara.Main
 {

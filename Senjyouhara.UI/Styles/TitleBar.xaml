@@ -85,12 +85,12 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
+
                         <Grid
                             x:Name="TitleGrid"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Visibility="Collapsed">
+                            VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />

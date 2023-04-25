@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using HandyControl.Controls;
 using HandyControl.Tools;
+using HandyControl.Tools.Extension;
 using Microsoft.Win32;
 using PropertyChanged;
 using Senjyouhara.Common.Exceptions;
@@ -164,7 +165,6 @@ namespace Senjyouhara.Main.ViewModels
 
         public void AddUpdateModal()
         {
-
             Task.Run(async () =>
             {
                 if (UpdateConfig.IsEnableUpdate)
@@ -172,15 +172,20 @@ namespace Senjyouhara.Main.ViewModels
                     var _updateInfo = await UpdateConfig.GetUpdateData();
                     if (_updateInfo.Version != AppConfig.Version)
                     {
-                        await Application.Current.Dispatcher.BeginInvoke(async () =>
+                        Application.Current.Dispatcher.BeginInvoke(async () =>
                         {
+
+                            var d = Application.Current.MainWindow;
+                            //var s = WindowHelper.GetActiveWindow();
                             var update = IoC.Get<UpdateViewModel>();
+                            ////var d = Dialog.Show<TestDialog>("DialogContainer");
+                            ////await Task.Delay(30 * 1000);
+                            ////d.Close();
                             await _windowManager.ShowDialogAsync(update);
                         });
-
                     }
                 }
-    });
+            });
         }
 
         private void Test2()

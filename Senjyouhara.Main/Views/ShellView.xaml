@@ -19,6 +19,10 @@
     xmlns:cm="http://caliburnmicro.com"
     mc:Ignorable="d">
 
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskBarInfo" />
+    </Window.TaskbarItemInfo>
+
     <Window.Resources >
     </Window.Resources>
 
@@ -30,7 +34,7 @@
         </Grid.RowDefinitions>
 
         <ui:TitleBar
-            Title="批量重命名工具"
+            Title="{Binding Title}"
             Height="35"
             Padding="16,4,0,5"
             VerticalAlignment="Top"
@@ -38,6 +42,9 @@
             FontSize="15"
             Foreground="#fff"
             ShowMaxBtn="False">
+            <!--<ui:TitleBar.OverrideTitle>
+                <TextBlock Padding="16 0"  Text="12345676"></TextBlock>
+            </ui:TitleBar.OverrideTitle>-->
             <ui:TitleBar.ExtendButtons>
                 <ToggleButton
                     Height="40"
