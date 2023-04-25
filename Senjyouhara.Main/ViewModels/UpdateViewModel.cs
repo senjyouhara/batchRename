@@ -51,7 +51,12 @@ namespace Senjyouhara.Main.ViewModels
             Tips = "正在检查更新中，请稍后……";
             Application.Current.Dispatcher.Invoke(async () =>
             {
-                _updateInfo = await UpdateConfig.GetUpdateData();
+
+                _updateInfo = UpdateConfig.UpdateInfo;
+                if (UpdateConfig.UpdateInfo == null)
+                {
+                    _updateInfo = await UpdateConfig.GetUpdateData();
+                }
                 if (_updateInfo == null)
                 {
                     Tips = "检查更新失败！";
@@ -94,11 +99,12 @@ namespace Senjyouhara.Main.ViewModels
         }
 
 
-        private UpdateView view;
-        public void Loaded(UpdateView obj)
+        public UpdateView MyView { get; private set; }
+        protected override void OnViewLoaded(object view)
         {
-            taskBarInfo = obj.TaskBarInfo;
-            view = obj;
+            base.OnViewLoaded(view);
+            MyView = (UpdateView)view;
+            taskBarInfo = MyView.TaskBarInfo;
         }
 
         private void TabbarProcess()
@@ -171,7 +177,7 @@ namespace Senjyouhara.Main.ViewModels
 
                     Application.Current.Dispatcher.BeginInvoke(() => {
                         taskBarInfo.ProgressState = TaskbarItemProgressState.None;
-                        FlashWindow.Flash(view);
+                        FlashWindow.Flash(Application.Current.MainWindow, 3, 300);
                     });
 
                     netStream.Close();

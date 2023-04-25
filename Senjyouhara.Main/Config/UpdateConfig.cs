@@ -23,13 +23,15 @@ namespace Senjyouhara.Main.Config
         public static bool IsForceUpdate = false;
         // 下载更新文件路径
         public static string UpdateFilePath = Directory.GetCurrentDirectory().Replace("\\", "/") + @"/update";
+        public static UpdateDataEntity UpdateInfo;
 
         // 请求最新版本信息相关接口
         public static async Task<UpdateDataEntity> GetUpdateData()
         {
             return await Task.Run(() => {
                 Thread.Sleep(1000);
-                return new UpdateDataEntity() { Path = "", Version = "1.1.0.0"};
+                UpdateConfig.UpdateInfo = new UpdateDataEntity() { Path = "", Version = "1.1.0.0"};
+                return UpdateConfig.UpdateInfo;
             });
         }
 

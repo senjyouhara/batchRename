@@ -10,7 +10,6 @@
     x:Name="win"
     Width="470"
     Height="280"
-    cal:Message.Attach="[Event Loaded] = [Action Loaded($view)]"
     AllowsTransparency="True"
     Background="Transparent"
     ResizeMode="CanMinimize"

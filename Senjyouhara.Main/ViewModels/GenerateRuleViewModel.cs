@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
 using Senjyouhara.Main.models;
+using Senjyouhara.Main.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,6 +48,17 @@ namespace Senjyouhara.Main.ViewModels
             AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
         }
 
+        public GenerateRuleView View { get; private set; }
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            View = (GenerateRuleView)view;
+        }
+
+        public override object GetView(object context = null)
+        {
+            return View;
+        }
         public void AddAppendNumberItem(AppendNumber appendNumber)
         {
             var index = AppendNumberList.IndexOf(appendNumber);

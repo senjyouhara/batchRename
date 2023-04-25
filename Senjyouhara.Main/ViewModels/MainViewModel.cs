@@ -180,11 +180,11 @@ namespace Senjyouhara.Main.ViewModels
 
                             //var d = Application.Current.MainWindow;
                             ////var s = WindowHelper.GetActiveWindow();
-                            //var update = IoC.Get<UpdateViewModel>();
+                            var update = IoC.Get<UpdateViewModel>();
                             //////var d = Dialog.Show<TestDialog>("DialogContainer");
                             //////await Task.Delay(30 * 1000);
                             //////d.Close();
-                            //await _windowManager.ShowDialogAsync(update);
+                            await _windowManager.ShowDialogAsync(update);
                         });
                     }
                 }
@@ -641,6 +641,8 @@ namespace Senjyouhara.Main.ViewModels
            _windowManager.ShowDialogAsync(dialog);
         }
 
+
+
         public Task HandleAsync(FormData message, CancellationToken cancellationToken)
         {
 
@@ -649,6 +651,17 @@ namespace Senjyouhara.Main.ViewModels
 
             });
 
+        }
+        private MainView mainView;
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            mainView = (MainView)view;
+        }
+
+        public override object GetView(object context = null)
+        {
+            return mainView;
         }
     }
 
