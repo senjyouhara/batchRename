@@ -15,6 +15,7 @@ namespace Senjyouhara.Main.models
         //[EmailAddress(ErrorMessage = "邮箱地址不合法")]
         //[RegularExpression(@"^1[3-9]\d{9}$", ErrorMessage = "手机号不正确")]
         public string FilePath { get; set; }
+        public string OriginFileName { get; set; }
         public string FileName { get; set; }
         public string PreviewFileName { get; set; }
         public string PreviewFilePath { get; set; }

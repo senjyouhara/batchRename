@@ -9,7 +9,10 @@ namespace Senjyouhara.Common.Utils
 {
     public class PatternUtil
     {
-
+        public static bool IsMatch(string pattern, string input)
+        {
+            return new Regex(pattern).IsMatch(input);
+        }
         public static List<string> GetPatternResult(string pattern, string input)
         {
             var result = new Regex(pattern).Matches(input);

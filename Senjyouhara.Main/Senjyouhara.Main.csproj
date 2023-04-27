@@ -40,6 +40,9 @@
     <ProjectReference Include="..\Senjyouhara.UI\Senjyouhara.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\loading.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

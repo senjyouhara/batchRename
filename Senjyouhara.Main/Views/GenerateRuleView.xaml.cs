@@ -19,11 +19,21 @@ namespace Senjyouhara.Main.Views
     /// <summary>
     /// GenerateRuleView.xaml 的交互逻辑
     /// </summary>
-    public partial class GenerateRuleView : UserControl
+    public partial class GenerateRuleView : Border
     {
         public GenerateRuleView()
         {
             InitializeComponent();
+        }
+
+        private void txtPatName_KeyUp(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
         }
     }
 }

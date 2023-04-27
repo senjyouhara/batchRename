@@ -44,7 +44,6 @@ namespace Senjyouhara.Main
 #else
             await DisplayRootViewForAsync<StartLoadingViewModel>();
 #endif
-
         }
 
         protected override object GetInstance(Type service, string key)

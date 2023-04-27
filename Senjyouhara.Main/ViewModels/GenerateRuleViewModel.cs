@@ -1,120 +1,257 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
+using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Senjyouhara.Main.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    public class AppendNumber
+    public class AppendNumber: IDataErrorInfo
     {
+        [StringLength(10, ErrorMessage = "最多输入10位数")]
+        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
         public string SerialNumber { get; set; }
+        [StringLength(1, ErrorMessage = "最多输入1位数")]
+        [RegularExpression(@"^[1-9]$", ErrorMessage = "只能为一位数整数")]
         public string DecimalNumber { get; set; }
-        public bool IsCanDelete { get; set; } = true;
+
+        public bool IsValid()
+        {
+            return Validator.TryValidateObject(
+                this, new ValidationContext(this, null, null), new List<ValidationResult>(), true);
+        }
+
+
+        public string Error
+        {
+            get
+            {
+                Type FormDataType = GetType();
+                PropertyInfo[] properties = FormDataType.GetProperties();
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    if (properties[i].Name.Equals(nameof(Error)) ||
+                        properties[i].Name.Equals("Item")
+                        )
+                    {
+                    }
+                    else
+                    {
+                        var Name = properties[i].Name;
+                        Debug.WriteLine(Name);
+                        var vc = new ValidationContext(this, null, null);
+                        vc.MemberName = Name;
+                        var res = new List<ValidationResult>();
+                        var result = Validator.TryValidateProperty(FormDataType.GetProperty(Name).GetValue(this, null), vc, res);
+                        if (res.Count > 0)
+                        {
+                            var arr = res.Select(r => r.ErrorMessage).ToArray();
+                            Debug.WriteLine(arr.ToString());
+                            if (arr.Length > 0)
+                            {
+                                return arr[0];
+                            }
+                        }
+                    }
+                }
+                return string.Empty;
+            }
+        }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                var vc = new ValidationContext(this, null, null);
+
+                vc.MemberName = columnName;
+                var res = new List<ValidationResult>();
+                var result = Validator.TryValidateProperty(this.GetType().GetProperty(columnName).GetValue(this, null), vc, res);
+                if (res.Count > 0)
+                {
+                    var arr = res.Select(r => r.ErrorMessage).ToArray();
+                    if (arr.Length > 0)
+                    {
+                        return string.Join(Environment.NewLine, arr[0]);
+                    }
+                }
+                return string.Empty;
+            }
+        }
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class FormData
+    public class FormData : IDataErrorInfo
     {
-        public string FirstNumber { get; set; }
-        public string DigitsNumber { get; set; }
-        public string Step { get; set; }
-        public string OriginName { get; set; }
-        public string Replace { get; set; }
-        public string PreviewReplace { get; set; }
+        [StringLength(10, ErrorMessage = "最多输入10位数")]
+        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
+        public string FirstNumber { get; set; } = string.Empty;
+
+        [StringLength(10, ErrorMessage = "最多输入10位数")]
+        [RegularExpression(@"^([0-9]+\.[0-9]{1})|([0-9][1-9]*)$", ErrorMessage = "只能为整数或带一位小数")]
+        public string Step { get; set; } = string.Empty;
+
+        [StringLength(10, ErrorMessage = "最多输入10位数")]
+        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
+        public string DigitsNumber { get; set; } = string.Empty;
+
         public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();
+
+        public bool IsValid()
+        {
+            var list = AppendNumberList.Where(v => v.IsValid()).ToList();
+           
+            var result = Validator.TryValidateObject(
+                this, new ValidationContext(this, null, null), new List<ValidationResult>(), true);
+
+            if(result== false)
+            {
+                return result;
+            }
+
+            //if (list.Count > 0)
+            //{
+            //    return false;
+            //}
+
+            return true;
+        }
+
+
+        public string Error {
+            get 
+            {
+                Type FormDataType = GetType();
+                PropertyInfo[] properties = FormDataType.GetProperties();
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    if (properties[i].Name.Equals(nameof(Error)) ||
+                        properties[i].Name.Equals("Item")
+                        )
+                    {
+                    } else if (properties[i].Name.Equals(nameof(AppendNumberList))) {
+                        var list = this.AppendNumberList.Where(v => v.IsValid()).Select(v=> v.Error).ToList();
+                        if(list.Count > 0)
+                        {
+                            return list[0];
+                        }
+                    } else
+                    {
+                        var Name = properties[i].Name;
+                        Debug.WriteLine(Name);
+                        var vc = new ValidationContext(this, null, null);
+                        vc.MemberName = Name;
+                        var res = new List<ValidationResult>();
+                        var result = Validator.TryValidateProperty(FormDataType.GetProperty(Name).GetValue(this, null), vc, res);
+                        if (res.Count > 0)
+                        {
+                            var arr = res.Select(r => r.ErrorMessage).ToArray();
+                            Debug.WriteLine(arr.ToString());
+                            if (arr.Length > 0)
+                            {
+                                return arr[0];
+                            }
+                        }
+                    }
+                }
+                return string.Empty;
+            }
+        }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                var vc = new ValidationContext(this, null, null);
+                
+                vc.MemberName = columnName;
+                var res = new List<ValidationResult>();
+                var result = Validator.TryValidateProperty(this.GetType().GetProperty(columnName).GetValue(this, null), vc, res);
+                if (res.Count > 0)
+                {
+                    var arr = res.Select(r => r.ErrorMessage).ToArray();
+                    if(arr.Length > 0)
+                    {
+                        return string.Join(Environment.NewLine, arr[0]);
+                    }
+                }
+                return string.Empty;
+            }
+        }
+
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class GenerateRuleViewModel: Screen
+    public class GenerateRuleViewModel : Screen
     {
-        public string FirstNumber { get; set; }
-        public string DigitsNumber { get; set; }
-        public string Step { get; set; }
-        public string OriginName { get; set; }
-        public string Replace { get; set; }
-        public string PreviewReplace { get; set; }
-        public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();
+        public IDelegateCommand CloseCommand { get; set; }
+        public IDelegateCommand<AppendNumber> AddAppendNumberItemCommand { get; set; }
+        public IDelegateCommand<AppendNumber> RemoveAppendNumberItemCommand { get; set; }
+
+        public FormData FormData { get; set; }
+
         private IEventAggregator _eventAggregator;
         public GenerateRuleViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
+            FormData = new();
+            FormData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
+            RemoveAppendNumberItemCommand = new DelegateCommand<AppendNumber>(RemoveAppendNumberItem);
+            AddAppendNumberItemCommand = new DelegateCommand<AppendNumber>(AddAppendNumberItem);
         }
+
+
 
         public void AddAppendNumberItem(AppendNumber appendNumber)
         {
-            var index = AppendNumberList.IndexOf(appendNumber);
+            var index = FormData.AppendNumberList.IndexOf(appendNumber);
             if(index >= 0)
             {
-                AppendNumberList.Insert(index+1, new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
+                FormData.AppendNumberList.Insert(index+1, new AppendNumber { DecimalNumber = "", SerialNumber = "" });
 
-            }
-            if(AppendNumberList.Count > 1) {
-                foreach (var item in AppendNumberList)
-                {
-                    item.IsCanDelete = true;
-                }
-            } else
-            {
-                foreach (var item in AppendNumberList)
-                {
-                    item.IsCanDelete = false;
-                }
             }
         }
 
         public void RemoveAppendNumberItem(AppendNumber appendNumber)
         {
-            if (AppendNumberList.Count <= 1)
+            if (FormData.AppendNumberList.Count <= 1)
             {
-                AppendNumberList.Clear();
-                AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "", IsCanDelete = false });
+                FormData.AppendNumberList.Clear();
+                FormData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
             } else
             {
-                AppendNumberList.Remove(appendNumber);
-            }
-
-            if (AppendNumberList.Count > 1)
-            {
-                foreach (var item in AppendNumberList)
-                {
-                    item.IsCanDelete = true;
-                }
-            }
-            else
-            {
-                foreach (var item in AppendNumberList)
-                {
-                    item.IsCanDelete = false;
-                }
+                FormData.AppendNumberList.Remove(appendNumber);
             }
         }
         public void OnOk()
         {
-           var FormData = new FormData()
+            Debug.WriteLine(FormData.Error);
+            if(FormData.IsValid())
             {
-                FirstNumber = FirstNumber,
-                DigitsNumber = DigitsNumber,
-                OriginName = OriginName,
-                Step = Step,
-                Replace = Replace,
-                PreviewReplace = PreviewReplace,
-                AppendNumberList = AppendNumberList,
-            };
-            _eventAggregator.PublishOnCurrentThreadAsync(FormData);
-            TryCloseAsync();
+                _eventAggregator.PublishOnUIThreadAsync(FormData);
+                TryCloseAsync();
+                CloseCommand?.Execute();
+            }
         }
         
         public void OnCancel()
         {
+            _eventAggregator.PublishOnUIThreadAsync(null);
             TryCloseAsync();
+            CloseCommand?.Execute();
         }
     }
 }

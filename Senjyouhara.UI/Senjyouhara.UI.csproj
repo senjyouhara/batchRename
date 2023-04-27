@@ -25,6 +25,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Styles\Icons\" />
+    <Compile Remove="Styles\Icons\**" />
+    <EmbeddedResource Remove="Styles\Icons\**" />
+    <None Remove="Styles\Icons\**" />
+    <Page Remove="Styles\Icons\**" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<Border
     x:Class="Senjyouhara.Main.Views.GenerateRuleView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,35 +6,78 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:Senjyouhara.Main.Views"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
     Width="500"
-    Height="400"
+    Height="380"
     Background="#FFF"
     mc:Ignorable="d">
-    <Grid Margin="0,20,0,10" VerticalAlignment="Top">
+
+    <Border.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Bottom" Background="Red" Foreground="White" FontSize="12" LineHeight="16"
+                                                       Width="Auto"
+                                                       VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontFamily="Arial" 
+                                                 Text="{Binding ElementName=ErrorBox, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                            </TextBlock>
+                            <AdornedElementPlaceholder Name="ErrorBox" />
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Border.Resources>
+    
+    <Grid VerticalAlignment="Top" MouseDown="Grid_MouseDown">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+        <Grid Background="#a0a2b4" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Border Margin="16,4,0,5">
+                <TextBlock Text="规则配置" FontSize="15" Foreground="#fff"></TextBlock>
+            </Border>
+
+            <Button Command="{Binding CloseCommand}" Grid.Column="1" Cursor="Hand" Background="Transparent" Style="{StaticResource buttonStyleHoverRed}">
+                <Viewbox
+                Width="13"
+                Height="13"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Child="{StaticResource UiIconClose}"
+                RenderOptions.BitmapScalingMode="HighQuality">
+                </Viewbox>
+            </Button>
+        </Grid>
+
+        <ScrollViewer Margin="0,20,0,10" Grid.Row="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
                 <StackPanel Margin="20,0" Orientation="Vertical">
                     <TextBox
-                        x:Name="FirstNumber"
+                        Text="{Binding FormData.FirstNumber, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnDataErrors=True}"
                         Margin="0,0,0,20"
                         hc:InfoElement.Title="开始序号(从1开始)"
                         Style="{StaticResource TextBoxExtend}" />
                     <TextBox
-                        x:Name="Step"
+                        Text="{Binding FormData.Step, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnDataErrors=True}"
                         Margin="0,0,0,20"
                         hc:InfoElement.Title="增量(每次增加几位，默认1)"
                         Style="{StaticResource TextBoxExtend}" />
                     <TextBox
-                        x:Name="DigitsNumber"
+                        Text="{Binding FormData.DigitsNumber, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}"
                         hc:InfoElement.Title="位数(主要用来前面填充0，不填则根据文件数量自动计算)"
                         Style="{StaticResource TextBoxExtend}" />
                 </StackPanel>
@@ -46,17 +89,17 @@
                     Content="文件名增量小数(用于特定序号后添加小数点情况)"
                     Foreground="Gray" />
                 <StackPanel Margin="20,20,20,0" Orientation="Vertical">
-                    <ItemsControl x:Name="AppendNumberList">
+                    <ItemsControl 
+                        ItemsSource="{Binding FormData.AppendNumberList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <DataTemplate.Resources>
                                     <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="FontSize" Value="14" />
                                         <Setter Property="VerticalAlignment" Value="Center" />
                                     </Style>
                                 </DataTemplate.Resources>
                                 <StackPanel
-                                    Margin="0,0,0,10"
+                                    Margin="0,0,0,20"
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal">
                                     <TextBlock Text="第" />
@@ -64,28 +107,30 @@
                                         Width="100"
                                         Margin="10,0,0,0"
                                         Style="{StaticResource TextBoxExtend}"
-                                        Text="{Binding SerialNumber}" />
+                                        Text="{Binding SerialNumber,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}" />
                                     <TextBlock Margin="10,0,0,0" Text="序号后添加" />
                                     <TextBox
                                         Width="100"
                                         Margin="10,0,0,0"
                                         Style="{StaticResource TextBoxExtend}"
-                                        Text="{Binding DecimalNumber}" />
+                                        Text="{Binding DecimalNumber,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}" />
                                     <TextBlock Margin="10,0,0,0" Text="小数" />
                                     <Button
                                         Margin="10,0,0,0"
-                                        cal:Message.Attach="[Event Click] = [Action AddAppendNumberItem($dataContext)]"
+                                        Command="{Binding DataContext.AddAppendNumberItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}}"
+                                        CommandParameter="{Binding }"
                                         Content="添加"
                                         FocusVisualStyle="{x:Null}" />
                                     <Button
                                         Name="DeleteBtn"
                                         Margin="10,0,0,0"
-                                        cal:Message.Attach="[Event Click] = [Action RemoveAppendNumberItem($dataContext)]"
+                                        Command="{Binding DataContext.RemoveAppendNumberItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}}"
+                                        CommandParameter="{Binding }"
                                         Content="删除"
                                         FocusVisualStyle="{x:Null}" />
                                 </StackPanel>
                                 <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsCanDelete}" Value="false">
+                                    <DataTrigger Binding="{Binding DataContext.FormData.AppendNumberList.Count, RelativeSource={RelativeSource AncestorType=StackPanel, Mode=FindAncestor}}" Value="1">
                                         <Setter TargetName="DeleteBtn" Property="Cursor" Value="No" />
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
@@ -95,39 +140,13 @@
 
                 </StackPanel>
 
-                <hc:Divider
-                    Margin="0,20,0,0"
-                    HorizontalContentAlignment="Left"
-                    Content="重命名后的文件名替换"
-                    Foreground="Gray" />
-
-                <StackPanel Margin="20,0" Orientation="Vertical">
-                    <TextBox
-                        x:Name="OriginName"
-                        Margin="0,20,0,20"
-                        hc:InfoElement.Title="文件名"
-                        hc:InfoElement.TitlePlacement="Left"
-                        Style="{StaticResource TextBoxExtend}" />
-                    <TextBox
-                        x:Name="Replace"
-                        Margin="0,0,0,20"
-                        hc:InfoElement.Title="替换成"
-                        hc:InfoElement.TitlePlacement="Left"
-                        Style="{StaticResource TextBoxExtend}" />
-
-                    <TextBlock
-                        x:Name="PreviewReplace"
-                        FontSize="14"
-                        Foreground="DimGray" />
-                </StackPanel>
-
 
             </StackPanel>
         </ScrollViewer>
 
         <StackPanel
-            Grid.Row="1"
-            Margin="10,5,10,0"
+            Margin="10,10,0,10"
+            Grid.Row="2"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Orientation="Horizontal">
@@ -146,4 +165,4 @@
                 Content="确  定" />
         </StackPanel>
     </Grid>
-</UserControl>
+</Border>

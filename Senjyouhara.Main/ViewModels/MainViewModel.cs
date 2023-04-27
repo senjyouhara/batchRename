@@ -2,6 +2,7 @@
 using HandyControl.Controls;
 using HandyControl.Tools;
 using HandyControl.Tools.Extension;
+using Microsoft.SqlServer.Server;
 using Microsoft.Win32;
 using PropertyChanged;
 using Senjyouhara.Common.Exceptions;
@@ -18,6 +19,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +33,35 @@ using System.Xml.Linq;
 
 namespace Senjyouhara.Main.ViewModels
 {
+    class Person
+    {
+        public string UserName { get; set; } = "的数据ad酒店服务IQ恶化";
+        public int Age { get; set; } = 176876546;
+        public DateTime Date { get; set; } = DateTime.Now;
+        public bool Bool { get; set; } = true;
+    }
+
+    class Dewater
+    {
+        public int ApplicationNo { get; set; }
+        public int CaseNumber { get; set; }
+        public int SerialNumber { get; set; }
+        public string ToCollectParts { get; set; }
+        public string ClinicalDiagnosis { get; set; }
+        public string InspectOffice { get; set; }
+        public string WaxBlockNo { get; set; }
+        public string TaskSource { get; set; }
+        public string BasedSite { get; set; }
+        public string WoodBlocks { get; set; }
+        public string SpecialHandl { get; set; }
+        public string Node { get; set; }
+        public string NumberSlices { get; set; }
+        public string Recorder { get; set; }
+        public DateTime BasedOnTime { get; set; }
+        public string Level { get; set; }
+        public string Content { get; set; }
+        public List<string> List { get; set; }
+    }
 
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen, IHandle<FormData>
@@ -38,10 +70,12 @@ namespace Senjyouhara.Main.ViewModels
         public string Tips { get; set; }
         public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
 
+        private GenerateRuleViewModel generateRuleViewModel;
+        private FormData formData;
         public string FileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])";
 
         [OnChangedMethod(nameof(FileNameItemsHandle))]
-        public string Rename { get; set; }
+        public string Rename { get; set; } = string.Empty;
 
         private FormData FormData = new();
 
@@ -51,113 +85,140 @@ namespace Senjyouhara.Main.ViewModels
             var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
             var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
 
-            for (int i = 0; i < otherList.Count; i++)
+            var appendList = formData?.AppendNumberList;
+
+            var step = string.IsNullOrWhiteSpace(formData?.Step) ? 10 : (int)(double.Parse(formData?.Step) * 10);
+
+            if (otherList.Count > 0)
             {
-                var item = otherList[i];
-                var f = new FileInfo(item.FilePath);
-                var name = Rename;
-                if (name.IndexOf("#") != -1)
+
+                var otherCount = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber));
+                otherCount *= 10;
+
+                for (int i = 0; i < otherList.Count; i++)
                 {
-                    var count = otherList.Count + "";
-                    var tmp = count.Substring(0, count.Length - (i + 1 + "").Length);
-                    name = name.Replace("#", $"{"".PadLeft(tmp.Length, '0')}{i + 1}");
+                    var item = otherList[i];
+                    var f = new FileInfo(item.FilePath);
+                    var name = Rename;
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        if (name?.IndexOf("#") != -1)
+                        {
+                            var count = otherList.Count.ToString();
+                            var tmp = count.Substring(0, count.Length - (i + 1).ToString().Length);
+                            var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
+                            var index = ((double)(otherCount / 10.0)).ToString("#.#");
+
+                            name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}");
+
+                            if (appendList?.Count > 0)
+                            {
+                                var select = appendList.Where(v => v.SerialNumber.Equals(index)).FirstOrDefault();
+                                if (select != null)
+                                {
+                                    name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(select.DecimalNumber) ? string.Empty : '.' + select.DecimalNumber)}");
+                                }
+                            }
+
+                        }
+                    } else
+                    {
+                        name = item.OriginFileName;
+                    }
+                   
+                    item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
+                    item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
+                    otherCount += step;
                 }
-                item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
-                item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
             }
 
-            var Count = 0;
-            for (int i = 0; i < subList.Count; i++)
-            {
-                var prevItemNumber = "";
-                var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{FileSortPattern}", subList[i - 1].FileName) : new List<string>();
-                if (prevlist.Count > 0)
-                {
-                    prevItemNumber = prevlist[0];
-                }
 
-                var itemNumber = "";
-                var item = subList[i];
-                var list = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
-                if (list.Count > 0)
+            // 如果有字幕文件则进入该项 为了匹配对应视频文件序号
+            if(subList.Count > 0)
+            {
+                var Count = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber) - 1);
+                Count *= 10;
+                for (int i = 0; i < subList.Count; i++)
                 {
-                   itemNumber = list[0];
+                    var prevItemNumber = "";
+                    var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{FileSortPattern}", subList[i - 1].FileName) : new List<string>();
+                    if (prevlist.Count > 0)
+                    {
+                        prevItemNumber = prevlist[0];
+                    }
+
+                    var itemNumber = "";
+                    var item = subList[i];
+                    var list = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
+                    if (list.Count > 0)
+                    {
+                        itemNumber = list[0];
+                    }
+                    // 如果有前一项 并且 当前项数字不等于前一项数字则进入
+                    // 为了防止当前项为字幕 而前一项是视频 这样数字序号就对应不上了
+                    if (!string.IsNullOrEmpty(prevItemNumber) && !itemNumber.Equals(prevItemNumber))
+                    {
+                            Count += step;
+                    }
+                    var name = Rename;
+                    var f = new FileInfo(item.FilePath);
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        if (name.IndexOf("#") != -1)
+                        {
+                            var count = subList.Count.ToString();
+                            var tmp = count.Substring(0, count.Length - (i + 1).ToString().Length);
+                            var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
+                            var index = ((double)(Count / 10)).ToString("#.#");
+                            name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}");
+
+                            if (appendList?.Count > 0)
+                            {
+                                var select = appendList.Where(v => v.SerialNumber.Equals(index)).FirstOrDefault();
+                                if (select != null)
+                                {
+                                    name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(select.DecimalNumber) ? string.Empty : '.' + select.DecimalNumber)}");
+                                }
+                            }
+
+                        }
+                    } else
+                    {
+                        name = item.OriginFileName;
+                    }
+                     
+                    item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
+                    item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
                 }
-                if (!string.IsNullOrEmpty(prevItemNumber) && !itemNumber.Equals(prevItemNumber))
-                {
-                    Count++;
-                }
-                var name = Rename;
-                var f = new FileInfo(item.FilePath);
-                if (name.IndexOf("#") != -1)
-                {
-                    var count = subList.Count + "";
-                    var tmp = count.Substring(0, count.Length - (i + 1 + "").Length);
-                    name = name.Replace("#", $"{"".PadLeft(tmp.Length, '0')}{Count + 1}");
-                }
-                item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
-                item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : "");
             }
+           
         }
 
 
         private IEventAggregator _eventAggregator;
         private IWindowManager _windowManager;
 
-        class Person
-        {
-            public string UserName { get; set; } = "的数据ad酒店服务IQ恶化";
-            public int Age { get; set; } = 176876546;
-            public DateTime Date { get; set; } = DateTime.Now;
-            public bool Bool { get; set; } = true;
-        }
-
-        class Dewater
-        {
-            public int ApplicationNo { get; set; }
-            public int CaseNumber { get; set; }
-            public int SerialNumber { get; set; }
-            public string ToCollectParts { get; set; }
-            public string ClinicalDiagnosis { get; set; }
-            public string InspectOffice { get; set; }
-            public string WaxBlockNo { get; set; }
-            public string TaskSource { get; set; }
-            public string BasedSite { get; set; }
-            public string WoodBlocks { get; set; }
-            public string SpecialHandl { get; set; }
-            public string Node { get; set; }
-            public string NumberSlices { get; set; }
-            public string Recorder { get; set; }
-            public DateTime BasedOnTime { get; set; }
-            public string Level { get; set; }
-            public string Content { get; set; }
-            public List<string> List { get; set; }
-        }
         public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager)
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
-            _eventAggregator.Subscribe(this);
+            _eventAggregator.SubscribeOnUIThread(this);
             //Test();
             //Test2();
-
+            generateRuleViewModel = new(_eventAggregator);
 
             //Application.Current.Dispatcher.BeginInvoke((() => {
-
             //    var grid = new Grid();
             //    var text = new TextBlock();
             //    text.Text = "asdhsakdhkasdsad";
             //    grid.Children.Add(text) ;
-
             //    MessageBoxHelper.Ask("叼毛开发者抛出了一个异常，请问您要跳转百度帮开发者解决一下这个问题吗？", "系统提示", callback =>
             //    {
             //        if (callback == MessageBoxResult.OK)
             //        {
             //        }
             //    });
-
             //}));
-            
 
             //AddUpdateModal();
 
@@ -325,13 +386,16 @@ namespace Senjyouhara.Main.ViewModels
 
                 FileNameItems.Add(new FileNameItem()
                 {
+                    OriginFileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
+                    FileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
                     FilePath = v.FullName,
-                    FileName = v.Name,
                     PreviewFileName = "",
                     SubtitleFileName = "",
                     SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : ""
                 });
             });
+
+            FileNameItemsHandle();
 
             var group = FileNameItems.GroupBy((item) =>
             {
@@ -372,19 +436,10 @@ namespace Senjyouhara.Main.ViewModels
                                 {
                                     (matchesA, matchesB) = (matchesB, matchesA);
                                 }
-                           
-                                var unionData = matchesA.Intersect(matchesB).ToList();
-
-                                //if (unionData.Count > 1)
-                                //{
-                                //    var m = unionData.Where(v => (v as string).Length <= 2).FirstOrDefault();
-                                //    return m[0] == ;
-                                //}
-
 
                                 for (int i = 0; i < matchesA.Count; i++)
                                 {
-                
+
                                     var aValue = matchesA[i].Replace(" ", "").Replace("[", "").Replace("]", "");
 
                                     var bValue = "";
@@ -409,7 +464,7 @@ namespace Senjyouhara.Main.ViewModels
                             }).ToList();
                             if (FilterSub.Count > 0)
                             {
-                                newList = newList.Concat(FilterSub.Select(v=>
+                                newList = newList.Concat(FilterSub.Select(v =>
                                 {
                                     v.FileName = " └─  " + v.FileName;
                                     return v;
@@ -425,10 +480,7 @@ namespace Senjyouhara.Main.ViewModels
                 }
                 catch (Exception ex)
                 {
-
                 }
-
-
             }
             else
             {
@@ -440,11 +492,18 @@ namespace Senjyouhara.Main.ViewModels
         {
 
             var count = FileNameItems.Count;
-
             if (count <= 0)
             {
                 return;
             }
+
+            var lisDup = FileNameItems.GroupBy(x => x.PreviewFileName).Where(x => x.Count() > 1).Select(x => x.Key).ToList();
+            if(lisDup.Count > 0)
+            {
+                System.Windows.MessageBox.Show("消息提示", "文件名重命名项有重复，请核对！", MessageBoxButton.OK);
+                return;
+            }
+
 
             Task.Factory.StartNew(() => {
                 for (int i = 0; i < FileNameItems.Count; i++)
@@ -459,6 +518,7 @@ namespace Senjyouhara.Main.ViewModels
                             Application.Current.Dispatcher.Invoke(() => {
                                 item.FilePath = item.PreviewFilePath;
                                 item.FileName = item.PreviewFileName;
+                                item.OriginFileName = item.FileName;
                                 item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : "";
                                 item.PreviewFileName = "成功！";
                             });
@@ -476,7 +536,6 @@ namespace Senjyouhara.Main.ViewModels
                                 System.Windows.MessageBox.Show(ex.Message);
                             }
                         }
-
                     }
                     else
                     {
@@ -636,18 +695,33 @@ namespace Senjyouhara.Main.ViewModels
 
         public void ShowGenerateRuleModal()
         {
-            var dialog = IoC.Get<GenerateRuleViewModel>();
-            _windowManager.ShowDialogAsync(dialog);
+            var dialog = Dialog.Show<GenerateRuleView>("DialogContainerToken");
+            if(formData!= null)
+            {
+                generateRuleViewModel.FormData = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(formData));
+            }
+            dialog.DataContext = generateRuleViewModel;
+            dialog.Show();
+            generateRuleViewModel.CloseCommand = new DelegateCommand(() =>
+            {
+                dialog.Close();
+            });
         }
 
 
 
         public Task HandleAsync(FormData message, CancellationToken cancellationToken)
         {
-
             return Task.Run(() =>
             {
-
+                if(message == null)
+                {
+                    formData = new FormData();
+                } else
+                {
+                    formData = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(message));
+                    FileNameItemsHandle();
+                }
             });
 
         }

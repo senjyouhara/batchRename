@@ -8,22 +8,15 @@ using System.Windows.Input;
 namespace Senjyouhara.Common.Utils
 {
 
-    public interface IDelegateCommand
+    public interface IDelegateCommand: ICommand
     {
-        event EventHandler CanExecuteChanged;
-
         bool CanExecute();
 
         void Execute();
 
     }
-    public interface IDelegateCommand<T>
+    public interface IDelegateCommand<T> : ICommand
     {
-        event EventHandler CanExecuteChanged;
-
-        bool CanExecute(T parameter);
-
-        void Execute(T parameter);
 
     }
 
@@ -101,22 +94,33 @@ namespace Senjyouhara.Common.Utils
         {
             return true;
         }
+
+        public bool CanExecute(object parameter)
+        {
+            return this.canExecute != null && this.canExecute();
+
+        }
+
+        public void Execute(object parameter)
+        {
+            this.execute();
+        }
     }
 
     public class DelegateCommand<T> : IDelegateCommand<T>
     {
-        private Action<object> execute;                     //定义成员
+        private Action<T> execute;                     //定义成员
 
         private Func<T, bool> canExecute;//Predicate：述语//定义成员
 
         private event EventHandler CanExecuteChangedInternal;//事件
 
-        public DelegateCommand(Action<object> execute)       //定义Action，CanExecute
+        public DelegateCommand(Action<T> execute)       //定义Action，CanExecute
            : this(execute, DefaultCanExecute)
         {
         }
 
-        public DelegateCommand(Action<object> execute, Func<T, bool> canExecute)//定义
+        public DelegateCommand(Action<T> execute, Func<T, bool> canExecute)//定义
         {
             if (execute == null)
             {
@@ -147,16 +151,6 @@ namespace Senjyouhara.Common.Utils
             }
         }
 
-        public bool CanExecute(T parameter)            //CanExecute方法
-        {
-            return this.canExecute != null && this.canExecute(parameter);
-        }
-
-        public void Execute(T parameter)              //Execute方法
-        {
-            this.execute(parameter);
-        }
-
         public void OnCanExecuteChanged()                //OnCanExecute方法
         {
             EventHandler handler = this.CanExecuteChangedInternal;
@@ -178,6 +172,14 @@ namespace Senjyouhara.Common.Utils
             return true;
         }
 
+        public bool CanExecute(object parameter)
+        {
+            return this.canExecute != null && this.canExecute((T) parameter);
+        }
 
+        public void Execute(object parameter)
+        {
+            this.execute((T)parameter);
+        }
     }
 }
