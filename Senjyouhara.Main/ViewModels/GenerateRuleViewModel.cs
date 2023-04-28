@@ -22,7 +22,7 @@ namespace Senjyouhara.Main.ViewModels
     public class AppendNumber: IDataErrorInfo
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
         public string SerialNumber { get; set; }
         [StringLength(1, ErrorMessage = "最多输入1位数")]
         [RegularExpression(@"^[1-9]$", ErrorMessage = "只能为一位数整数")]
