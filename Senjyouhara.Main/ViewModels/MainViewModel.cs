@@ -95,6 +95,7 @@ namespace Senjyouhara.Main.ViewModels
             {
                 var otherCount = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber));
                 otherCount *= 10;
+                AppendNumber select = null;
 
                 for (int i = 0; i < otherList.Count; i++)
                 {
@@ -105,19 +106,37 @@ namespace Senjyouhara.Main.ViewModels
                     {
                         if (name?.IndexOf("#") != -1)
                         {
+                            var prevIndex = (otherCount - step) / 10;
                             var count = otherList.Count.ToString();
-                            var tmp = count.Substring(0, count.Length - (i + 1).ToString().Length);
+                            var tmp = count;
+                            Debug.WriteLine(tmp);
                             var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
-                            var index = ((double)(otherCount / 10.0)).ToString("#.#");
+                            var index = double.Parse((otherCount / 10.0).ToString());
+                            var indexStr = index.ToString("#.#");
 
-                            name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}");
-
+                            name = name.Replace("#", $"{indexStr.PadLeft(DigitsNumber, '0')}");
+                            Debug.WriteLine($"index: {indexStr},prevIndex: {prevIndex}, tmp: {tmp}, name: {name}, itemFile: {item.FileName}");
+                            Debug.WriteLine($"appendList: {appendList}");
                             if (appendList?.Count > 0)
                             {
-                                var select = appendList.Where(v => v.SerialNumber.Equals(index)).FirstOrDefault();
-                                if (select != null)
+                                var append = appendList.Where(v =>
                                 {
-                                    name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(select.DecimalNumber) ? string.Empty : '.' + select.DecimalNumber)}");
+                                    Debug.WriteLine($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
+                                    if (prevIndex > -1)
+                                    {
+                                        return (v.SerialNumber).Equals(prevIndex.ToString());
+                                    }
+                                    return false;
+                                }).FirstOrDefault();
+                                Debug.WriteLine($"select: {select}");
+                                if (append != null && append != select)
+                                {
+                                    select = append;
+                                    name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
+                                    Debug.WriteLine($"name: {name}");
+                                } else
+                                {
+                                    select = null;
                                 }
                             }
 
@@ -129,7 +148,10 @@ namespace Senjyouhara.Main.ViewModels
                    
                     item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
                     item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
-                    otherCount += step;
+                    if (select == null)
+                    {
+                        otherCount += step;
+                    }
                 }
             }
 
@@ -137,8 +159,11 @@ namespace Senjyouhara.Main.ViewModels
             // 如果有字幕文件则进入该项 为了匹配对应视频文件序号
             if(subList.Count > 0)
             {
-                var Count = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber) - 1);
+                //subList = subList.OrderBy(v => v.OriginFileName, new FileComparer()).ToList();
+                var Count = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : int.Parse(formData?.FirstNumber);
                 Count *= 10;
+                AppendNumber select = null;
+
                 for (int i = 0; i < subList.Count; i++)
                 {
                     var prevItemNumber = string.Empty;
@@ -155,12 +180,7 @@ namespace Senjyouhara.Main.ViewModels
                     {
                         itemNumber = list[0];
                     }
-                    // 如果有前一项 并且 当前项数字不等于前一项数字则进入
-                    // 为了防止当前项为字幕 而前一项是视频 这样数字序号就对应不上了
-                    if (!string.IsNullOrEmpty(prevItemNumber) && !itemNumber.Equals(prevItemNumber))
-                    {
-                            Count += step;
-                    }
+
                     var name = Rename;
                     var f = new FileInfo(item.FilePath);
                     if (!string.IsNullOrWhiteSpace(name))
@@ -169,17 +189,34 @@ namespace Senjyouhara.Main.ViewModels
                         {
                             // 根据文件数量获取前面填充0数量
                             var count = subList.Count.ToString();
-                            var tmp = count.Substring(0, count.Length - (i + 1).ToString().Length);
+                            var prevIndex = (Count - step) / 10;
+                            var tmp = count;
                             var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
-                            var index = ((double)(Count / 10)).ToString("#.#");
-                            name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}");
+                            var index = double.Parse((Count / 10.0).ToString());
+                            var indexStr = index.ToString("#.#");
+                            name = name.Replace("#", $"{indexStr.PadLeft(DigitsNumber, '0')}");
 
                             if (appendList?.Count > 0)
                             {
-                                var select = appendList.Where(v => v.SerialNumber.Equals(index)).FirstOrDefault();
-                                if (select != null)
+                                var append = appendList.Where(v =>
                                 {
-                                    name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(select.DecimalNumber) ? string.Empty : '.' + select.DecimalNumber)}");
+                                    Debug.WriteLine($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
+                                    if (prevIndex > -1)
+                                    {
+                                        return (v.SerialNumber).Equals(prevIndex.ToString());
+                                    }
+                                    return false;
+                                }).FirstOrDefault();
+                                Debug.WriteLine($"select: {select}");
+                                if (append != null && append != select)
+                                {
+                                    select = append;
+                                    name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
+                                    Debug.WriteLine($"name: {name}");
+                                }
+                                else
+                                {
+                                    select = null;
                                 }
                             }
                         }
@@ -187,7 +224,10 @@ namespace Senjyouhara.Main.ViewModels
                     {
                         name = item.OriginFileName;
                     }
-                     
+                    if(select == null)
+                    {
+                        Count += step;
+                    }
                     item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
                     item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
                 }
@@ -384,7 +424,6 @@ namespace Senjyouhara.Main.ViewModels
                 });
             });
 
-            FileNameItemsHandle();
 
             var group = FileNameItems.GroupBy((item) =>
             {
@@ -403,13 +442,15 @@ namespace Senjyouhara.Main.ViewModels
 
             Debug.WriteLine(group);
 
+            FileNameItems = new ObservableCollection<FileNameItem>(sortList);
+            FileNameItemsHandle();
 
             if (IsSubMergeVideo)
             {
                 try
                 {
-                    var subList = sortList.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
-                    var otherList = sortList.Where(v => !subList.Contains(v)).ToList();
+                    var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
+                    var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
                     
                     var subSortList = subList.OrderBy(f => f.FileName, new FileComparer()).ToList();
                     var newList = new List<FileNameItem>();
@@ -465,10 +506,6 @@ namespace Senjyouhara.Main.ViewModels
                 catch (Exception ex)
                 {
                 }
-            }
-            else
-            {
-                FileNameItems = new ObservableCollection<FileNameItem>(sortList);
             }
         }
 

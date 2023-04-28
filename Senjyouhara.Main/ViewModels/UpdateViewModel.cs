@@ -85,7 +85,6 @@ namespace Senjyouhara.Main.ViewModels
                     Directory.CreateDirectory(UpdateConfig.UpdateFilePath);
                 }
                 
-
                 //var result = await DownloadFile("https://patchwiki.biligame.com/images/re0/3/3f/h8yxnkq94sis8p5vn1i8x4lbir2fwo1.png", UpdateConfig.UpdateFilePath + @"/update.7z");
                 var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
                 if (result)
