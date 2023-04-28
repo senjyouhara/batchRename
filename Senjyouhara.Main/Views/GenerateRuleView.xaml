@@ -102,19 +102,18 @@
                                     Margin="0,0,0,20"
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal">
-                                    <TextBlock Text="第" />
+                                    <TextBlock Text="序号" />
                                     <TextBox
-                                        Width="100"
+                                        Width="120"
                                         Margin="10,0,0,0"
                                         Style="{StaticResource TextBoxExtend}"
                                         Text="{Binding SerialNumber,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}" />
-                                    <TextBlock Margin="10,0,0,0" Text="序号后添加" />
+                                    <TextBlock Margin="10,0,0,0" Text="后添加小数" />
                                     <TextBox
-                                        Width="100"
+                                        Width="120"
                                         Margin="10,0,0,0"
                                         Style="{StaticResource TextBoxExtend}"
                                         Text="{Binding DecimalNumber,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True}" />
-                                    <TextBlock Margin="10,0,0,0" Text="小数" />
                                     <Button
                                         Margin="10,0,0,0"
                                         Command="{Binding DataContext.AddAppendNumberItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}}"

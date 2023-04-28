@@ -34,6 +34,7 @@
 
         <ui:TitleBar
             Title="{Binding Title}"
+            Icon="/icon.png"
             Height="35"
             Padding="16,4,0,5"
             VerticalAlignment="Top"

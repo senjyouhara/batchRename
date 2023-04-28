@@ -18,7 +18,7 @@ namespace Senjyouhara.Main.Config
         }
 
         // 是否开启自动更新
-        public static bool IsEnableUpdate = true;
+        public static bool IsEnableUpdate = false;
         // 是否强制更新，如果为否则可以用户取消更新
         public static bool IsForceUpdate = false;
         // 下载更新文件路径

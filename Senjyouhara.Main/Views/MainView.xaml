@@ -58,14 +58,15 @@
 
                     <ListView.View>
                         <GridView>
+                            <!--Width="{Binding ElementName=col1, Path=ActualWidth}"-->
                             <GridViewColumn
-                            Width="{Binding ElementName=col1, Path=ActualWidth}"
+                            Width="580"
                             ui:RangeColumn.MinWidth="100"
                             DisplayMemberBinding="{Binding FileName}"
                             Header="文件名" />
                             <!--<GridViewColumn ui:RangeColumn.MinWidth="100" Header="字幕" Width="{Binding ElementName=col2, Path=ActualWidth}" DisplayMemberBinding="{Binding SubtitleFileName}" />-->
                             <GridViewColumn
-                            Width="{Binding ElementName=col2, Path=ActualWidth}"
+                            Width="580"
                             ui:RangeColumn.MinWidth="100"
                             DisplayMemberBinding="{Binding PreviewFileName}"
                             Header="结果" />

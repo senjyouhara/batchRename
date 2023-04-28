@@ -8,6 +8,7 @@ using PropertyChanged;
 using Senjyouhara.Common.Exceptions;
 using Senjyouhara.Common.Log;
 using Senjyouhara.Common.Utils;
+using Senjyouhara.Main.Comparer;
 using Senjyouhara.Main.Config;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
@@ -64,7 +65,7 @@ namespace Senjyouhara.Main.ViewModels
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class MainViewModel : Screen, IHandle<FormData>
+    public class MainViewModel : Screen, IHandle<FormData>, IHandle<string>
     {
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
@@ -72,7 +73,8 @@ namespace Senjyouhara.Main.ViewModels
 
         private GenerateRuleViewModel generateRuleViewModel;
         private FormData formData;
-        public string FileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])";
+        public string FileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])|(^[0-9]+$|[0-9]+\\.[0-9]+$)";
+        public string SubFileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])|(^[0-9]+$|[0-9]+\\.[0-9]+$)";
 
         [OnChangedMethod(nameof(FileNameItemsHandle))]
         public string Rename { get; set; } = string.Empty;
@@ -91,7 +93,6 @@ namespace Senjyouhara.Main.ViewModels
 
             if (otherList.Count > 0)
             {
-
                 var otherCount = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber));
                 otherCount *= 10;
 
@@ -140,16 +141,16 @@ namespace Senjyouhara.Main.ViewModels
                 Count *= 10;
                 for (int i = 0; i < subList.Count; i++)
                 {
-                    var prevItemNumber = "";
-                    var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{FileSortPattern}", subList[i - 1].FileName) : new List<string>();
+                    var prevItemNumber = string.Empty;
+                    var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", subList[i - 1].FileName) : new List<string>();
                     if (prevlist.Count > 0)
                     {
                         prevItemNumber = prevlist[0];
                     }
 
-                    var itemNumber = "";
+                    var itemNumber = string.Empty;
                     var item = subList[i];
-                    var list = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
+                    var list = PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", item.FileName);
                     if (list.Count > 0)
                     {
                         itemNumber = list[0];
@@ -166,6 +167,7 @@ namespace Senjyouhara.Main.ViewModels
                     {
                         if (name.IndexOf("#") != -1)
                         {
+                            // 根据文件数量获取前面填充0数量
                             var count = subList.Count.ToString();
                             var tmp = count.Substring(0, count.Length - (i + 1).ToString().Length);
                             var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
@@ -180,7 +182,6 @@ namespace Senjyouhara.Main.ViewModels
                                     name = name.Replace("#", $"{index.PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(select.DecimalNumber) ? string.Empty : '.' + select.DecimalNumber)}");
                                 }
                             }
-
                         }
                     } else
                     {
@@ -206,21 +207,9 @@ namespace Senjyouhara.Main.ViewModels
             //Test();
             //Test2();
             generateRuleViewModel = new(_eventAggregator);
-
-            //Application.Current.Dispatcher.BeginInvoke((() => {
-            //    var grid = new Grid();
-            //    var text = new TextBlock();
-            //    text.Text = "asdhsakdhkasdsad";
-            //    grid.Children.Add(text) ;
-            //    MessageBoxHelper.Ask("叼毛开发者抛出了一个异常，请问您要跳转百度帮开发者解决一下这个问题吗？", "系统提示", callback =>
-            //    {
-            //        if (callback == MessageBoxResult.OK)
-            //        {
-            //        }
-            //    });
-            //}));
-
-            //AddUpdateModal();
+            formData= new FormData();
+            formData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
+            AddUpdateModal();
 
         }
 
@@ -351,7 +340,7 @@ namespace Senjyouhara.Main.ViewModels
 
         public void SelectFileHandle()
         {
-            Tips = "";
+            Tips = string.Empty;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = "c:\\desktop";    //初始的文件夹
             openFileDialog.Filter = "所有文件(*.*)|*.*";//在对话框中显示的文件类型
@@ -367,7 +356,7 @@ namespace Senjyouhara.Main.ViewModels
 
         public void ClearListHandle()
         {
-            Tips = "";
+            Tips = string.Empty;
             FileNameItems.Clear();
         }
 
@@ -389,9 +378,9 @@ namespace Senjyouhara.Main.ViewModels
                     OriginFileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
                     FileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
                     FilePath = v.FullName,
-                    PreviewFileName = "",
-                    SubtitleFileName = "",
-                    SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : ""
+                    PreviewFileName = string.Empty,
+                    SubtitleFileName = string.Empty,
+                    SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : string.Empty
                 });
             });
 
@@ -407,59 +396,54 @@ namespace Senjyouhara.Main.ViewModels
             {
                 var key = groupItem.Key;
                 var groupList = groupItem.ToList();
-                groupList.Sort(MySort);
+                //groupList.Sort(MySort);
+                groupList = groupList.OrderBy(f => f.FileName, new FileComparer()).ToList();
                 sortList = sortList.Concat(groupList).ToList();
             }
 
             Debug.WriteLine(group);
 
+
             if (IsSubMergeVideo)
             {
-
                 try
                 {
-
                     var subList = sortList.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
                     var otherList = sortList.Where(v => !subList.Contains(v)).ToList();
+                    
+                    var subSortList = subList.OrderBy(f => f.FileName, new FileComparer()).ToList();
                     var newList = new List<FileNameItem>();
                     foreach (var item in otherList)
                     {
+                        // 如果为视频文件
                         if (VIDEO_SUBFIX_LIST.Contains(item.SuffixName.ToLower()))
                         {
                             newList.Add(item);
-                            var FilterSub = subList.Where(v =>
+                            // 寻找视频文件对应的字幕
+                            var FilterSub = subSortList.Where(v =>
                             {
                                 var matchesA = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
-                                var matchesB = PatternUtil.GetPatternResult(@$"{FileSortPattern}", v.FileName);
-
+                                var matchesB = PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", v.FileName);
                                 if (matchesA.Count < matchesB.Count)
                                 {
                                     (matchesA, matchesB) = (matchesB, matchesA);
                                 }
-
                                 for (int i = 0; i < matchesA.Count; i++)
                                 {
-
-                                    var aValue = matchesA[i].Replace(" ", "").Replace("[", "").Replace("]", "");
-
-                                    var bValue = "";
-
+                                    var aValue = matchesA[i];
+                                    var bValue = string.Empty;
                                     if (matchesB[i] != null)
                                     {
                                         bValue = matchesB[i];
                                     }
 
-                                    bValue = bValue.Replace(" ", "").Replace("[", "").Replace("]", "");
-
                                     Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
-
                                     if (string.IsNullOrEmpty(bValue))
                                     {
                                         break;
                                     }
                                     if (aValue.Equals(bValue)) return true;
                                 }
-
                                 return false;
                             }).ToList();
                             if (FilterSub.Count > 0)
@@ -519,7 +503,7 @@ namespace Senjyouhara.Main.ViewModels
                                 item.FilePath = item.PreviewFilePath;
                                 item.FileName = item.PreviewFileName;
                                 item.OriginFileName = item.FileName;
-                                item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : "";
+                                item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : string.Empty;
                                 item.PreviewFileName = "成功！";
                             });
                             Thread.Sleep(80);
@@ -545,46 +529,6 @@ namespace Senjyouhara.Main.ViewModels
                 }
                 Tips = "重命名成功!";
             });
-        }
-
-        private int MySort (FileNameItem a, FileNameItem b)
-        {
-            var matchesA = PatternUtil.GetPatternResult(@$"{FileSortPattern}", a.FileName);
-            var matchesB = PatternUtil.GetPatternResult(@$"{FileSortPattern}", b.FileName);
-
-
-            if (matchesA.Count < matchesB.Count)
-            {
-                (matchesA, matchesB) = (matchesB, matchesA);
-            }
-
-            for (int i = 0; i < matchesA.Count; i++)
-            {
-                var aValue = matchesA[i].Replace(" ", "").Replace("[", "").Replace("]", "");
-
-                var bValue = "";
-
-                if (!string.IsNullOrEmpty(matchesB[i]))
-                {
-                    bValue = matchesB[i];
-                }
-                else
-                {
-                    break;
-                }
-
-                bValue = bValue?.Replace(" ", "").Replace("[", "").Replace("]", "");
-                Log.Info($"aValue : {aValue}, bValue : {bValue}");
-                if (aValue == bValue) continue;
-
-                int aDouble = int.Parse((double.Parse(aValue) * 100).ToString());
-                int bDouble = int.Parse((double.Parse(bValue) * 100).ToString());
-                Log.Info($"aDouble : {aDouble}, bDouble : {bDouble}");
-
-                return aDouble - bDouble;
-            }
-
-            return -1;
         }
 
         public void OnListViewDrop(object sender, DragEventArgs e)
@@ -714,16 +658,18 @@ namespace Senjyouhara.Main.ViewModels
         {
             return Task.Run(() =>
             {
-                if(message == null)
-                {
-                    formData = new FormData();
-                } else
-                {
                     formData = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(message));
                     FileNameItemsHandle();
-                }
             });
 
+        }
+
+        public Task HandleAsync(string message, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+               
+            });
         }
     }
 

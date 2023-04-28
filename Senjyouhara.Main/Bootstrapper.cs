@@ -28,7 +28,6 @@ namespace Senjyouhara.Main
             container.Singleton<IWindowManager, WindowManager>();
             container.Singleton<IEventAggregator, EventAggregator>();
             
-            container.PerRequest<TestViewModel>();
             container.PerRequest<ShellViewModel>();
             container.PerRequest<StartLoadingViewModel>();
             container.PerRequest<MainViewModel>();
@@ -42,7 +41,8 @@ namespace Senjyouhara.Main
 #if (DEBUG)
             await DisplayRootViewForAsync<ShellViewModel>();
 #else
-            await DisplayRootViewForAsync<StartLoadingViewModel>();
+            await DisplayRootViewForAsync<ShellViewModel>();
+            //await DisplayRootViewForAsync<StartLoadingViewModel>();
 #endif
         }
 

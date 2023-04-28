@@ -34,7 +34,6 @@ namespace updater
 
         public MainWindow()
         {
-            InitializeComponent();
             var args = Environment.GetCommandLineArgs().Skip(1).ToList();
 
             if(args.Count > 0 )

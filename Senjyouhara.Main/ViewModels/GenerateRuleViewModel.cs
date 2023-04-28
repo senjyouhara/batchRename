@@ -112,8 +112,8 @@ namespace Senjyouhara.Main.ViewModels
 
         public bool IsValid()
         {
-            var list = AppendNumberList.Where(v => v.IsValid()).ToList();
-           
+            var list = AppendNumberList.Where(v => v.IsValid() == false).ToList();
+
             var result = Validator.TryValidateObject(
                 this, new ValidationContext(this, null, null), new List<ValidationResult>(), true);
 
@@ -122,10 +122,10 @@ namespace Senjyouhara.Main.ViewModels
                 return result;
             }
 
-            //if (list.Count > 0)
-            //{
-            //    return false;
-            //}
+            if (list.Count > 0)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -249,7 +249,7 @@ namespace Senjyouhara.Main.ViewModels
         
         public void OnCancel()
         {
-            _eventAggregator.PublishOnUIThreadAsync(null);
+            _eventAggregator.PublishOnUIThreadAsync("cancel");
             TryCloseAsync();
             CloseCommand?.Execute();
         }

@@ -86,8 +86,8 @@ namespace Senjyouhara.Main.ViewModels
                 }
                 
 
-                var result = await DownloadFile("https://patchwiki.biligame.com/images/re0/3/3f/h8yxnkq94sis8p5vn1i8x4lbir2fwo1.png", UpdateConfig.UpdateFilePath + @"/update.7z");
-                //var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
+                //var result = await DownloadFile("https://patchwiki.biligame.com/images/re0/3/3f/h8yxnkq94sis8p5vn1i8x4lbir2fwo1.png", UpdateConfig.UpdateFilePath + @"/update.7z");
+                var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
                 if (result)
                 {
                     Status = "unzip";
@@ -196,7 +196,7 @@ namespace Senjyouhara.Main.ViewModels
         {
             Debug.WriteLine(AppConfig.Name);
             Debug.WriteLine(AppConfig.Version);
-            //Process.Start(Directory.GetCurrentDirectory() + @$"\update.exe --name={AppConfig.Name} --version ={AppConfig.Version}");
+            Process.Start(Directory.GetCurrentDirectory() + @$"\update.exe --name={AppConfig.Name} --version ={AppConfig.Version}");
         }
 
     }
