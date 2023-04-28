@@ -8,6 +8,8 @@ mvvm框架上使用caliburn，使用Fody.PropertyChanged进行实体代码生成
 * 自定义文件序号增量
 * 自定义文件序号长度补0
 * 自定义额外序号后添加小数点
+* 选中列表项按delete删除
+* 选中拖拽
 
 
 
