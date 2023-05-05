@@ -142,7 +142,7 @@ namespace Senjyouhara.UI.Controls
         public bool IsCanMove
         {
             get => (bool)GetValue(IsCanMoveProperty);
-            internal set => SetValue(IsCanMoveProperty, value);
+            set => SetValue(IsCanMoveProperty, value);
         }
         public bool IsMaximized
         {

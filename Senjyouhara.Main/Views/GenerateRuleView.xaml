@@ -150,7 +150,6 @@
             VerticalAlignment="Bottom"
             Orientation="Horizontal">
             <Button
-                x:Name="cancel"
                 Width="100"
                 Height="35"
                 Margin="5,0"

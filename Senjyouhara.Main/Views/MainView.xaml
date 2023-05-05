@@ -123,7 +123,7 @@
                     Content="规则配置"
                     FocusVisualStyle="{x:Null}" />
 
-                    <!--<Button
+                    <Button
                     Width="80"
                     Height="36"
                     Margin="10,0,0,0"
@@ -136,7 +136,7 @@
                     Margin="10,0,0,0"
                     FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action AddUpdateModal]"
-                    Content="打开更新弹框" />-->
+                    Content="打开更新弹框" />
 
                     <CheckBox
                     x:Name="IsSubMergeVideo"

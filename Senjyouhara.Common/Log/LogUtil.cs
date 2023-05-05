@@ -1,9 +1,11 @@
 ﻿using Senjyouhara.Common.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Senjyouhara.Common.Log
 {
@@ -15,6 +17,7 @@ namespace Senjyouhara.Common.Log
         #region 字段
 
         private static LogWriter _logWriter = new LogWriter();
+        private static List<LogType> LogLevelList = new List<LogType>();
 
         #endregion
 
@@ -22,7 +25,24 @@ namespace Senjyouhara.Common.Log
         #region 静态构造函数
         static LogUtil()
         {
-            //_logWriter = new LogWriter();
+            var values = LogType.GetValues(typeof(LogType));
+            var level = LogConfig.LogLevel;
+
+            var index = 0;
+            var flag = false;
+
+            foreach (var value in values)
+            {
+                if (value.Equals(level))
+                {
+                    index = (int)value;
+                    flag = true;
+                }
+                if (flag)
+                {
+                    LogLevelList.Add((LogType) value);
+                }
+            }
         }
         #endregion
 
@@ -32,7 +52,7 @@ namespace Senjyouhara.Common.Log
         /// </summary>
         public static void Info(string log)
         {
-            _logWriter.WriteLog(LogType.Info, log);
+            Write(LogType.Info, log);
         }
         #endregion
 
@@ -42,7 +62,17 @@ namespace Senjyouhara.Common.Log
         /// </summary>
         public static void Debug(string log)
         {
-            _logWriter.WriteLog(LogType.Debug, log);
+            Write(LogType.Debug, log);
+        }
+        #endregion
+
+        #region 写警告日志
+        /// <summary>
+        /// 写调试日志
+        /// </summary>
+        public static void Warn(string log)
+        {
+            Write(LogType.Warn, log);
         }
         #endregion
 
@@ -60,7 +90,28 @@ namespace Senjyouhara.Common.Log
         /// </summary>
         public static void Error(string log)
         {
-            _logWriter.WriteLog(LogType.Error, log);
+            Write(LogType.Error, log);
+        }
+
+        public static void Write(LogType type, string log)
+        {
+            Write(type, log, null);
+        }
+        public static void Write(LogType type, string log, Exception ex)
+        {
+
+            try
+            {
+                var find = LogLevelList.First(v => v.Equals(type));
+            }
+            catch (Exception)
+            {
+
+                return;
+            }
+
+
+            _logWriter.WriteLog(type, string.IsNullOrEmpty(log) ? ex?.ToString() : log + "：" + ex?.ToString());
         }
         #endregion
 

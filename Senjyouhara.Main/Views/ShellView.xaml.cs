@@ -1,5 +1,6 @@
 ﻿using HandyControl.Controls;
 using System;
+using Senjyouhara.Main.ViewModels;
 
 namespace Senjyouhara.Main.Views
 {
@@ -11,6 +12,7 @@ namespace Senjyouhara.Main.Views
         public ShellView()
         {
             InitializeComponent();
+            this.DataContext = new ShellViewModel(null);
         }
     }
 }

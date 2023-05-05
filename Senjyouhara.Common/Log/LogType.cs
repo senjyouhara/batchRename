@@ -15,6 +15,8 @@ namespace Senjyouhara.Common.Log
 
         Info,
 
+        Warn,
+
         Error
     }
 }

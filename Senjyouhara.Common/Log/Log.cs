@@ -42,6 +42,14 @@ namespace Senjyouhara.Common.Log
             LogUtil.Info(string.Format(msg, args));
         }
 
+        public static void Warn(string msg)
+        {
+            LogUtil.Warn(msg);
+        }
+        public static void Warn(string msg, params object[] args)
+        {
+            LogUtil.Warn(string.Format(msg, args));
+        }
 
         public static void Error(string msg)
         {

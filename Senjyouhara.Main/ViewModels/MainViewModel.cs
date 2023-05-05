@@ -109,31 +109,31 @@ namespace Senjyouhara.Main.ViewModels
                             var prevIndex = (otherCount - step) / 10;
                             var count = otherList.Count.ToString();
                             var tmp = count;
-                            Debug.WriteLine(tmp);
+                            Log.Debug(tmp);
                             var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
                             var index = double.Parse((otherCount / 10.0).ToString());
                             var indexStr = index.ToString("#.#");
 
                             name = name.Replace("#", $"{indexStr.PadLeft(DigitsNumber, '0')}");
-                            Debug.WriteLine($"index: {indexStr},prevIndex: {prevIndex}, tmp: {tmp}, name: {name}, itemFile: {item.FileName}");
-                            Debug.WriteLine($"appendList: {appendList}");
+                            Log.Debug($"index: {indexStr},prevIndex: {prevIndex}, tmp: {tmp}, name: {name}, itemFile: {item.FileName}");
+                            Log.Debug($"appendList: {appendList}");
                             if (appendList?.Count > 0)
                             {
                                 var append = appendList.Where(v =>
                                 {
-                                    Debug.WriteLine($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
+                                    Log.Debug($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
                                     if (prevIndex > -1)
                                     {
                                         return (v.SerialNumber).Equals(prevIndex.ToString());
                                     }
                                     return false;
                                 }).FirstOrDefault();
-                                Debug.WriteLine($"select: {select}");
+                                Log.Debug($"select: {select}");
                                 if (append != null && append != select)
                                 {
                                     select = append;
                                     name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
-                                    Debug.WriteLine($"name: {name}");
+                                    Log.Debug($"name: {name}");
                                 } else
                                 {
                                     select = null;
@@ -200,19 +200,19 @@ namespace Senjyouhara.Main.ViewModels
                             {
                                 var append = appendList.Where(v =>
                                 {
-                                    Debug.WriteLine($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
+                                    Log.Debug($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
                                     if (prevIndex > -1)
                                     {
                                         return (v.SerialNumber).Equals(prevIndex.ToString());
                                     }
                                     return false;
                                 }).FirstOrDefault();
-                                Debug.WriteLine($"select: {select}");
+                                Log.Debug($"select: {select}");
                                 if (append != null && append != select)
                                 {
                                     select = append;
                                     name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
-                                    Debug.WriteLine($"name: {name}");
+                                    Log.Debug($"name: {name}");
                                 }
                                 else
                                 {
@@ -250,7 +250,6 @@ namespace Senjyouhara.Main.ViewModels
             formData= new FormData();
             formData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
             AddUpdateModal();
-
         }
 
         public void AddUpdateModal()
@@ -291,9 +290,8 @@ namespace Senjyouhara.Main.ViewModels
         {
             var t = DateTime.Now;
             //Debug.WriteLine(t.ToString("yyyy-MM-dd HH:mm:ss:fff"));
-            Log.Info($"添加日志~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Log.Debug($"添加日志~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             //Debug.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff"));
-
         }
 
         private void Test()
@@ -440,7 +438,7 @@ namespace Senjyouhara.Main.ViewModels
                 sortList = sortList.Concat(groupList).ToList();
             }
 
-            Debug.WriteLine(group);
+            Log.Debug(group.ToString());
 
             FileNameItems = new ObservableCollection<FileNameItem>(sortList);
             FileNameItemsHandle();
@@ -478,7 +476,7 @@ namespace Senjyouhara.Main.ViewModels
                                         bValue = matchesB[i];
                                     }
 
-                                    Debug.WriteLine($"aValue : {aValue}, bValue : {bValue}");
+                                    Log.Debug($"aValue : {aValue}, bValue : {bValue}");
                                     if (string.IsNullOrEmpty(bValue))
                                     {
                                         break;

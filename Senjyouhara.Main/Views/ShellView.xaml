@@ -40,6 +40,7 @@
             VerticalAlignment="Top"
             Background="#0074ff"
             FontSize="15"
+            IsCanMove="False"
             Foreground="#fff"
             ShowMaxBtn="False">
             <!--<ui:TitleBar.OverrideTitle>
