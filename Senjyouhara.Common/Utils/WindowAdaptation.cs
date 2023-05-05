@@ -13,6 +13,13 @@ namespace Senjyouhara.Common.Utils
     /// </summary>
     public class WindowAdaptation
     {
+
+        class WindowSize
+        {
+            public double Width { get; set; }
+            public double Height { get; set; }
+        }
+
         #region 窗口宽度比例
 
         /// <summary>
@@ -133,7 +140,7 @@ namespace Senjyouhara.Common.Utils
 
         const int DpiPercent = 96;
 
-        private static dynamic GetScreenSize(Window window)
+        private static WindowSize GetScreenSize(Window window)
         {
             var intPtr = new WindowInteropHelper(window).Handle; //获取当前窗口的句柄
             var screen = Screen.FromHandle(intPtr); //获取当前屏幕
@@ -146,7 +153,7 @@ namespace Senjyouhara.Common.Utils
                 var width = screen.WorkingArea.Width / dpiXRatio;
                 var height = screen.WorkingArea.Height / dpiYRatio;
 
-                return new { Width = width, Height = height };
+                return new WindowSize { Width = width, Height = height };
             }
         }
     }

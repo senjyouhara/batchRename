@@ -73,8 +73,6 @@ namespace Senjyouhara.Main.ViewModels
 
         private GenerateRuleViewModel generateRuleViewModel;
         private FormData formData;
-        public string FileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])|(^[0-9]+$|[0-9]+\\.[0-9]+$)";
-        public string SubFileSortPattern { get; set; } = "(\\s[0-9]+\\.[0-9]+\\s|\\s[0-9]+\\s)|(\\[[0-9]+\\.[0-9]+\\]|\\[[0-9]+\\])|(^[0-9]+$|[0-9]+\\.[0-9]+$)";
 
         [OnChangedMethod(nameof(FileNameItemsHandle))]
         public string Rename { get; set; } = string.Empty;
@@ -159,28 +157,13 @@ namespace Senjyouhara.Main.ViewModels
             // 如果有字幕文件则进入该项 为了匹配对应视频文件序号
             if(subList.Count > 0)
             {
-                //subList = subList.OrderBy(v => v.OriginFileName, new FileComparer()).ToList();
                 var Count = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : int.Parse(formData?.FirstNumber);
                 Count *= 10;
                 AppendNumber select = null;
 
                 for (int i = 0; i < subList.Count; i++)
                 {
-                    var prevItemNumber = string.Empty;
-                    var prevlist = i > 0 ? PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", subList[i - 1].FileName) : new List<string>();
-                    if (prevlist.Count > 0)
-                    {
-                        prevItemNumber = prevlist[0];
-                    }
-
-                    var itemNumber = string.Empty;
                     var item = subList[i];
-                    var list = PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", item.FileName);
-                    if (list.Count > 0)
-                    {
-                        itemNumber = list[0];
-                    }
-
                     var name = Rename;
                     var f = new FileInfo(item.FilePath);
                     if (!string.IsNullOrWhiteSpace(name))
@@ -414,7 +397,7 @@ namespace Senjyouhara.Main.ViewModels
                 FileNameItems.Add(new FileNameItem()
                 {
                     OriginFileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
-                    FileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
+                    FileName = v.Name,
                     FilePath = v.FullName,
                     PreviewFileName = string.Empty,
                     SubtitleFileName = string.Empty,
@@ -450,7 +433,7 @@ namespace Senjyouhara.Main.ViewModels
                     var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
                     var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
                     
-                    var subSortList = subList.OrderBy(f => f.FileName, new FileComparer()).ToList();
+                    var subSortList = subList.OrderBy(f => f.OriginFileName, new FileComparer()).ToList();
                     var newList = new List<FileNameItem>();
                     foreach (var item in otherList)
                     {
@@ -459,40 +442,12 @@ namespace Senjyouhara.Main.ViewModels
                         {
                             newList.Add(item);
                             // 寻找视频文件对应的字幕
-                            var FilterSub = subSortList.Where(v =>
-                            {
-                                var matchesA = PatternUtil.GetPatternResult(@$"{FileSortPattern}", item.FileName);
-                                var matchesB = PatternUtil.GetPatternResult(@$"{SubFileSortPattern}", v.FileName);
-                                if (matchesA.Count < matchesB.Count)
-                                {
-                                    (matchesA, matchesB) = (matchesB, matchesA);
-                                }
-                                for (int i = 0; i < matchesA.Count; i++)
-                                {
-                                    var aValue = matchesA[i];
-                                    var bValue = string.Empty;
-                                    if (matchesB[i] != null)
-                                    {
-                                        bValue = matchesB[i];
-                                    }
-
-                                    Log.Debug($"aValue : {aValue}, bValue : {bValue}");
-                                    if (string.IsNullOrEmpty(bValue))
-                                    {
-                                        break;
-                                    }
-                                    if (aValue.Equals(bValue)) return true;
-                                }
-                                return false;
-                            }).ToList();
-                            if (FilterSub.Count > 0)
-                            {
+                            var FilterSub = subSortList;
                                 newList = newList.Concat(FilterSub.Select(v =>
                                 {
                                     v.FileName = " └─  " + v.FileName;
                                     return v;
                                 })).ToList();
-                            }
                         }
                         else
                         {
@@ -519,7 +474,7 @@ namespace Senjyouhara.Main.ViewModels
             var lisDup = FileNameItems.GroupBy(x => x.PreviewFileName).Where(x => x.Count() > 1).Select(x => x.Key).ToList();
             if(lisDup.Count > 0)
             {
-                System.Windows.MessageBox.Show("消息提示", "文件名重命名项有重复，请核对！", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("消息提示", "文件名重命名项有重复，请检查！", MessageBoxButton.OK);
                 return;
             }
 
@@ -537,7 +492,7 @@ namespace Senjyouhara.Main.ViewModels
                             Application.Current.Dispatcher.Invoke(() => {
                                 item.FilePath = item.PreviewFilePath;
                                 item.FileName = item.PreviewFileName;
-                                item.OriginFileName = item.FileName;
+                                item.OriginFileName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(0, item.FileName.LastIndexOf(".")) : item.FileName;
                                 item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : string.Empty;
                                 item.PreviewFileName = "成功！";
                             });
