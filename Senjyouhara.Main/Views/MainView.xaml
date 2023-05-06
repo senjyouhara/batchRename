@@ -131,12 +131,12 @@
                     cal:Message.Attach="[Event Click] = [Action AddLog]"
                     Content="添加日志" />-->
 
-                <Button
+                <!--<Button
                     Height="36"
                     Margin="10,0,0,0"
                     FocusVisualStyle="{x:Null}"
                     cal:Message.Attach="[Event Click] = [Action AddUpdateModal]"
-                    Content="打开更新弹框" />
+                    Content="打开更新弹框" />-->
 
                     <CheckBox
                     x:Name="IsSubMergeVideo"

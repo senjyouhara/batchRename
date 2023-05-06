@@ -10,6 +10,7 @@ using Senjyouhara.Common.Log;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Comparer;
 using Senjyouhara.Main.Config;
+using Senjyouhara.Main.Core.Manager.Dialog;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
 using Senjyouhara.UI.Extensions;
@@ -65,7 +66,7 @@ namespace Senjyouhara.Main.ViewModels
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class MainViewModel : Screen, IHandle<FormData>, IHandle<string>
+    public class MainViewModel : Screen
     {
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
@@ -221,11 +222,13 @@ namespace Senjyouhara.Main.ViewModels
 
         private IEventAggregator _eventAggregator;
         private IWindowManager _windowManager;
+        private readonly IDialogManager dialogManager;
 
-        public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager)
+        public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IDialogManager dialogManager)
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
+            this.dialogManager = dialogManager;
             _eventAggregator.SubscribeOnUIThread(this);
             //Test();
             //Test2();
@@ -629,36 +632,16 @@ namespace Senjyouhara.Main.ViewModels
 
         public void ShowGenerateRuleModal()
         {
-            var dialog = Dialog.Show<GenerateRuleView>("DialogContainerToken");
-            if(formData!= null)
+
+            var tmp = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(formData));
+            var parm = new DialogParameters();
+            parm.Add("detail", tmp);
+            dialogManager.ShowMyDialogAsync(IoC.Get<GenerateRuleViewModel>(), parm, (r) =>
             {
-                generateRuleViewModel.FormData = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(formData));
-            }
-            dialog.DataContext = generateRuleViewModel;
-            dialog.Show();
-            generateRuleViewModel.CloseCommand = new DelegateCommand(() =>
-            {
-                dialog.Close();
-            });
-        }
-
-
-
-        public Task HandleAsync(FormData message, CancellationToken cancellationToken)
-        {
-            return Task.Run(() =>
-            {
-                    formData = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(message));
-                    FileNameItemsHandle();
-            });
-
-        }
-
-        public Task HandleAsync(string message, CancellationToken cancellationToken)
-        {
-            return Task.Run(() =>
-            {
-               
+                if(r.Result == ButtonResult.OK)
+                {
+                    formData = r.Parameters.GetValue<FormData>("detail");
+                }
             });
         }
     }

@@ -40,7 +40,6 @@
             VerticalAlignment="Top"
             Background="#0074ff"
             FontSize="15"
-            IsCanMove="False"
             Foreground="#fff"
             ShowMaxBtn="False">
             <!--<ui:TitleBar.OverrideTitle>
@@ -59,6 +58,7 @@
         </ui:TitleBar>
 
         <ContentControl Grid.Row="1" cm:View.Model="{Binding ActiveItem}" />
+        <Grid Grid.Row="1" x:Name="dialog"></Grid>
         <Grid Grid.Row="1">
             <hc:Drawer
                 Name="DrawerLeft"

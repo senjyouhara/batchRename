@@ -6,6 +6,7 @@ using System.Windows;
 using Senjyouhara.Common.Utils;
 using System.Windows.Threading;
 using Senjyouhara.Main.Views;
+using Senjyouhara.Main.Core.Manager.Dialog;
 
 namespace Senjyouhara.Main
 {
@@ -26,6 +27,7 @@ namespace Senjyouhara.Main
             container = new SimpleContainer();
 
             container.Singleton<IWindowManager, WindowManager>();
+            container.Singleton<IDialogManager, DialogManager>();
             container.Singleton<IEventAggregator, EventAggregator>();
             
             container.PerRequest<ShellViewModel>();

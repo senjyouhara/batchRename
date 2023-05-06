@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
 using Senjyouhara.Common.Utils;
+using Senjyouhara.Main.Core.Manager.Dialog;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
 using System;
@@ -195,7 +196,7 @@ namespace Senjyouhara.Main.ViewModels
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class GenerateRuleViewModel : Screen
+    public class GenerateRuleViewModel : Screen,IDialogAware
     {
         public IDelegateCommand CloseCommand { get; set; }
         public IDelegateCommand<AppendNumber> AddAppendNumberItemCommand { get; set; }
@@ -203,7 +204,12 @@ namespace Senjyouhara.Main.ViewModels
 
         public FormData FormData { get; set; }
 
+        public string Title => "规则配置";
+
         private IEventAggregator _eventAggregator;
+
+        public event Action<IDialogResult> RequestClose;
+
         public GenerateRuleViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
@@ -211,6 +217,10 @@ namespace Senjyouhara.Main.ViewModels
             FormData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
             RemoveAppendNumberItemCommand = new DelegateCommand<AppendNumber>(RemoveAppendNumberItem);
             AddAppendNumberItemCommand = new DelegateCommand<AppendNumber>(AddAppendNumberItem);
+            CloseCommand = new DelegateCommand(() =>
+            {
+                RequestClose(new DialogResult(ButtonResult.Abort));
+            });
         }
 
 
@@ -241,17 +251,36 @@ namespace Senjyouhara.Main.ViewModels
             Debug.WriteLine(FormData.Error);
             if(FormData.IsValid())
             {
-                _eventAggregator.PublishOnUIThreadAsync(FormData);
-                TryCloseAsync();
-                CloseCommand?.Execute();
+                //_eventAggregator.PublishOnUIThreadAsync(FormData);
+                RequestClose(new DialogResult(ButtonResult.OK));
             }
         }
         
         public void OnCancel()
         {
-            _eventAggregator.PublishOnUIThreadAsync("cancel");
-            TryCloseAsync();
-            CloseCommand?.Execute();
+            //_eventAggregator.PublishOnUIThreadAsync("cancel");
+            RequestClose(new DialogResult(ButtonResult.Cancel));
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public IDialogParameters OnDialogClosed(ButtonResult buttonResult)
+        {
+            var p = new DialogParameters();
+            p.Add("detail", FormData);
+            return buttonResult == ButtonResult.OK ? p : null;
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            var detail = parameters.GetValue<FormData>("detail");
+            if(detail != null)
+            {
+                FormData = detail;
+            }
         }
     }
 }
