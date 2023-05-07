@@ -94,16 +94,16 @@ namespace Senjyouhara.UI.Styles
                 var content = messageBoxContent as UIElement;
                 
                 if(messageBoxContent.GetType() == typeof(string))
-            {
-                var block = new TextBlock();
-                block.FontSize = 16;
-                block.TextWrapping = TextWrapping.Wrap;
-                block.VerticalAlignment = VerticalAlignment.Center;
-                block.HorizontalAlignment = HorizontalAlignment.Center;
-                block.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                block.Text = messageBoxContent.ToString();
-                content = block;
-            }
+                {
+                    var block = new TextBlock();
+                    block.FontSize = 16;
+                    block.TextWrapping = TextWrapping.Wrap;
+                    block.VerticalAlignment = VerticalAlignment.Center;
+                    block.HorizontalAlignment = HorizontalAlignment.Center;
+                    block.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                    block.Text = messageBoxContent.ToString();
+                    content = block;
+                }
 
                 Content.Children.Add(content);
                 this.Title = caption;
@@ -139,40 +139,40 @@ namespace Senjyouhara.UI.Styles
                     default:
                         break;
                 }
-                SetIcon(type);
+                //SetIcon(type);
                 this.resultAction = callback;
                 this.ShowDialog();
             }
 
             private void SetIcon(MessageBoxType type)
             {
-                //string iconText = "";
-                //switch (type)
-                //{
-                //    case MessageBoxType.Info:
-                //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00bcd4"));
-                //        iconText = "\xe844";
-                //        break;
-                //    case MessageBoxType.Success:
-                //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2db84d"));
-                //        iconText = "\xe68b";
-                //        break;
-                //    case MessageBoxType.Warning:
-                //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e9af20"));
-                //        iconText = "\xe61c";
-                //        break;
-                //    case MessageBoxType.Error:
-                //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#db3340"));
-                //        iconText = "\xe62b";
-                //        break;
-                //    case MessageBoxType.Ask:
-                //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8a2be2"));
-                //        iconText = "\xe60c";
-                //        break;
-                //    default:
-                //        break;
-                //}
-                //icon.Text = iconText;
+            string iconText = "";
+            switch (type)
+            {
+                case MessageBoxType.Info:
+                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00bcd4"));
+                    iconText = "&#xe77f;";
+                    break;
+                case MessageBoxType.Success:
+                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2db84d"));
+                    iconText = "&#xe77d;";
+                    break;
+                case MessageBoxType.Warning:
+                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e9af20"));
+                    iconText = "&#xe785;";
+                    break;
+                case MessageBoxType.Error:
+                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#db3340"));
+                    iconText = "&#xe77e;";
+                    break;
+                case MessageBoxType.Ask:
+                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8a2be2"));
+                    iconText = "&#xe60c;";
+                    break;
+                default:
+                    break;
             }
+            icon.Text = iconText;
+        }
     }
 }

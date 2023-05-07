@@ -26,7 +26,7 @@ namespace Senjyouhara.Main.Core.Manager.Dialog
 
         public T GetValue<T>(string key)
         {
-            return _entries.ContainsKey(key) ? (T) _entries[key] : (T) new object();
+            return (T) _entries[key];
         }
 
         public bool TryGetValue<T>(string key, out T value)

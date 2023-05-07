@@ -7,11 +7,10 @@
     Title="MessageBoxWindow"
     Width="800"
     Height="450"
-    MinWidth="360"
+    MinWidth="450"
     MinHeight="200"
     MaxWidth="400"
     MaxHeight="300"
-    BorderBrush="#37bffb"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
@@ -19,6 +18,12 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
+
+    <Window.Effect>
+        <DropShadowEffect BlurRadius="30" ShadowDepth="1" Opacity="0.5" Direction="0"></DropShadowEffect>
+    </Window.Effect>
+    
+    
 
     <WindowChrome.WindowChrome>
         <WindowChrome
@@ -42,7 +47,14 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-
+            <!--<TextBlock
+                x:Name="icon"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="pack://application:,,,/Senjyouhara.UI;component/Assets/#iconfont"
+                FontSize="30"
+                Foreground="Black" />-->
             <Grid
                 x:Name="Content"
                 Grid.Column="1"
@@ -60,31 +72,33 @@
         <StackPanel
             Grid.Row="1"
             Margin="10"
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Orientation="Horizontal">
-            <Button
+
+                <Button
+                Margin="6,0"
                 x:Name="Confirm"
                 Width="100"
                 Height="30"
-                Margin="5,0"
-                Background="#285aab"
+                Background="DarkGray"
                 BorderThickness="0"
                 Click="Confirm_Click"
                 Content="确定"
                 Foreground="#fff"
                 IsDefault="True" />
-            <Button
+                <Button
+                Margin="6,0"
                 x:Name="Cannel"
                 Width="100"
                 Height="30"
-                Margin="5,0"
-                Background="#285aab"
+                Background="DarkGray"
                 BorderThickness="0"
                 Click="Cannel_Click"
                 Content="取消"
                 Foreground="#fff"
                 IsCancel="True" />
+            
         </StackPanel>
     </Grid>
 </Window>

@@ -72,7 +72,6 @@ namespace Senjyouhara.Main.ViewModels
         public string Tips { get; set; }
         public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
 
-        private GenerateRuleViewModel generateRuleViewModel;
         private FormData formData;
 
         [OnChangedMethod(nameof(FileNameItemsHandle))]
@@ -232,7 +231,6 @@ namespace Senjyouhara.Main.ViewModels
             _eventAggregator.SubscribeOnUIThread(this);
             //Test();
             //Test2();
-            generateRuleViewModel = new(_eventAggregator);
             formData= new FormData();
             formData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
             AddUpdateModal();
@@ -624,18 +622,17 @@ namespace Senjyouhara.Main.ViewModels
 
         }
 
-        public void OnListViewPreviewDragOver(object sender, MouseEventArgs e)
-        {
-
-
-        }
-
         public void ShowGenerateRuleModal()
         {
 
             var tmp = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(formData));
             var parm = new DialogParameters();
             parm.Add("detail", tmp);
+            
+            MessageBoxHelper.Info("打开弹框", "消息提示", r =>
+            {
+
+            }, UI.Styles.MessageBoxWindow.ButtonType.OKCancel);
             dialogManager.ShowMyDialogAsync(IoC.Get<GenerateRuleViewModel>(), parm, (r) =>
             {
                 if(r.Result == ButtonResult.OK)

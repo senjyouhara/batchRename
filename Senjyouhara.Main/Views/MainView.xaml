@@ -45,7 +45,9 @@
                 x:Name="FileNameItems"
                 Margin="0"
                 Padding="0"
-                cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)];                  [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];                 [Event PreviewDragOver] = [Action OnListViewPreviewDragOver($source, $eventArgs)];                 [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
+                cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)];                  
+                    [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];
+                    [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
                 ui:ListViewLayoutManager.Enabled="True"
                 AllowDrop="True"
                 Background="Transparent"

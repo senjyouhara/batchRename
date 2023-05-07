@@ -97,19 +97,28 @@ namespace Senjyouhara.Common.Log
         {
             Write(type, log, null);
         }
+
+        private static bool FindList<T>(List<T> list, string t)
+        {
+            foreach (var item in list)
+            {
+                if (item.ToString().Equals(t))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static void Write(LogType type, string log, Exception ex)
         {
 
-            try
+            var find = FindList<LogType>(LogLevelList, type.ToString());
+            if(!find)
             {
-                var find = LogLevelList.First(v => v.Equals(type));
-            }
-            catch (Exception)
-            {
-
                 return;
             }
-
 
             _logWriter.WriteLog(type, string.IsNullOrEmpty(log) ? ex?.ToString() : log + "：" + ex?.ToString());
         }
