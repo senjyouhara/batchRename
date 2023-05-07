@@ -629,10 +629,9 @@ namespace Senjyouhara.Main.ViewModels
             var parm = new DialogParameters();
             parm.Add("detail", tmp);
             
-            MessageBoxHelper.Info("打开弹框", "消息提示", r =>
-            {
-
-            }, UI.Styles.MessageBoxWindow.ButtonType.OKCancel);
+            //MessageBoxHelper.Info("打开弹框", "消息提示", r =>
+            //{
+            //}, UI.Styles.MessageBoxWindow.ButtonType.OKCancel);
             dialogManager.ShowMyDialogAsync(IoC.Get<GenerateRuleViewModel>(), parm, (r) =>
             {
                 if(r.Result == ButtonResult.OK)

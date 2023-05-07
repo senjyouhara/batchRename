@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Senjyouhara.UI.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,9 +55,27 @@ namespace Senjyouhara.UI.Styles
                     }
                 }
                 CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, CloseEvent));
-            }
+                Loaded += MessageBoxWindow_Loaded;
+        }
 
-            private void CloseEvent(object sender, ExecutedRoutedEventArgs e)
+        protected bool m_IsDraging = false;
+        protected Point m_DragStartPoint;
+        private void MessageBoxWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var header = (Grid)Template.FindName("header", this);
+            if (header != null)
+            {
+                header.MouseMove += (s, e) =>
+                {
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        Window.GetWindow(this).DragMove();
+                    }
+                };
+            }
+        }
+
+        private void CloseEvent(object sender, ExecutedRoutedEventArgs e)
             {
                 this.Close();
                 resultAction?.Invoke(MessageBoxResult.None);
@@ -105,6 +124,15 @@ namespace Senjyouhara.UI.Styles
                     content = block;
                 }
 
+                if(content is IMessageBoxAware mba)
+                {
+                    mba.RequestClose += (r) =>
+                    {
+                        this.Close();
+                        resultAction?.Invoke(r);
+                    };
+                }
+
                 Content.Children.Add(content);
                 this.Title = caption;
                 this.currentButtonStyle = buttonType;
@@ -144,35 +172,40 @@ namespace Senjyouhara.UI.Styles
                 this.ShowDialog();
             }
 
-            private void SetIcon(MessageBoxType type)
+        private void Mba_RequestClose(MessageBoxResult obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SetIcon(MessageBoxType type)
             {
-            string iconText = "";
-            switch (type)
-            {
-                case MessageBoxType.Info:
-                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00bcd4"));
-                    iconText = "&#xe77f;";
-                    break;
-                case MessageBoxType.Success:
-                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2db84d"));
-                    iconText = "&#xe77d;";
-                    break;
-                case MessageBoxType.Warning:
-                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e9af20"));
-                    iconText = "&#xe785;";
-                    break;
-                case MessageBoxType.Error:
-                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#db3340"));
-                    iconText = "&#xe77e;";
-                    break;
-                case MessageBoxType.Ask:
-                    icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8a2be2"));
-                    iconText = "&#xe60c;";
-                    break;
-                default:
-                    break;
-            }
-            icon.Text = iconText;
+            //string iconText = "";
+            //switch (type)
+            //{
+            //    case MessageBoxType.Info:
+            //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00bcd4"));
+            //        iconText = "&#xe77f;";
+            //        break;
+            //    case MessageBoxType.Success:
+            //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2db84d"));
+            //        iconText = "&#xe77d;";
+            //        break;
+            //    case MessageBoxType.Warning:
+            //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e9af20"));
+            //        iconText = "&#xe785;";
+            //        break;
+            //    case MessageBoxType.Error:
+            //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#db3340"));
+            //        iconText = "&#xe77e;";
+            //        break;
+            //    case MessageBoxType.Ask:
+            //        icon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8a2be2"));
+            //        iconText = "&#xe60c;";
+            //        break;
+            //    default:
+            //        break;
+            //}
+            //icon.Text = iconText;
         }
     }
 }

@@ -13,33 +13,27 @@
     MaxHeight="300"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    Background="{x:Null}"
     SizeToContent="WidthAndHeight"
+    AllowsTransparency="True"
     Style="{StaticResource MessageBoxWindowStyle}"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
 
     <Window.Effect>
-        <DropShadowEffect BlurRadius="30" ShadowDepth="1" Opacity="0.5" Direction="0"></DropShadowEffect>
+        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.7"></DropShadowEffect>
     </Window.Effect>
     
+    <Window.Resources >
+    </Window.Resources>
     
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="30"
-            CornerRadius="0"
-            GlassFrameThickness="0" />
-    </WindowChrome.WindowChrome>
-
-    <Window.Resources />
-    <Grid>
+    <Grid Background="#FFF">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid
-            Margin="30"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
@@ -79,23 +73,27 @@
                 <Button
                 Margin="6,0"
                 x:Name="Confirm"
-                Width="100"
+                Width="80"
                 Height="30"
                 Background="DarkGray"
                 BorderThickness="0"
                 Click="Confirm_Click"
                 Content="确定"
                 Foreground="#fff"
+                Cursor="Hand"
+                Focusable="False"
                 IsDefault="True" />
                 <Button
                 Margin="6,0"
                 x:Name="Cannel"
-                Width="100"
+                Width="80"
                 Height="30"
                 Background="DarkGray"
                 BorderThickness="0"
                 Click="Cannel_Click"
                 Content="取消"
+                Focusable="False"
+                Cursor="Hand"
                 Foreground="#fff"
                 IsCancel="True" />
             
