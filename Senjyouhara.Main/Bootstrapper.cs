@@ -24,8 +24,10 @@ namespace Senjyouhara.Main
 
         protected override void Configure()
         {
+
             container = new SimpleContainer();
 
+            container.Singleton<SimpleContainer>();
             container.Singleton<IWindowManager, WindowManager>();
             container.Singleton<IDialogManager, DialogManager>();
             container.Singleton<IEventAggregator, EventAggregator>();

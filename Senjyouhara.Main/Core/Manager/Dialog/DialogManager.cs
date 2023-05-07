@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using HandyControl.Controls;
+using Senjyouhara.Main.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace Senjyouhara.Main.Core.Manager.Dialog
@@ -33,6 +35,7 @@ namespace Senjyouhara.Main.Core.Manager.Dialog
 
             var view = ViewLocator.LocateForModel(rootModel, null, context);
             ViewModelBinder.Bind(rootModel, view, context);
+
             MyControl DialogWarp = new MyControl();
 
             if (!(rootModel is IDialogAware dialogView))
