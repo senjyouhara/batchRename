@@ -72,8 +72,10 @@ namespace Senjyouhara.Main.Core.Manager.Dialog
                 {
                     DialogWarp.Result = new DialogResult();
                 }
-                var dialogParams = ((IDialogAware)DialogWarp.DataContext).OnDialogClosed(DialogWarp.Result.Result);
+
+                var dialogParams = ((IDialogAware)DialogWarp.DataContext).OnDialogClosing(DialogWarp.Result.Result);
                 DialogWarp.Result.Parameters = dialogParams ?? parameters;
+                ((IDialogAware)DialogWarp.DataContext).OnDialogClosed();
                 callback?.Invoke(DialogWarp.Result);
                 DialogWarp.DataContext = null;
                 DialogWarp.Content = null;

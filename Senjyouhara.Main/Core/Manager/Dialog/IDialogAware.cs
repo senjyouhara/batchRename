@@ -10,7 +10,9 @@ namespace Senjyouhara.Main.Core.Manager.Dialog
     {
         bool CanCloseDialog();
 
-        IDialogParameters OnDialogClosed(ButtonResult buttonResult);
+        IDialogParameters OnDialogClosing(ButtonResult buttonResult);
+
+        void OnDialogClosed();
 
         void OnDialogOpened(IDialogParameters parameters);
 

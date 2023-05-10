@@ -7,6 +7,7 @@ using Senjyouhara.Common.Utils;
 using System.Windows.Threading;
 using Senjyouhara.Main.Views;
 using Senjyouhara.Main.Core.Manager.Dialog;
+using System.Linq;
 
 namespace Senjyouhara.Main
 {

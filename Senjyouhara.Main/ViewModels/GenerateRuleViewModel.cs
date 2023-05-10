@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
+using Senjyouhara.Common.Log;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Core.Manager.Dialog;
 using Senjyouhara.Main.models;
@@ -24,10 +25,10 @@ namespace Senjyouhara.Main.ViewModels
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
         [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
-        public string SerialNumber { get; set; }
+        public string SerialNumber { get; set; } = string.Empty;
         [StringLength(1, ErrorMessage = "最多输入1位数")]
         [RegularExpression(@"^[1-9]$", ErrorMessage = "只能为一位数整数")]
-        public string DecimalNumber { get; set; }
+        public string DecimalNumber { get; set; } = string.Empty;
 
         public bool IsValid()
         {
@@ -52,7 +53,6 @@ namespace Senjyouhara.Main.ViewModels
                     else
                     {
                         var Name = properties[i].Name;
-                        Debug.WriteLine(Name);
                         var vc = new ValidationContext(this, null, null);
                         vc.MemberName = Name;
                         var res = new List<ValidationResult>();
@@ -60,7 +60,6 @@ namespace Senjyouhara.Main.ViewModels
                         if (res.Count > 0)
                         {
                             var arr = res.Select(r => r.ErrorMessage).ToArray();
-                            Debug.WriteLine(arr.ToString());
                             if (arr.Length > 0)
                             {
                                 return arr[0];
@@ -183,7 +182,7 @@ namespace Senjyouhara.Main.ViewModels
                 var result = Validator.TryValidateProperty(this.GetType().GetProperty(columnName).GetValue(this, null), vc, res);
                 if (res.Count > 0)
                 {
-                    var arr = res.Select(r => r.ErrorMessage).ToArray();
+                    var arr = (from r in res select r.ErrorMessage).ToArray();
                     if(arr.Length > 0)
                     {
                         return string.Join(Environment.NewLine, arr[0]);
@@ -198,9 +197,27 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class GenerateRuleViewModel : Screen,IDialogAware
     {
-        public IDelegateCommand CloseCommand { get; set; }
-        public IDelegateCommand<AppendNumber> AddAppendNumberItemCommand { get; set; }
-        public IDelegateCommand<AppendNumber> RemoveAppendNumberItemCommand { get; set; }
+        public IDelegateCommand CloseCommand { get {
+                return new DelegateCommand(() =>
+                {
+                    RequestClose(new DialogResult(ButtonResult.Abort));
+                });
+            } }
+        public IDelegateCommand<AppendNumber> AddAppendNumberItemCommand
+        {
+            get
+            {
+                return new DelegateCommand<AppendNumber>(AddAppendNumberItem);
+            }
+        }
+
+        public IDelegateCommand<AppendNumber> RemoveAppendNumberItemCommand
+        {
+            get
+            {
+                return new DelegateCommand<AppendNumber>(RemoveAppendNumberItem);
+            }
+        }
 
         public FormData FormData { get; set; }
 
@@ -214,13 +231,7 @@ namespace Senjyouhara.Main.ViewModels
         {
             _eventAggregator = eventAggregator;
             FormData = new();
-            FormData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
-            RemoveAppendNumberItemCommand = new DelegateCommand<AppendNumber>(RemoveAppendNumberItem);
-            AddAppendNumberItemCommand = new DelegateCommand<AppendNumber>(AddAppendNumberItem);
-            CloseCommand = new DelegateCommand(() =>
-            {
-                RequestClose(new DialogResult(ButtonResult.Abort));
-            });
+            FormData.AppendNumberList.Add(new AppendNumber());
         }
 
 
@@ -230,7 +241,7 @@ namespace Senjyouhara.Main.ViewModels
             var index = FormData.AppendNumberList.IndexOf(appendNumber);
             if(index >= 0)
             {
-                FormData.AppendNumberList.Insert(index+1, new AppendNumber { DecimalNumber = "", SerialNumber = "" });
+                FormData.AppendNumberList.Insert(index+1, new ());
 
             }
         }
@@ -240,7 +251,7 @@ namespace Senjyouhara.Main.ViewModels
             if (FormData.AppendNumberList.Count <= 1)
             {
                 FormData.AppendNumberList.Clear();
-                FormData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
+                FormData.AppendNumberList.Add(new ());
             } else
             {
                 FormData.AppendNumberList.Remove(appendNumber);
@@ -248,30 +259,21 @@ namespace Senjyouhara.Main.ViewModels
         }
         public void OnOk()
         {
-            Debug.WriteLine(FormData.Error);
+            Log.Debug(FormData.Error);
             if(FormData.IsValid())
             {
-                //_eventAggregator.PublishOnUIThreadAsync(FormData);
                 RequestClose(new DialogResult(ButtonResult.OK));
             }
         }
         
         public void OnCancel()
         {
-            //_eventAggregator.PublishOnUIThreadAsync("cancel");
             RequestClose(new DialogResult(ButtonResult.Cancel));
         }
 
         public bool CanCloseDialog()
         {
             return true;
-        }
-
-        public IDialogParameters OnDialogClosed(ButtonResult buttonResult)
-        {
-            var p = new DialogParameters();
-            p.Add("detail", FormData);
-            return buttonResult == ButtonResult.OK ? p : null;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
@@ -281,6 +283,17 @@ namespace Senjyouhara.Main.ViewModels
             {
                 FormData = detail;
             }
+        }
+
+        public IDialogParameters OnDialogClosing(ButtonResult buttonResult)
+        {
+            var p = new DialogParameters();
+            p.Add("detail", FormData);
+            return buttonResult == ButtonResult.OK ? p : null;
+        }
+
+        public void OnDialogClosed()
+        {
         }
     }
 }
