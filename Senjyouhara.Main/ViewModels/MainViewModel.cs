@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -232,7 +233,7 @@ namespace Senjyouhara.Main.ViewModels
             //Test();
             //Test2();
             formData= new FormData();
-            formData.AppendNumberList.Add(new AppendNumber { DecimalNumber = "", SerialNumber = "" });
+            formData.AppendNumberList.Add(new ());
             AddUpdateModal();
         }
 
