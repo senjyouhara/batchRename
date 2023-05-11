@@ -1,35 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Senjyouhara.Common.Utils
 {
 
-    public interface IDelegateCommand: ICommand
-    {
-        bool CanExecute();
-
-        void Execute();
-
-    }
-    public interface IDelegateCommand<T> : ICommand
+    public abstract class DelegateCommandBase : ICommand
     {
 
+        public event EventHandler CanExecuteChanged;
+        private SynchronizationContext _synchronizationContext;
+
+        protected abstract void Execute(object parameter);
+        protected abstract bool CanExecute(object parameter);
+
+        protected DelegateCommandBase()
+        {
+            _synchronizationContext = SynchronizationContext.Current;
+        }
+
+        bool ICommand.CanExecute(object parameter)
+        {
+            return CanExecute(parameter);
+        }
+
+        void ICommand.Execute(object parameter)
+        {
+            Execute(parameter);
+        }
+
+        protected virtual void OnCanExecuteChanged()
+        {
+            var handler = CanExecuteChanged;
+            if (handler != null)
+            {
+                if (_synchronizationContext != null && _synchronizationContext != SynchronizationContext.Current)
+                    _synchronizationContext.Post((o) => handler.Invoke(this, EventArgs.Empty), null);
+                else
+                    handler.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    public class DelegateCommand: IDelegateCommand
+    public class DelegateCommand: DelegateCommandBase
     {
         private Action execute;                     //定义成员
-
         private Func<bool> canExecute;//Predicate：述语//定义成员
 
-        private event EventHandler CanExecuteChangedInternal;//事件
-
         public DelegateCommand(Action execute)       //定义Action，CanExecute
-           : this(execute, DefaultCanExecute)
+           : this(execute, ()=>true)
         {
         }
 
@@ -49,39 +74,14 @@ namespace Senjyouhara.Common.Utils
             this.canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged        //CanExecuteChanged事件处理方法
-        {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-                this.CanExecuteChangedInternal += value;
-            }
-
-            remove
-            {
-                CommandManager.RequerySuggested -= value;
-                this.CanExecuteChangedInternal -= value;
-            }
-        }
-
         public bool CanExecute()            //CanExecute方法
         {
-            return this.canExecute != null && this.canExecute();
+            return canExecute != null && canExecute();
         }
 
         public void Execute()              //Execute方法
         {
-            this.execute();
-        }
-
-        public void OnCanExecuteChanged()                //OnCanExecute方法
-        {
-            EventHandler handler = this.CanExecuteChangedInternal;
-            if (handler != null)
-            {
-                //DispatcherHelper.BeginInvokeOnUIThread(() => handler.Invoke(this, EventArgs.Empty));
-                handler.Invoke(this, EventArgs.Empty);
-            }
+            execute();
         }
 
         public void Destroy()                          //销毁方法
@@ -90,33 +90,25 @@ namespace Senjyouhara.Common.Utils
             this.execute = () => { return; };
         }
 
-        private static bool DefaultCanExecute()  //DefaultCanExecute方法
+        protected override void Execute(object parameter)
         {
-            return true;
+            Execute();
         }
 
-        public bool CanExecute(object parameter)
+        protected override bool CanExecute(object parameter)
         {
-            return this.canExecute != null && this.canExecute();
-
-        }
-
-        public void Execute(object parameter)
-        {
-            this.execute();
+            return CanExecute();
         }
     }
 
-    public class DelegateCommand<T> : IDelegateCommand<T>
+    public class DelegateCommand<T> : DelegateCommandBase
     {
         private Action<T> execute;                     //定义成员
 
         private Func<T, bool> canExecute;//Predicate：述语//定义成员
 
-        private event EventHandler CanExecuteChangedInternal;//事件
-
         public DelegateCommand(Action<T> execute)       //定义Action，CanExecute
-           : this(execute, DefaultCanExecute)
+           : this(execute, t => true)
         {
         }
 
@@ -136,50 +128,30 @@ namespace Senjyouhara.Common.Utils
             this.canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged        //CanExecuteChanged事件处理方法
-        {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-                this.CanExecuteChangedInternal += value;
-            }
-
-            remove
-            {
-                CommandManager.RequerySuggested -= value;
-                this.CanExecuteChangedInternal -= value;
-            }
-        }
-
-        public void OnCanExecuteChanged()                //OnCanExecute方法
-        {
-            EventHandler handler = this.CanExecuteChangedInternal;
-            if (handler != null)
-            {
-                //DispatcherHelper.BeginInvokeOnUIThread(() => handler.Invoke(this, EventArgs.Empty));
-                handler.Invoke(this, EventArgs.Empty);
-            }
-        }
-
         public void Destroy()                          //销毁方法
         {
             this.canExecute = _ => false;
             this.execute = _ => { return; };
         }
 
-        private static bool DefaultCanExecute(T parameter)  //DefaultCanExecute方法
+        public bool CanExecute(T parameter)
         {
-            return true;
+            return canExecute != null && canExecute(parameter);
         }
 
-        public bool CanExecute(object parameter)
+        public void Execute(T parameter)
         {
-            return this.canExecute != null && this.canExecute((T) parameter);
+            execute(parameter);
         }
 
-        public void Execute(object parameter)
+        protected override void Execute(object parameter)
         {
-            this.execute((T)parameter);
+            execute((T)parameter);
+        }
+
+        protected override bool CanExecute(object parameter)
+        {
+            return canExecute != null && canExecute((T)parameter);
         }
     }
 }
