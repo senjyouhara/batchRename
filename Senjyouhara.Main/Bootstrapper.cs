@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using Senjyouhara.Main.Views;
 using Senjyouhara.Main.Core.Manager.Dialog;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Senjyouhara.Main
 {
@@ -21,24 +22,19 @@ namespace Senjyouhara.Main
             Initialize();
         }
 
-
-
         protected override void Configure()
         {
-
             container = new SimpleContainer();
-
-            container.Singleton<SimpleContainer>();
             container.Singleton<IWindowManager, WindowManager>();
             container.Singleton<IDialogManager, DialogManager>();
             container.Singleton<IEventAggregator, EventAggregator>();
-            
+
             container.PerRequest<ShellViewModel>();
             container.PerRequest<StartLoadingViewModel>();
             container.PerRequest<MainViewModel>();
             container.PerRequest<UpdateViewModel>();
             container.PerRequest<GenerateRuleViewModel>();
-            
+            container.Singleton<SimpleContainer>();
         }
 
         protected override async void OnStartup(object sender, StartupEventArgs e)

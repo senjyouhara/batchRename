@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
+using Senjyouhara.Common.Base;
 using Senjyouhara.Common.Models;
 using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Config;
@@ -35,7 +36,7 @@ namespace Senjyouhara.Main.ViewModels
         public int DownloadFileNumber { get; set; } = 1;
         public string Tips { get; set; } = "文件下载失败！";
 
-        public IDelegateCommand CloseCommand { get; set; }
+        public DelegateCommand CloseCommand { get; set; }
 
         public Visibility CancelVisibility { get; set; } = UpdateConfig.IsForceUpdate ? Visibility.Collapsed : Visibility.Visible;
 
@@ -84,7 +85,7 @@ namespace Senjyouhara.Main.ViewModels
                 {
                     Directory.CreateDirectory(UpdateConfig.UpdateFilePath);
                 }
-                
+
                 //var result = await DownloadFile("https://patchwiki.biligame.com/images/re0/3/3f/h8yxnkq94sis8p5vn1i8x4lbir2fwo1.png", UpdateConfig.UpdateFilePath + @"/update.7z");
                 var result = await DownloadFile(_updateInfo.Path, UpdateConfig.UpdateFilePath + @"/update.7z");
                 if (result)
@@ -123,71 +124,124 @@ namespace Senjyouhara.Main.ViewModels
 
         public async Task<bool> DownloadFile(string url, string localpath)
         {
-            try
+
+
+            return await Task.Run(async () =>
             {
-                WebResponse response = null;
-                //获取远程文件
-                WebRequest request = WebRequest.Create(url);
-                response = request.GetResponse();
-                if (response == null) return false;
+                var h = new HttpClientService();
 
-
-                double size = response.ContentLength;
-                FileTotalSize = Math.Round(double.Parse(response.ContentLength.ToString()) / 1024 / 1024, 2);
-                //读远程文件的大小
-                //下载远程文件
-                return await Task.Run(() =>
+                try
                 {
-                    Stream netStream = response.GetResponseStream();
-                    Stream fileStream = new FileStream(localpath, FileMode.Create);
-                    byte[] read = new byte[1024];
-                    double progressBarValue = 0;
-                    int realReadLen = netStream.Read(read, 0, read.Length);
-              
-                    Application.Current.Dispatcher.BeginInvoke(() => {
+                    await Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
                         taskBarInfo.ProgressState = TaskbarItemProgressState.Normal;
                         TabbarProcess();
                     });
-                    while (realReadLen > 0)
+                    var result = await h.DownloadExecuteAsync(new BaseRequest() { Url = url }, localpath, (p, cancelToken) =>
                     {
-                        fileStream.Write(read, 0, realReadLen);
-                        progressBarValue += realReadLen;
-                        double percent = (Math.Round(progressBarValue / size, 6) * 100);
+                        Debug.WriteLine(p.ToString());
                         if (Application.Current == null)
                         {
                             CloseModal();
-                            break;
-                        } else
+                            cancelToken.Invoke();
+                        }
+                        else
                         {
                             Application.Current.Dispatcher.BeginInvoke(() =>
                             {
-                                Percent = percent;
-                                DownloadFileSize = Math.Round(progressBarValue / 1024 / 1024, 2);
+                                Percent = p.Percent;
+                                DownloadFileSize = Math.Round(p.Loading / 1024 / 1024, 2);
                             });
                         }
-
-                        Thread.Sleep(10);
-                        realReadLen = netStream.Read(read, 0, read.Length);
-                    }
-
-
-                    Application.Current.Dispatcher.Invoke(() => {
-                        taskBarInfo.ProgressState = TaskbarItemProgressState.None;
-                        FlashWindow.Flash(Application.Current.MainWindow, 0);
                     });
+                    if (result != null && (result.Success))
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            taskBarInfo.ProgressState = TaskbarItemProgressState.None;
+                            FlashWindow.Flash(Application.Current.MainWindow, 0);
+                        });
 
-                    netStream.Close();
-                    fileStream.Close();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
 
-                    return true;
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("NetError on DownloadFile");
-            }
+                }
 
-            return false;
+                return false;
+            });
+
+
+            //    try
+            //    {
+            //        WebResponse response = null;
+            //    //获取远程文件
+            //    WebRequest request = WebRequest.Create(url);
+            //    response = request.GetResponse();
+            //    if (response == null) return false;
+
+
+            //    double size = response.ContentLength;
+            //    FileTotalSize = Math.Round(double.Parse(response.ContentLength.ToString()) / 1024 / 1024, 2);
+            //    //读远程文件的大小
+            //    //下载远程文件
+            //    return await Task.Run(() =>
+            //    {
+            //        Stream netStream = response.GetResponseStream();
+            //        Stream fileStream = new FileStream(localpath, FileMode.Create);
+            //        byte[] read = new byte[1024];
+            //        double progressBarValue = 0;
+            //        int realReadLen = netStream.Read(read, 0, read.Length);
+
+            //        Application.Current.Dispatcher.BeginInvoke(() =>
+            //        {
+            //            taskBarInfo.ProgressState = TaskbarItemProgressState.Normal;
+            //            TabbarProcess();
+            //        });
+            //        while (realReadLen > 0)
+            //        {
+            //            fileStream.Write(read, 0, realReadLen);
+            //            progressBarValue += realReadLen;
+            //            double percent = (Math.Round(progressBarValue / size, 6) * 100);
+            //            if (Application.Current == null)
+            //            {
+            //                CloseModal();
+            //                break;
+            //            }
+            //            else
+            //            {
+            //                Application.Current.Dispatcher.BeginInvoke(() =>
+            //                {
+            //                    Percent = percent;
+            //                    DownloadFileSize = Math.Round(progressBarValue / 1024 / 1024, 2);
+            //                });
+            //            }
+
+            //            Thread.Sleep(10);
+            //            realReadLen = netStream.Read(read, 0, read.Length);
+            //        }
+
+
+            //        Application.Current.Dispatcher.Invoke(() =>
+            //        {
+            //            taskBarInfo.ProgressState = TaskbarItemProgressState.None;
+            //            FlashWindow.Flash(Application.Current.MainWindow, 0);
+            //        });
+
+            //        netStream.Close();
+            //        fileStream.Close();
+
+            //        return true;
+            //    });
+            //}
+            //    catch (Exception ex)
+            //    {
+            //        Debug.WriteLine("NetError on DownloadFile");
+            //    }
+
+            //    return false;
         }
 
 

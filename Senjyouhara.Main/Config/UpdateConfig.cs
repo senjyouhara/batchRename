@@ -30,8 +30,8 @@ namespace Senjyouhara.Main.Config
         {
             return await Task.Run(() => {
                 Thread.Sleep(1000);
-                UpdateConfig.UpdateInfo = new UpdateDataEntity() { Path = "", Version = "1.1.0.0"};
-                return UpdateConfig.UpdateInfo;
+                UpdateInfo = new UpdateDataEntity() { Path = "", Version = "1.1.0.0"};
+                return UpdateInfo;
             });
         }
 

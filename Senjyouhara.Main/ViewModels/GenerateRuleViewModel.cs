@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
+using Senjyouhara.Common.Base;
 using Senjyouhara.Common.Log;
-using Senjyouhara.Common.Utils;
 using Senjyouhara.Main.Core.Manager.Dialog;
 using Senjyouhara.Main.models;
 using Senjyouhara.Main.Views;
@@ -197,13 +197,13 @@ namespace Senjyouhara.Main.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class GenerateRuleViewModel : Screen,IDialogAware
     {
-        public IDelegateCommand CloseCommand { get {
+        public DelegateCommand CloseCommand { get {
                 return new DelegateCommand(() =>
                 {
                     RequestClose(new DialogResult(ButtonResult.Abort));
                 });
             } }
-        public IDelegateCommand<AppendNumber> AddAppendNumberItemCommand
+        public DelegateCommand<AppendNumber> AddAppendNumberItemCommand
         {
             get
             {
@@ -211,7 +211,7 @@ namespace Senjyouhara.Main.ViewModels
             }
         }
 
-        public IDelegateCommand<AppendNumber> RemoveAppendNumberItemCommand
+        public DelegateCommand<AppendNumber> RemoveAppendNumberItemCommand
         {
             get
             {

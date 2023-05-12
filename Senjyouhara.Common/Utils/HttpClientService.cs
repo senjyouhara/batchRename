@@ -3,20 +3,55 @@ using Senjyouhara.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace Senjyouhara.Common.Utils
 {
+
+    public class Progress
+    {
+        public double Total { get; set; }
+
+        public double Loading { get; set; }
+
+        public double Speed { get; set; }
+        public double Percent { get; set; }
+
+        public override string ToString()
+        {
+            var s = new StringBuilder();
+            s.Append("Progress { " + nameof(Total) + " ")
+                .Append(Total + " ,")
+                .Append(nameof(Loading) + " ")
+                .Append(Loading + " ,")
+                .Append(nameof(Speed) + " ")
+                .Append(Speed + " ,")
+                .Append(nameof(Percent) + " ")
+                .Append(Percent + " }");
+            return s.ToString();
+        }
+    }
+
+    public delegate void CancelToken();
+
     public class HttpClientService
     {
         private string domain = "http://localhost:8080/";
         private RestClient client;
         private HttpClientOptions clientOptions = new HttpClientOptions();
+
+        private CancelToken cancelToken = () => {
+            throw new Exception("中断操作");
+        };
 
         public HttpClientService()
         {
@@ -134,28 +169,83 @@ namespace Senjyouhara.Common.Utils
             return ExecuteAsync<T>(baseRequest);
         }
 
-        public async Task<ResBase<T>> DownloadExecuteAsync<T>(BaseRequest baseRequest, string savePath)
+        public async Task<ResBase<object>> DownloadExecuteAsync(BaseRequest baseRequest, string savePath, Action<Progress, CancelToken> cb)
         {
-            var request = new RestRequest(baseRequest.Url, baseRequest.Method);
-            request.AddHeader("Cache-Control", "no-cache");
-            request.AddHeader("Content-Type", "application/json");
+            return  await Task.Run(() => {
+                var request = new RestRequest(baseRequest.Url, baseRequest.Method);
+                request.AddHeader("Cache-Control", "no-cache");
+                request.AddHeader("Content-Type", "application/json");
+                ParamsHandler(request, baseRequest);
 
-            ParamsHandler(request, baseRequest);
+                try
+                {
+                    request.AdvancedResponseWriter = (input, response) => ReadAsBytes(input, response, savePath, cb);
+                    client.DownloadData(request, true);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return null;
+                }
 
-            byte[] bytes = client.DownloadData(request);
-            var res = new ResBase<T>();
-            res.Msg = "下载成功";
+                var res = new ResBase<object>();
+                res.Success = true;
+                res.Msg = "下载成功";
+                return res;
+            });
+        }
 
-            try
+        private void ReadAsBytes(Stream input,IHttpResponse response, string savePath, Action<Progress, CancelToken> cb)
+        {
+            double size = response.ContentLength;
+            var buffer = new byte[16 * 1024];
+            using (var ms = new MemoryStream())
             {
-                File.WriteAllBytes(savePath, bytes);
-            }
-            catch (Exception ex)
-            {
-                res.Msg = ex.Message;
-                res.Success = false;
-            }
-            return res;
+                int read;
+                try
+                {
+                    double progressBarValue = 0;
+                    double speed = 0;
+                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, read);
+                        progressBarValue += read;
+                        double percent = (Math.Round(progressBarValue / size, 6) * 100);
+                        double DownloadFileSize = Math.Round(progressBarValue / 1024 / 1024, 2);
+                        speed = read;
+                        Thread.Sleep(10);
+                        var p = new Progress();
+                        p.Total = size;
+                        p.Percent = percent;
+                        p.Speed = speed;
+                        p.Loading = progressBarValue;
+                        cb?.Invoke(p, cancelToken);
+                    }
+                    File.WriteAllBytes(savePath, ms.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    throw ex;
+                }
+            };
+
+
+
+            //using (var ms = new MemoryStream())
+            //{
+            //    int read;
+            //    try
+            //    {
+            //        while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+            //        { ms.Write(buffer, 0, read); }
+
+            //        return ms.ToArray();
+            //    }
+            //    catch (WebException ex)
+            //    { return Encoding.UTF8.GetBytes(ex.Message); }
+            //};
+
         }
 
 

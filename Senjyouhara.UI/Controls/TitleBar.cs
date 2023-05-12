@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Windows.Media;
+using Senjyouhara.Common.Base;
 
 namespace Senjyouhara.UI.Controls
 {
@@ -198,7 +199,7 @@ namespace Senjyouhara.UI.Controls
 
         public TitleBar()
         {           
-            SetValue(ButtonCommandProperty, new RelayCommand<string>(TemplateButton_OnClick));
+            SetValue(ButtonCommandProperty, new DelegateCommand<string>(TemplateButton_OnClick));
             Loaded += TitleBar_loaded;
         }
 

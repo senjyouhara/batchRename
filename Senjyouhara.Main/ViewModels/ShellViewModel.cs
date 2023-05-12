@@ -1,5 +1,7 @@
 ﻿using Caliburn.Micro;
 using PropertyChanged;
+using Senjyouhara.Common.Base;
+using Senjyouhara.Common.Log;
 using Senjyouhara.Main.Config;
 using System.Threading.Tasks;
 
@@ -9,7 +11,7 @@ namespace Senjyouhara.Main.ViewModels
     public class ShellViewModel : Conductor<IScreen>
     {
 
-        public string Title { get; set; } = "";
+        public string Title { get; set; }
 
         private IEventAggregator _eventAggregator;
         public ShellViewModel(IWindowManager windowManager)

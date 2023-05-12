@@ -18,7 +18,8 @@ namespace Senjyouhara.Main.Config
             AssemblyName thisAssemName = assembly.GetName();
             Name = thisAssemName.Name;
             Version ver = thisAssemName.Version;
-            Version = $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+            //Version = $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+            Version = $"{ver.Major}.{ver.Minor}.{ver.Build}";
         }
     }
 }

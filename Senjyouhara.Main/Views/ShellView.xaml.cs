@@ -12,7 +12,6 @@ namespace Senjyouhara.Main.Views
         public ShellView()
         {
             InitializeComponent();
-            this.DataContext = new ShellViewModel(null);
         }
     }
 }

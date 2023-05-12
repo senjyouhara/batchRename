@@ -1,4 +1,5 @@
-﻿using Senjyouhara.Common.Utils;
+﻿using Senjyouhara.Common.Base;
+using Senjyouhara.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

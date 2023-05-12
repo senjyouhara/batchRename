@@ -36,36 +36,6 @@ using System.Xml.Linq;
 
 namespace Senjyouhara.Main.ViewModels
 {
-    class Person
-    {
-        public string UserName { get; set; } = "的数据ad酒店服务IQ恶化";
-        public int Age { get; set; } = 176876546;
-        public DateTime Date { get; set; } = DateTime.Now;
-        public bool Bool { get; set; } = true;
-    }
-
-    class Dewater
-    {
-        public int ApplicationNo { get; set; }
-        public int CaseNumber { get; set; }
-        public int SerialNumber { get; set; }
-        public string ToCollectParts { get; set; }
-        public string ClinicalDiagnosis { get; set; }
-        public string InspectOffice { get; set; }
-        public string WaxBlockNo { get; set; }
-        public string TaskSource { get; set; }
-        public string BasedSite { get; set; }
-        public string WoodBlocks { get; set; }
-        public string SpecialHandl { get; set; }
-        public string Node { get; set; }
-        public string NumberSlices { get; set; }
-        public string Recorder { get; set; }
-        public DateTime BasedOnTime { get; set; }
-        public string Level { get; set; }
-        public string Content { get; set; }
-        public List<string> List { get; set; }
-    }
-
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen
     {
@@ -230,17 +200,13 @@ namespace Senjyouhara.Main.ViewModels
             _windowManager = windowManager;
             this.dialogManager = dialogManager;
             _eventAggregator.SubscribeOnUIThread(this);
-            //Test();
-            //Test2();
-            formData= new FormData();
+            formData = new FormData();
             formData.AppendNumberList.Add(new ());
             AddUpdateModal();
         }
 
         public void AddUpdateModal()
         {
-
-
             Task.Run(async () =>
             {
                 if (UpdateConfig.IsEnableUpdate)
@@ -258,19 +224,6 @@ namespace Senjyouhara.Main.ViewModels
             });
         }
 
-        private void Test2()
-        {
-                Task.Run(() =>
-                {
-                    Parallel.For(0, 10, (i) =>
-                    {
-                        Log.Info($"测试任务  序号 {i + 1}");
-                    });
-
-                });
-            Log.Info($"测试任务 执行完成");
-        }
-
         public void AddLog()
         {
             var t = DateTime.Now;
@@ -278,88 +231,6 @@ namespace Senjyouhara.Main.ViewModels
             Log.Debug($"添加日志~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             //Debug.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff"));
         }
-
-        private void Test()
-        {
-            var dict = new Dictionary<string, object>();
-            dict["a"] = "asdas";
-            dict["b"] = "当前为多无群";
-            dict["UserName"] = 123123;
-            dict["c"] = 123123;
-            dict["d"] = true;
-            dict["f"] = "duwq4234328432";
-            dict["g"] = new string[] { "duwq4234328432" };
-            dict["h"] = new int[] { 12312312, 321321321, 432432 };
-            dict["i"] = DateTime.Now;
-            dict["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
-            var dict2 = new Dictionary<string, object>();
-            dict2["a"] = "asdas";
-            dict2["b"] = "当前为多无群";
-            dict2["UserName"] = 123123;
-            dict2["c"] = 123123;
-            dict2["d"] = true;
-            dict2["f"] = "duwq4234328432";
-            dict2["g"] = new string[] { "duwq4234328432" };
-            dict2["h"] = new int[] { 12312312, 321321321, 432432 };
-            dict2["i"] = DateTime.Now;
-            dict2["j"] = new DateTime(2008, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc);
-            dict2["i"] = dict;
-            var str = JSONUtil.ToJSON(dict2);
-            Log.Debug(str);
-            //Log.Error("", new BusinessRunTimeException("自定义异常22"));
-
-            //throw new BusinessRunTimeException("自定义异常");
-
-
-            //var jsonStr = @"[{
-            //    ""applicationNo"": 1005219342,
-            //    ""caseNumber"": 202215682,
-            //    ""serialNumber"": 1,
-            //    ""toCollectParts"": ""食管"",
-            //    ""clinicalDiagnosis"": ""食管癌肿物"",
-            //    ""inspectOffice"": ""头颈部"",
-            //    ""waxBlockNo"": ""202215682-1"",
-            //    ""taskSource"": ""常规"",
-            //    ""basedSite"": ""肿物"",
-            //    ""woodBlocks"": ""1"",
-            //    ""specialHandl"": ""无"",
-            //    ""node"": """",
-            //    ""numberSlices"": ""修淑岩"",
-            //    ""basedOnTime"": ""2022-05-18 10:42:00"",
-            //    ""recorder"": ""付红蕊"",
-            //    ""level"": ""优"",        
-            //    ""list"": [""常规"", ""肿物""],
-            //    ""content"": """"
-            //},{
-            //    ""applicationNo"": 1005219342,
-            //    ""caseNumber"": 202215682,
-            //    ""serialNumber"": 1,
-            //    ""toCollectParts"": ""食管"",
-            //    ""clinicalDiagnosis"": ""食管癌肿物"",
-            //    ""inspectOffice"": ""头颈部"",
-            //    ""waxBlockNo"": ""202215682-2"",
-            //    ""taskSource"": ""常规"",
-            //    ""basedSite"": ""肿物"",
-            //    ""woodBlocks"": ""1"",
-            //    ""specialHandl"": ""无"",
-            //    ""node"": """",
-            //    ""numberSlices"": ""修淑岩"",
-            //    ""basedOnTime"": ""2022-05-18 10:42:00"",
-            //    ""recorder"": ""付红蕊"",
-            //    ""level"": ""优"",
-            //    ""content"": """"
-            //},]";
-            //try
-            //{
-            //    var data = JSONUtil.ToData<List<Dewater>>(jsonStr);
-            //    Debug.WriteLine(data);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Error("", ex);
-            //}
-        }
-
 
         public void SelectFileHandle()
         {

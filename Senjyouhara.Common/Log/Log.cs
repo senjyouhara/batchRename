@@ -15,7 +15,11 @@ namespace Senjyouhara.Common.Log
         // 需要在App.xaml.cs 定义一些异常捕获事件
         static Log()
         {
+#if (DEBUG)
             LogConfig.IsWriteFile = true;
+#else
+            LogConfig.IsWriteFile = false;
+#endif
             Application.Current.Exit += App_Exit;
         }
 

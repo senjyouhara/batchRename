@@ -30,4 +30,8 @@
     <None Remove="Styles\Icons\**" />
     <Page Remove="Styles\Icons\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj" />
+  </ItemGroup>
 </Project>

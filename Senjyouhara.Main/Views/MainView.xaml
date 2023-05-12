@@ -12,7 +12,6 @@
     xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    hc:Dialog.Token="DialogContainerToken"
     mc:Ignorable="d">
 
     <hc:DialogContainer>

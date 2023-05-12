@@ -22,22 +22,21 @@ namespace Senjyouhara.Main.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(DataContext);
-            //video.Source = new Uri("pack://application:,,,/Resources/loading.mp4");
+            //var loadingVideo = Properties.Resources.loadingVideo;
+            //video.Source = new Uri(@"pack://application:,,,/Resources/loading.mp4", UriKind.Absolute);
             //video.Play();
-            
-            //img.Source = new BitmapImage(new Uri("pack://application:,,,/Senjyouhara.Main;component/Resources/loading.png")); 
-            //new Uri("pack://application:,,,/Resources/loading.png");
+
+            //img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Resources/loading.png", UriKind.Absolute));
         }
 
         public void MediaLoaded(object sender, RoutedEventArgs e)
         {
             double lastTime = 2 * 1000;
-            System.Timers.Timer t = new System.Timers.Timer(lastTime);//实例化Timer类，设置间隔时间为200毫秒；   
+            Timer t = new Timer(lastTime);//实例化Timer类，设置间隔时间为200毫秒；   
             t.AutoReset = false;//设置是执行一次（false）还是一直执行(true)；    
             t.Enabled = true;  //是否执行System.Timers.Timer.Elapsed事件；  ,调用start()方法也可以将其设置为true
 
-            t.Elapsed += new System.Timers.ElapsedEventHandler((o, e) =>
+            t.Elapsed += new ElapsedEventHandler((o, e) =>
             {
                 App.Current.Dispatcher.Invoke((() =>
                 {

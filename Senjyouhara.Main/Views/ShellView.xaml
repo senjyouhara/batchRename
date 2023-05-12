@@ -23,16 +23,18 @@
         <TaskbarItemInfo x:Name="TaskBarInfo" />
     </Window.TaskbarItemInfo>
 
-    <Window.Resources />
+    <Window.Resources>
+        
+    </Window.Resources>
 
-    <Grid Background="#ffffff">
+    <Border>
+        <Grid Background="#FFF" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-
-        <ui:TitleBar
+            <ui:TitleBar
             Title="{Binding Title}"
             Icon="/icon.png"
             Height="35"
@@ -42,44 +44,43 @@
             FontSize="15"
             Foreground="#fff"
             ShowMaxBtn="False">
-            <!--<ui:TitleBar.OverrideTitle>
+                <!--<ui:TitleBar.OverrideTitle>
                 <TextBlock Padding="16 0"  Text="12345676"></TextBlock>
             </ui:TitleBar.OverrideTitle>-->
-            <ui:TitleBar.ExtendButtons>
-                <ToggleButton
-                    Height="40"
-                    Margin="0,0,0,0"
+                <ui:TitleBar.ExtendButtons>
+                    <ToggleButton
+                    Height="35"
                     hc:IconElement.Geometry="{StaticResource InfoGeometry}"
                     Background="#0074ff"
                     BorderBrush="#0074ff"
                     FontSize="99"
                     IsChecked="{Binding IsOpen, ElementName=DrawerLeft}" />
-            </ui:TitleBar.ExtendButtons>
-        </ui:TitleBar>
+                </ui:TitleBar.ExtendButtons>
+            </ui:TitleBar>
 
-        <ContentControl Grid.Row="1" cm:View.Model="{Binding ActiveItem}" />
-        <Grid Grid.Row="1" x:Name="dialog"></Grid>
-        <Grid Grid.Row="1">
-            <hc:Drawer
+            <ContentControl Grid.Row="1" cm:View.Model="{Binding ActiveItem}" />
+            <Grid Grid.Row="1" x:Name="dialog"></Grid>
+            <Grid Grid.Row="1">
+                <hc:Drawer
                 Name="DrawerLeft"
                 Dock="Left"
                 ShowMode="Push">
-                <Border
+                    <Border
                     Width="300"
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="0,1,0,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBlock
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
                             Margin="10,0,0,0"
                             HorizontalAlignment="Center"
                             Style="{StaticResource TextBlockTitle}"
                             Text="提示" />
-                        <Button
+                            <Button
                             Grid.Row="0"
                             HorizontalAlignment="Right"
                             hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
@@ -87,10 +88,10 @@
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Style="{StaticResource ButtonIcon}" />
 
-                        <Grid Grid.Row="1" Margin="6,12">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <Grid Grid.Row="1" Margin="6,12">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-                                <TextBlock FontSize="14" TextWrapping="Wrap">
+                                    <TextBlock FontSize="14" TextWrapping="Wrap">
                                     命名序号为#，可以替代每次递增<LineBreak />
                                     命名序号从1开始，每次+1,会根据需要命名的文件数量来自动补齐前面的0<LineBreak /><LineBreak />
                                     例：[Moozzi2] Bakemonogatari - # (BD 1920x1080 x.264 FLACx2)<LineBreak />
@@ -106,12 +107,14 @@
                                     [Moozzi2] Bakemonogatari - 14 (BD 1920x1080 x.264 FLACx2)<LineBreak />
                                     [Moozzi2] Bakemonogatari - 15 (BD 1920x1080 x.264 FLACx2)<LineBreak />
 
-                                </TextBlock>
-                            </ScrollViewer>
+                                    </TextBlock>
+                                </ScrollViewer>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Border>
-            </hc:Drawer>
+                    </Border>
+                </hc:Drawer>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
+    
 </Window>
