@@ -2,7 +2,7 @@
   "profiles": {
     "updater": {
       "commandName": "Project",
-      "commandLineArgs": "--name=vsgui --version=1.0.1 --backPath=./bak"
+      "commandLineArgs": "--name=BatchRename --version=0.0.1 --backPath=./bak"
     }
   }
 }

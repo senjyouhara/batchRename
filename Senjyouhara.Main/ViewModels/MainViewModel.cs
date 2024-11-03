@@ -316,11 +316,14 @@ namespace Senjyouhara.Main.ViewModels
                             newList.Add(item);
                             // 寻找视频文件对应的字幕
                             var FilterSub = subSortList;
-                                newList = newList.Concat(FilterSub.Select(v =>
+                                newList.AddRange(FilterSub.Select(v =>
                                 {
-                                    v.FileName = " └─  " + v.FileName;
+                                    if (!v.FileName.StartsWith(" └─  "))
+                                    {
+                                        v.FileName = " └─  " + v.FileName;
+                                    }
                                     return v;
-                                })).ToList();
+                                }));
                         }
                         else
                         {
@@ -362,14 +365,14 @@ namespace Senjyouhara.Main.ViewModels
                         try
                         {
                             f.MoveTo(item.PreviewFilePath);
-                            Application.Current.Dispatcher.Invoke(() => {
+                            Application.Current.Dispatcher.BeginInvoke(() => {
                                 item.FilePath = item.PreviewFilePath;
                                 item.FileName = item.PreviewFileName;
                                 item.OriginFileName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(0, item.FileName.LastIndexOf(".")) : item.FileName;
                                 item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : string.Empty;
                                 item.PreviewFileName = "成功！";
                             });
-                            Thread.Sleep(80);
+                            // Thread.Sleep(20);
                         }
                         catch (Exception ex)
                         {
@@ -509,6 +512,7 @@ namespace Senjyouhara.Main.ViewModels
                 if(r.Result == ButtonResult.OK)
                 {
                     formData = r.Parameters.GetValue<FormData>("detail");
+                    FileNameItemsHandle();
                 }
             });
         }

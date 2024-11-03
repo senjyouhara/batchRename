@@ -21,7 +21,7 @@ using System.Xml.Linq;
 namespace Senjyouhara.Main.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    public class AppendNumber: IDataErrorInfo
+    public partial class AppendNumber: IDataErrorInfo
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
         [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
@@ -97,15 +97,15 @@ namespace Senjyouhara.Main.ViewModels
     public class FormData : IDataErrorInfo
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
         public string FirstNumber { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([0-9]+\.[0-9]{1})|([0-9][1-9]*)$", ErrorMessage = "只能为整数或带一位小数")]
+        [RegularExpression(@"^([1-9][0-9]*\.[0-9]{1})|([1-9][0-9]*)$", ErrorMessage = "只能为整数或带一位小数")]
         public string Step { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([0-9][1-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
         public string DigitsNumber { get; set; } = string.Empty;
 
         public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();

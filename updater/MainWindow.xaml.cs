@@ -63,7 +63,7 @@ namespace updater
                 this.Close();
             }
 
-            Init();
+            // Init();
         }
 
         private void Init()
@@ -131,11 +131,18 @@ namespace updater
                 }
 
                 Directory.Delete(updatepath, true);
+                
+                Thread.Sleep(100);
+
+                if (File.Exists(Directory.GetCurrentDirectory() + @$"\{Args["name"]}.exe"))
+                {
+                    Process.Start(Directory.GetCurrentDirectory() + @$"\{Args["name"]}.exe");
+                }
+            
+                Close();
             }
 
-            Thread.Sleep(100);
-            Process.Start(Directory.GetCurrentDirectory() + @$"\{Args["name"]}.exe");
-            Close();
+
         }
 
         public static string RunSyncProcess(string clipath, string common)
