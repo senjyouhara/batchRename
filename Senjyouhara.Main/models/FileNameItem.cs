@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using System.Collections.Generic;
+using PropertyChanged;
 using Senjyouhara.Common.Utils;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,6 +24,8 @@ namespace Senjyouhara.Main.models
         public string PreviewFilePath { get; set; }
         public string SubtitleFileName { get; set; }
         public string SuffixName { get; set; }
+
+        public List<string> SubUidList { get; set; } = new();
 
     }
 }
