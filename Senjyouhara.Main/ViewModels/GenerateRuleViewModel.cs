@@ -24,10 +24,10 @@ namespace Senjyouhara.Main.ViewModels
     public partial class AppendNumber: IDataErrorInfo
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为非0开头的正整数")]
         public string SerialNumber { get; set; } = string.Empty;
         [StringLength(1, ErrorMessage = "最多输入1位数")]
-        [RegularExpression(@"^[1-9]$", ErrorMessage = "只能为一位数整数")]
+        [RegularExpression(@"^[1-9]$", ErrorMessage = "只能为非0开头的正整数")]
         public string DecimalNumber { get; set; } = string.Empty;
 
         public bool IsValid()
@@ -97,15 +97,15 @@ namespace Senjyouhara.Main.ViewModels
     public class FormData : IDataErrorInfo
     {
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为非0开头的正整数")]
         public string FirstNumber { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([1-9][0-9]*\.[0-9]{1})|([1-9][0-9]*)$", ErrorMessage = "只能为整数或带一位小数")]
+        [RegularExpression(@"^([1-9][0-9]*\.[0-9]{1})|([1-9][0-9]*)$", ErrorMessage = "只能为非0开头的正整数或带一位小数")]
         public string Step { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "最多输入10位数")]
-        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为整数")]
+        [RegularExpression(@"^([1-9][0-9]*)$", ErrorMessage = "只能为非0开头的正整数")]
         public string DigitsNumber { get; set; } = string.Empty;
 
         public ObservableCollection<AppendNumber> AppendNumberList { get; set; } = new();

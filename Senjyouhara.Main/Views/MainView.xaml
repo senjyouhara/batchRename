@@ -138,9 +138,11 @@
                     Content="打开更新弹框" />-->
 
                     <CheckBox
-                    x:Name="IsSubMergeVideo"
-                    Margin="10,10,0,0"
-                    Content="字幕是否归并到视频下" />
+                        FocusVisualStyle="{x:Null}"
+                        cal:Message.Attach="[Event Click] = [Action CheckSubCommand]"
+                        x:Name="IsSubMergeVideo"
+                        Margin="10,10,0,0"
+                        Content="字幕是否归并到视频下" />
                 </WrapPanel>
             </Grid>
         </Grid>

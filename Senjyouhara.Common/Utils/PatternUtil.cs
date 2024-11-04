@@ -26,6 +26,11 @@ namespace Senjyouhara.Common.Utils
             }
             return list;
         }
+        public static string GetFirstPatternResult(string pattern, string input)
+        {
+            var result = GetPatternResult(pattern, input);
+            return result.Count > 0 ? result[0] : null;
+        }
 
     }
 }

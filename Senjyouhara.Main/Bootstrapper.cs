@@ -9,6 +9,7 @@ using Senjyouhara.Main.Views;
 using Senjyouhara.Main.Core.Manager.Dialog;
 using System.Linq;
 using System.Diagnostics;
+using Senjyouhara.Common.Log;
 
 namespace Senjyouhara.Main
 {
@@ -20,6 +21,7 @@ namespace Senjyouhara.Main
         public Bootstrapper()
         {
             Initialize();
+            LogConfig.IsWriteFile = false;
         }
 
         protected override void Configure()

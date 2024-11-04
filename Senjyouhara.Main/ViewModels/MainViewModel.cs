@@ -36,12 +36,39 @@ using System.Xml.Linq;
 
 namespace Senjyouhara.Main.ViewModels
 {
+    internal class FileNameComparison : IComparer<string>
+    {
+        public int Compare(string x, string y)
+        {
+            var nameA = x!;
+            var nameB = y!;
+
+            if (Regex.IsMatch(nameA, @"\d+\.\d+"))
+            {
+                if (!Regex.IsMatch(nameB, @"\d+\.\d+"))
+                {
+                    nameB = Regex.Replace(nameB, @"(\d+)", "$1.0");
+                }
+            }
+            else if (Regex.IsMatch(nameB, @"\d+\.\d+"))
+            {
+                if (!Regex.IsMatch(nameA, @"\d+\.\d+"))
+                {
+                    nameA = Regex.Replace(nameA, @"(\d+)", "$1.0");
+                }
+            }
+
+            return new FileComparer().Compare(nameA, nameB);
+        }
+    }
+
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel : Screen
     {
         public bool IsSubMergeVideo { get; set; } = true;
         public string Tips { get; set; }
-        public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new ObservableCollection<FileNameItem>();
+        private List<FileNameItem> OriginFileNameItems { get; set; } = new();
+        public ObservableCollection<FileNameItem> FileNameItems { get; set; } = new();
 
         private FormData formData;
 
@@ -52,156 +79,124 @@ namespace Senjyouhara.Main.ViewModels
 
         private void FileNameItemsHandle()
         {
-
-            var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
+            var subList = FileNameItems.Where(v =>
+                SubFileSubfixList.FirstOrDefault(s => s.Trim().ToLower().Equals(v.SuffixName)) != null).ToList();
             var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
 
             var appendList = formData?.AppendNumberList;
-
             var step = string.IsNullOrWhiteSpace(formData?.Step) ? 10 : (int)(double.Parse(formData?.Step) * 10);
 
-            if (otherList.Count > 0)
+            var groupList = new List<List<FileNameItem>>();
+            groupList.Add(otherList);
+            groupList.Add(subList);
+
+            foreach (var list in groupList)
             {
-                var otherCount = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : (int.Parse(formData?.FirstNumber));
-                otherCount *= 10;
-                AppendNumber select = null;
-
-                for (int i = 0; i < otherList.Count; i++)
+                if (list.Count > 0)
                 {
-                    var item = otherList[i];
-                    var f = new FileInfo(item.FilePath);
-                    var name = Rename;
-                    if (!string.IsNullOrWhiteSpace(name))
-                    {
-                        if (name?.IndexOf("#") != -1)
-                        {
-                            var prevIndex = (otherCount - step) / 10;
-                            var count = otherList.Count.ToString();
-                            var tmp = count;
-                            Log.Debug(tmp);
-                            var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
-                            var index = double.Parse((otherCount / 10.0).ToString());
-                            var indexStr = index.ToString("#.#");
+                    var firstNumber = string.IsNullOrWhiteSpace(formData?.FirstNumber)
+                        ? 1
+                        : (int.Parse(formData?.FirstNumber));
+                    firstNumber *= 10;
+                    AppendNumber select = null;
 
-                            name = name.Replace("#", $"{indexStr.PadLeft(DigitsNumber, '0')}");
-                            Log.Debug($"index: {indexStr},prevIndex: {prevIndex}, tmp: {tmp}, name: {name}, itemFile: {item.FileName}");
-                            Log.Debug($"appendList: {appendList}");
-                            if (appendList?.Count > 0)
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var item = list[i];
+                        var f = new FileInfo(item.FilePath);
+                        var name = Rename;
+                        if (!string.IsNullOrWhiteSpace(name))
+                        {
+                            if (name?.IndexOf("#") != -1)
                             {
-                                var append = appendList.Where(v =>
+                                // 根据文件数量获取前面填充0数量
+                                var count = list.Count.ToString();
+                                var prevIndex = (firstNumber - step) / 10;
+                                var tmp = count;
+                                Log.Debug(tmp);
+                                var digitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber)
+                                    ? tmp.Length
+                                    : int.Parse(formData?.DigitsNumber);
+                                var index = double.Parse((firstNumber / 10.0).ToString());
+                                var indexStr = index.ToString("#.#");
+
+                                name = name.Replace("#", $"{indexStr.PadLeft(digitsNumber, '0')}");
+                                Log.Debug(
+                                    $"index: {indexStr},prevIndex: {prevIndex}, tmp: {tmp}, name: {name}, itemFile: {item.FileName}");
+                                Log.Debug($"appendList: {appendList}");
+                                if (appendList?.Count > 0)
                                 {
-                                    Log.Debug($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
-                                    if (prevIndex > -1)
+                                    var append = appendList.Where(v =>
                                     {
-                                        return (v.SerialNumber).Equals(prevIndex.ToString());
+                                        Log.Debug(
+                                            $"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
+                                        if (prevIndex > -1)
+                                        {
+                                            return (v.SerialNumber).Equals(prevIndex.ToString());
+                                        }
+
+                                        return false;
+                                    }).FirstOrDefault();
+                                    Log.Debug($"select: {select}");
+                                    if (append != null && append != select)
+                                    {
+                                        select = append;
+                                        name = Rename.Replace("#",
+                                            $"{prevIndex.ToString("#.#").PadLeft(digitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
+                                        Log.Debug($"name: {name}");
                                     }
-                                    return false;
-                                }).FirstOrDefault();
-                                Log.Debug($"select: {select}");
-                                if (append != null && append != select)
-                                {
-                                    select = append;
-                                    name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
-                                    Log.Debug($"name: {name}");
-                                } else
-                                {
-                                    select = null;
+                                    else
+                                    {
+                                        select = null;
+                                    }
                                 }
                             }
-
                         }
-                    } else
-                    {
-                        name = item.OriginFileName;
-                    }
-                   
-                    item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
-                    item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
-                    if (select == null)
-                    {
-                        otherCount += step;
+                        else
+                        {
+                            name = item.OriginFileName;
+                        }
+
+                        if (select == null)
+                        {
+                            firstNumber += step;
+                        }
+
+                        item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName)
+                            ? $".{item.SuffixName}"
+                            : string.Empty);
+                        item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName)
+                            ? $".{item.SuffixName}"
+                            : string.Empty);
                     }
                 }
             }
 
-
-            // 如果有字幕文件则进入该项 为了匹配对应视频文件序号
-            if(subList.Count > 0)
+            foreach (var originFileNameItem in OriginFileNameItems)
             {
-                var Count = string.IsNullOrWhiteSpace(formData?.FirstNumber) ? 1 : int.Parse(formData?.FirstNumber);
-                Count *= 10;
-                AppendNumber select = null;
-
-                for (int i = 0; i < subList.Count; i++)
+                var find = FileNameItems.FirstOrDefault(item => item.Uid.Equals(originFileNameItem.Uid));
+                if (find != null)
                 {
-                    var item = subList[i];
-                    var name = Rename;
-                    var f = new FileInfo(item.FilePath);
-                    if (!string.IsNullOrWhiteSpace(name))
-                    {
-                        if (name.IndexOf("#") != -1)
-                        {
-                            // 根据文件数量获取前面填充0数量
-                            var count = subList.Count.ToString();
-                            var prevIndex = (Count - step) / 10;
-                            var tmp = count;
-                            var DigitsNumber = string.IsNullOrWhiteSpace(formData?.DigitsNumber) ? tmp.Length : int.Parse(formData?.DigitsNumber);
-                            var index = double.Parse((Count / 10.0).ToString());
-                            var indexStr = index.ToString("#.#");
-                            name = name.Replace("#", $"{indexStr.PadLeft(DigitsNumber, '0')}");
-
-                            if (appendList?.Count > 0)
-                            {
-                                var append = appendList.Where(v =>
-                                {
-                                    Log.Debug($"SerialNumber: {(v.SerialNumber)},prevIndex: {prevIndex}, compare: {(v.SerialNumber).Equals(prevIndex.ToString())}");
-                                    if (prevIndex > -1)
-                                    {
-                                        return (v.SerialNumber).Equals(prevIndex.ToString());
-                                    }
-                                    return false;
-                                }).FirstOrDefault();
-                                Log.Debug($"select: {select}");
-                                if (append != null && append != select)
-                                {
-                                    select = append;
-                                    name = Rename.Replace("#", $"{prevIndex.ToString("#.#").PadLeft(DigitsNumber, '0')}{(string.IsNullOrWhiteSpace(append.DecimalNumber) ? string.Empty : '.' + append.DecimalNumber)}");
-                                    Log.Debug($"name: {name}");
-                                }
-                                else
-                                {
-                                    select = null;
-                                }
-                            }
-                        }
-                    } else
-                    {
-                        name = item.OriginFileName;
-                    }
-                    if(select == null)
-                    {
-                        Count += step;
-                    }
-                    item.PreviewFileName = name + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
-                    item.PreviewFilePath = $"{f.DirectoryName}\\{name}" + (!string.IsNullOrEmpty(item.SuffixName) ? $".{item.SuffixName}" : string.Empty);
+                    originFileNameItem.PreviewFileName = find.PreviewFileName;
+                    originFileNameItem.PreviewFilePath = find.PreviewFilePath;
                 }
             }
-           
         }
 
 
-        private IEventAggregator _eventAggregator;
-        private IWindowManager _windowManager;
-        private readonly IDialogManager dialogManager;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly IWindowManager _windowManager;
+        private readonly IDialogManager _dialogManager;
 
-        public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IDialogManager dialogManager)
+        public MainViewModel(IEventAggregator eventAggregator, IWindowManager windowManager,
+            IDialogManager dialogManager)
         {
             _eventAggregator = eventAggregator;
             _windowManager = windowManager;
-            this.dialogManager = dialogManager;
+            this._dialogManager = dialogManager;
             _eventAggregator.SubscribeOnUIThread(this);
             formData = new FormData();
-            formData.AppendNumberList.Add(new ());
+            formData.AppendNumberList.Add(new());
             AddUpdateModal();
         }
 
@@ -211,8 +206,8 @@ namespace Senjyouhara.Main.ViewModels
             {
                 if (UpdateConfig.IsEnableUpdate)
                 {
-                    var _updateInfo = await UpdateConfig.GetUpdateData();
-                    if (_updateInfo.Version != AppConfig.Version)
+                    var updateInfo = await UpdateConfig.GetUpdateData();
+                    if (updateInfo.Version != AppConfig.Version)
                     {
                         await Application.Current.Dispatcher.BeginInvoke(async () =>
                         {
@@ -236,15 +231,16 @@ namespace Senjyouhara.Main.ViewModels
         {
             Tips = string.Empty;
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = "c:\\desktop";    //初始的文件夹
-            openFileDialog.Filter = "所有文件(*.*)|*.*";//在对话框中显示的文件类型
+            openFileDialog.InitialDirectory = "c:\\desktop"; //初始的文件夹
+            openFileDialog.Filter = "所有文件(*.*)|*.*"; //在对话框中显示的文件类型
             openFileDialog.Title = "请选择文件";
+            
             openFileDialog.Multiselect = true;
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == true)
             {
-                var FileList = new List<string>(openFileDialog.FileNames);
-                AddFilesHandle(FileList);
+                var fileList = new List<string>(openFileDialog.FileNames);
+                AddFilesHandle(fileList);
             }
         }
 
@@ -254,108 +250,170 @@ namespace Senjyouhara.Main.ViewModels
             FileNameItems.Clear();
         }
 
-        public static string[] SUB_FILE_SUBFIX_LIST = new string[] { "ass", "ssa", "srt" };
-        public static string[] VIDEO_SUBFIX_LIST = new string[] { "mkv", "mp4", "flv", "f4v", "avi", "rm", "rmvb", "mov", "wmv" };
-        private void AddFilesHandle(List<string> files)
+        private static readonly string[] SubFileSubfixList = new string[] { "ass", "ssa", "srt" };
+
+        private static readonly string[] VideoSubfixList = new string[]
+            { "mkv", "mp4", "flv", "f4v", "avi", "rm", "rmvb", "mov", "wmv" };
+
+        private void SubFileMerge()
         {
-            files.ForEach(file =>
+            var subList = FileNameItems.Where(v =>
+                SubFileSubfixList.FirstOrDefault(s => s.Trim().ToLower().Equals(v.SuffixName)) != null).ToList();
+            var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
+            foreach (var fileNameItem in subList)
             {
-                var v = new FileInfo(file);
-                var flag = Directory.Exists(file);
-                if (flag)
+                if (fileNameItem.FileName.StartsWith(" └─  "))
                 {
-                    return;
+                    fileNameItem.FileName = fileNameItem.FileName.Replace(" └─  ", "");
                 }
-
-                FileNameItems.Add(new FileNameItem()
-                {
-                    OriginFileName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(0, v.Name.LastIndexOf(".")) : v.Name,
-                    FileName = v.Name,
-                    FilePath = v.FullName,
-                    PreviewFileName = string.Empty,
-                    SubtitleFileName = string.Empty,
-                    SuffixName = v.Name.LastIndexOf(".") >= 0 ? v.Name.Substring(v.Name.LastIndexOf(".") + 1) : string.Empty
-                });
-            });
-
-
-            var group = FileNameItems.GroupBy((item) =>
-            {
-                return item.SuffixName.ToLower();
-            });
-
-            var sortList = new List<FileNameItem>();
-            foreach (var groupItem in group)
-            {
-                var key = groupItem.Key;
-                var groupList = groupItem.ToList();
-                //groupList.Sort(MySort);
-                groupList = groupList.OrderBy(f => f.FileName, new FileComparer()).ToList();
-                sortList = sortList.Concat(groupList).ToList();
             }
-
-            Log.Debug(group.ToString());
-
-            FileNameItems = new ObservableCollection<FileNameItem>(sortList);
-            FileNameItemsHandle();
 
             if (IsSubMergeVideo)
             {
                 try
                 {
-                    var subList = FileNameItems.Where(v => SUB_FILE_SUBFIX_LIST.Where(s => s.Trim().ToLower().Equals(v.SuffixName)).FirstOrDefault() != null).ToList();
-                    var otherList = FileNameItems.Where(v => !subList.Contains(v)).ToList();
-                    
-                    var subSortList = subList.OrderBy(f => f.OriginFileName, new FileComparer()).ToList();
+                    var subSortList = subList.OrderBy(f => f.OriginFileName, new FileNameComparison()).ToList();
                     var newList = new List<FileNameItem>();
-                    foreach (var item in otherList)
+                    if (otherList.Count > 0)
                     {
-                        // 如果为视频文件
-                        if (VIDEO_SUBFIX_LIST.Contains(item.SuffixName.ToLower()))
+                        var tmpSubList = new List<FileNameItem>();
+                        foreach (var item in otherList)
                         {
-                            newList.Add(item);
-                            // 寻找视频文件对应的字幕
-                            var FilterSub = subSortList;
-                                newList.AddRange(FilterSub.Select(v =>
+                            // 如果为视频文件
+                            if (VideoSubfixList.Contains(item.SuffixName.ToLower()))
+                            {
+                                newList.Add(item);
+                                var number =
+                                    PatternUtil.GetFirstPatternResult(@"[0-9]+(\.[0-9]+)*", item.OriginFileName);
+                                Log.Info($"number: {number}");
+                                if (number is { })
                                 {
-                                    if (!v.FileName.StartsWith(" └─  "))
+                                    // 寻找视频文件对应的字幕
+                                    var subFilter = subSortList.Where(v =>
                                     {
-                                        v.FileName = " └─  " + v.FileName;
-                                    }
-                                    return v;
-                                }));
+                                        var tmp = PatternUtil.GetFirstPatternResult(@"[0-9]+(\.[0-9]+)*",
+                                            v.OriginFileName);
+                                        return tmp == number;
+                                    }).Select(v =>
+                                    {
+                                        if (!v.FileName.StartsWith(" └─  "))
+                                        {
+                                            v.FileName = " └─  " + v.FileName;
+                                        }
+
+                                        return v;
+                                    });
+                                    Log.Info($" subFilter : {subFilter}");
+                                    tmpSubList.AddRange(subFilter);
+                                    newList.AddRange(subFilter);
+                                }
+                            }
+                            else
+                            {
+                                newList.Add(item);
+                            }
                         }
-                        else
+
+                        if (tmpSubList.Count < subList.Count)
                         {
-                            newList.Add(item);
+                            var tmp = (from subItem in subList
+                                    where !(from item in tmpSubList select item).ToList().Contains(subItem)
+                                    select subItem
+                                ).ToList();
+
+                            Log.Info($"tmp: {tmp}");
+
+                            if (tmp.Count > 0)
+                            {
+                                newList.AddRange(tmp);
+                            }
                         }
                     }
+                    else
+                    {
+                        newList = subList;
+                    }
+
                     FileNameItems = new ObservableCollection<FileNameItem>(newList);
                 }
                 catch (Exception ex)
                 {
+                    Log.Error("error", ex);
                 }
             }
+            else
+            {
+                FileNameItems = new(OriginFileNameItems);
+            }
+        }
+
+        private void AddFilesHandle(List<string> files)
+        {
+            var time = DateTime.Now;
+            TimeSpan ts = time - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            var Timestamp = Convert.ToInt64(ts.TotalMilliseconds); //精确到毫秒
+            var selectList = files.Where(file =>
+            {
+                var flag = Directory.Exists(file);
+                if (flag)
+                {
+                    return false;
+                }
+
+                return true;
+            }).Select(file =>
+            {
+                var v = new FileInfo(file);
+                return new FileNameItem()
+                {
+                    Uid = Guid.NewGuid().ToString(),
+                    OriginFileName = v.Name.LastIndexOf(".", StringComparison.Ordinal) >= 0
+                        ? v.Name.Substring(0, v.Name.LastIndexOf(".", StringComparison.Ordinal))
+                        : v.Name,
+                    FileName = v.Name,
+                    FilePath = v.FullName,
+                    PreviewFileName = string.Empty,
+                    SubtitleFileName = string.Empty,
+                    SuffixName = v.Name.LastIndexOf(".", StringComparison.Ordinal) >= 0
+                        ? v.Name.Substring(v.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)
+                        : string.Empty
+                };
+            }).ToList();
+            var sortList = new List<FileNameItem>(FileNameItems.ToList());
+            selectList = selectList.OrderBy(v => v.OriginFileName, new FileNameComparison()).ToList();
+            foreach (var item in selectList)
+            {
+                item.Timestamp = Timestamp++;
+            }
+
+            sortList.AddRange(selectList);
+            OriginFileNameItems.AddRange(selectList);
+
+            FileNameItems = new ObservableCollection<FileNameItem>(sortList);
+            FileNameItemsHandle();
+
+            SubFileMerge();
         }
 
         public void RenameFileHandle()
         {
-
             var count = FileNameItems.Count;
             if (count <= 0)
             {
                 return;
             }
 
-            var lisDup = FileNameItems.GroupBy(x => x.PreviewFileName).Where(x => x.Count() > 1).Select(x => x.Key).ToList();
-            if(lisDup.Count > 0)
+            var lisDup = FileNameItems.GroupBy(x => x.PreviewFileName).Where(x => x.Count() > 1).Select(x => x.Key)
+                .ToList();
+            if (lisDup.Count > 0)
             {
                 System.Windows.MessageBox.Show("消息提示", "文件名重命名项有重复，请检查！", MessageBoxButton.OK);
                 return;
             }
 
 
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 for (int i = 0; i < FileNameItems.Count; i++)
                 {
                     var item = FileNameItems[i];
@@ -365,11 +423,18 @@ namespace Senjyouhara.Main.ViewModels
                         try
                         {
                             f.MoveTo(item.PreviewFilePath);
-                            Application.Current.Dispatcher.BeginInvoke(() => {
+                            Application.Current.Dispatcher.BeginInvoke(() =>
+                            {
                                 item.FilePath = item.PreviewFilePath;
                                 item.FileName = item.PreviewFileName;
-                                item.OriginFileName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(0, item.FileName.LastIndexOf(".")) : item.FileName;
-                                item.SuffixName = item.FileName.LastIndexOf(".") >= 0 ? item.FileName.Substring(item.FileName.LastIndexOf(".") + 1) : string.Empty;
+                                item.OriginFileName = item.FileName.LastIndexOf(".", StringComparison.Ordinal) >= 0
+                                    ? item.FileName.Substring(0,
+                                        item.FileName.LastIndexOf(".", StringComparison.Ordinal))
+                                    : item.FileName;
+                                item.SuffixName = item.FileName.LastIndexOf(".", StringComparison.Ordinal) >= 0
+                                    ? item.FileName.Substring(item.FileName.LastIndexOf(".", StringComparison.Ordinal) +
+                                                              1)
+                                    : string.Empty;
                                 item.PreviewFileName = "成功！";
                             });
                             // Thread.Sleep(20);
@@ -393,123 +458,149 @@ namespace Senjyouhara.Main.ViewModels
                         return;
                     }
                 }
+
                 Tips = "重命名成功!";
             });
         }
 
         public void OnListViewDrop(object sender, DragEventArgs e)
         {
-
-            var FileDrop = e.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
             var listView1 = sender as ListView;
-
-            if (FileDrop != null)
+            if (e.Data.GetData(System.Windows.DataFormats.FileDrop) is string[] fileDrop)
             {
-                var FileNames = new List<string>(FileDrop);
-                AddFilesHandle(FileNames);
+                var fileNames = new List<string>(fileDrop);
+                AddFilesHandle(fileNames);
             }
             else
             {
-
-                var pos = e.GetPosition(listView1);   //获取位置
-                var result = VisualTreeHelper.HitTest(listView1, pos);   //根据位置得到result
+                var position = e.GetPosition(listView1!); //获取位置
+                var result = VisualTreeHelper.HitTest(listView1, position); //根据位置得到result
                 if (result == null)
                 {
-                    return;   //找不到 返回
+                    return; //找不到 返回
                 }
+
                 #region 查找元数据
+
                 var sourcePerson = e.Data.GetData(typeof(FileNameItem)) as FileNameItem;
                 if (sourcePerson == null)
                 {
                     return;
                 }
+
                 #endregion
 
-                #region  查找目标数据
+                #region 查找目标数据
+
                 var listBoxItem = Utils.FindVisualParent<ListViewItem>(result.VisualHit);
                 if (listBoxItem == null)
                 {
                     return;
                 }
+
                 var targetPerson = listBoxItem.Content as FileNameItem;
                 if (ReferenceEquals(targetPerson, sourcePerson))
                 {
                     return;
                 }
+
                 #endregion
 
 
-                int sourceIndex = listView1.Items.IndexOf(sourcePerson);
-                int targetIndex = listView1.Items.IndexOf(targetPerson);
+                var sourceIndex = listView1.Items.IndexOf(sourcePerson);
+                var targetIndex = listView1.Items.IndexOf(targetPerson!);
 
-                var source = listView1.ItemsSource as ObservableCollection<FileNameItem>;
+                if (listView1.ItemsSource is ObservableCollection<FileNameItem> source)
+                {
+                    var sourceItem = source[sourceIndex];
+                    var targetItem = source[targetIndex];
+                    (targetItem.Timestamp, sourceItem.Timestamp) = (sourceItem.Timestamp, targetItem.Timestamp);
 
-                source.Move(sourceIndex, targetIndex);
+                    if (SubFileSubfixList.Contains(sourceItem.SuffixName) ||
+                        SubFileSubfixList.Contains(targetItem.SuffixName))
+                    {
+                        return;
+                    }
 
-                listView1.SelectedItem = source[targetIndex];
+                    source!.Move(sourceIndex, targetIndex);
+
+                    var findIndex = OriginFileNameItems.FindIndex(item => item.Uid == sourceItem.Uid);
+                    var findIndex2 = OriginFileNameItems.FindIndex(item => item.Uid == targetItem.Uid);
+                    OriginFileNameItems[findIndex2] = sourceItem;
+                    OriginFileNameItems[findIndex] = targetItem;
+
+                    listView1.SelectedItem = source[targetIndex];
+                }
             }
         }
+
         public void OnListViewPreviewKeyUp(object sender, KeyEventArgs e)
         {
-
             if (e.Key == Key.Delete)
             {
                 var listView1 = sender as ListView;
-                var items = listView1.SelectedItems;
+                var items = listView1!.SelectedItems;
                 var newArr = new FileNameItem[items.Count];
                 items.CopyTo(newArr, 0);
                 foreach (FileNameItem item in newArr)
                 {
+                    OriginFileNameItems.Remove(item);
                     FileNameItems.Remove(item);
                 }
+
                 listView1.SelectedItem = null;
             }
-
         }
 
 
         public void OnListViewPreviewMouseMove(object sender, MouseEventArgs e)
         {
-
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 var listView1 = sender as ListView;
 
                 #region 源位置
-                var pos = e.GetPosition(listView1);  // 获取位置
-                HitTestResult result = VisualTreeHelper.HitTest(listView1, pos);  //根据位置得到result
+
+                var pos = e.GetPosition(listView1); // 获取位置
+                HitTestResult result = VisualTreeHelper.HitTest(listView1!, pos); //根据位置得到result
                 if (result == null)
                 {
-                    return;    //找不到 返回
+                    return; //找不到 返回
                 }
+
                 var listBoxItem = Utils.FindVisualParent<ListBoxItem>(result.VisualHit);
                 if (listBoxItem == null || listBoxItem.Content != listView1.SelectedItem)
                 {
                     return;
                 }
-                DataObject dataObj = new DataObject(listBoxItem.Content as FileNameItem);
+
+                DataObject dataObj =
+                    new DataObject(listBoxItem.Content as FileNameItem ?? throw new InvalidOperationException());
+
                 #endregion
 
-
                 //DataObject dataObj = new DataObject(sender as FileNameItem);
-                DragDrop.DoDragDrop(listView1, dataObj, DragDropEffects.Move);  //调用方法
+                DragDrop.DoDragDrop(listView1, dataObj, DragDropEffects.Move); //调用方法
             }
+        }
 
+        public void CheckSubCommand()
+        {
+            SubFileMerge();
         }
 
         public void ShowGenerateRuleModal()
         {
-
             var tmp = JSONUtil.ToData<FormData>(JSONUtil.ToJSON(formData));
             var parm = new DialogParameters();
             parm.Add("detail", tmp);
-            
+
             //MessageBoxHelper.Info("打开弹框", "消息提示", r =>
             //{
             //}, UI.Styles.MessageBoxWindow.ButtonType.OKCancel);
-            dialogManager.ShowMyDialogAsync(IoC.Get<GenerateRuleViewModel>(), parm, (r) =>
+            _dialogManager.ShowMyDialogAsync(IoC.Get<GenerateRuleViewModel>(), parm, (r) =>
             {
-                if(r.Result == ButtonResult.OK)
+                if (r.Result == ButtonResult.OK)
                 {
                     formData = r.Parameters.GetValue<FormData>("detail");
                     FileNameItemsHandle();
@@ -530,8 +621,8 @@ namespace Senjyouhara.Main.ViewModels
 
                 obj = VisualTreeHelper.GetParent(obj);
             }
+
             return null;
         }
     }
-
 }
