@@ -16,7 +16,7 @@ namespace Senjyouhara.Main.ViewModels
         private IEventAggregator _eventAggregator;
         public ShellViewModel(IWindowManager windowManager)
         {
-            Title = "批量重命名工具" + " - v" + AppConfig.Version;
+            Title = AppConfig.Title + " - v" + AppConfig.Version;
             _eventAggregator = new EventAggregator();
             _eventAggregator.SubscribeOnUIThread(this);
             Task.Run(async () =>

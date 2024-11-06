@@ -10,6 +10,7 @@ namespace Senjyouhara.Main.Config
 {
     public class AppConfig
     {
+        public static string Title = "批量重命名工具";
         public static string Name = "";
         public static string Version = "";
         static AppConfig()
