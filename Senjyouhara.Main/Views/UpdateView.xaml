@@ -33,6 +33,7 @@
 
             <ui:TitleBar
                 Title="检查更新"
+                Icon="/icon.png"
                 Height="35"
                 Padding="16,4,0,5"
                 VerticalAlignment="Top"
