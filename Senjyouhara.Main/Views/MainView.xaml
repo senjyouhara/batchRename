@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="clr-namespace:Senjyouhara.UI.Controls;assembly=Senjyouhara.UI"
+    xmlns:extensions="clr-namespace:Senjyouhara.UI.Extensions;assembly=Senjyouhara.UI"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -44,7 +45,7 @@
                         cal:Message.Attach="[Event Drop] = [Action OnListViewDrop($source, $eventArgs)];                  
                         [Event PreviewMouseMove] = [Action OnListViewPreviewMouseMove($source, $eventArgs)];
                         [Event PreviewKeyUp] = [Action OnListViewPreviewKeyUp($source, $eventArgs)]"
-                        ui:ListViewLayoutManager.Enabled="True"
+                        extensions:ListViewLayoutManager.Enabled="True"
                         AllowDrop="True"
                         Background="Transparent"
                         BorderBrush="Black"
@@ -58,14 +59,14 @@
                             <GridView>
                                 <!--Width="{Binding ElementName=col1, Path=ActualWidth}"-->
                                 <GridViewColumn
-                                    Width="580"
-                                    ui:RangeColumn.MinWidth="100"
+                                    extensions:ListViewColumnWidthProperty.MinWidth="100"
+                                    extensions:ListViewColumnWidthProperty.Width="500"
                                     DisplayMemberBinding="{Binding FileName}"
                                     Header="文件名" />
                                 <!--<GridViewColumn ui:RangeColumn.MinWidth="100" Header="字幕" Width="{Binding ElementName=col2, Path=ActualWidth}" DisplayMemberBinding="{Binding SubtitleFileName}" />-->
                                 <GridViewColumn
-                                    Width="580"
-                                    ui:RangeColumn.MinWidth="100"
+                                    extensions:ListViewColumnWidthProperty.MinWidth="100"
+                                    extensions:ListViewColumnWidthProperty.Width="580"
                                     DisplayMemberBinding="{Binding PreviewFileName}"
                                     Header="结果" />
                             </GridView>

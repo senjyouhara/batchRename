@@ -50,6 +50,9 @@
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\common\Senjyouhara.Common\Senjyouhara.Common.csproj" />
+    <ProjectReference Include="..\common\Senjyouhara.UI\Senjyouhara.UI.csproj" />
+    <ProjectReference Include="..\common\updater\updater.csproj" />
     <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj" />
     <ProjectReference Include="..\Senjyouhara.UI\Senjyouhara.UI.csproj" />
   </ItemGroup>

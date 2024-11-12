@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "updater": {
-      "commandName": "Project",
-      "commandLineArgs": "--name=BatchRename --version=0.0.1 --backPath=./bak"
-    }
-  }
-}

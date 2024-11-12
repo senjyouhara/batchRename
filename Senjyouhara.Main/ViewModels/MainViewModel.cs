@@ -166,7 +166,7 @@ namespace Senjyouhara.Main.ViewModels
                     foreach (var fileNameItem in filter)
                     {
                         string langSubffix =
-                            PatternUtil.GetFirstPatternResult(@".[a-zA-Z-]+$", fileNameItem.OriginFileName) ??
+                            PatternUtil.GetPatternResultFirst(@".[a-zA-Z-]+$", fileNameItem.OriginFileName) ??
                             string.Empty;
                         fileNameItem.PreviewFileName = name + (!string.IsNullOrEmpty(fileNameItem.SuffixName)
                             ? $"{(string.IsNullOrEmpty(langSubffix) ? "" : langSubffix)}.{fileNameItem.SuffixName}"
@@ -297,14 +297,14 @@ namespace Senjyouhara.Main.ViewModels
                             {
                                 newList.Add(item);
                                 var number =
-                                    PatternUtil.GetFirstPatternResult(@"[0-9]+(\.[0-9]+)*", item.OriginFileName);
+                                    PatternUtil.GetPatternResultFirst(@"[0-9]+(\.[0-9]+)*", item.OriginFileName);
                                 Log.Info($"number: {number}");
                                 if (number is { })
                                 {
                                     // 寻找视频文件对应的字幕
                                     var subFilter = subSortList.Where(v =>
                                     {
-                                        var tmp = PatternUtil.GetFirstPatternResult(@"[0-9]+(\.[0-9]+)*",
+                                        var tmp = PatternUtil.GetPatternResultFirst(@"[0-9]+(\.[0-9]+)*",
                                             v.OriginFileName);
                                         return tmp == number;
                                     }).Select(v =>
