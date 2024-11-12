@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "updater": {
+      "commandName": "Project",
+      "commandLineArgs": "--name=ImageGenerateVideo --version=1.0.1 --backPath=./bak"
+    }
+  }
+}
