@@ -5,11 +5,11 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senjyouhara.Main", "Senjyouhara.Main\Senjyouhara.Main.csproj", "{B9ECF318-198D-4FEE-AB5B-270553DBA7E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senjyouhara.Common", "csharp-common\Senjyouhara.Common\Senjyouhara.Common.csproj", "{4C6F9778-4FE5-42C4-AAFD-32A99C2C5E0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senjyouhara.Common", "common\Senjyouhara.Common\Senjyouhara.Common.csproj", "{4C6F9778-4FE5-42C4-AAFD-32A99C2C5E0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senjyouhara.UI", "csharp-common\Senjyouhara.UI\Senjyouhara.UI.csproj", "{B868408E-F9D1-46FB-A9F9-9BCBBD88ACDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senjyouhara.UI", "common\Senjyouhara.UI\Senjyouhara.UI.csproj", "{B868408E-F9D1-46FB-A9F9-9BCBBD88ACDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updater", "csharp-common\updater\updater.csproj", "{197F0E7C-BDFA-4FB8-BD88-19A3B36E65A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updater", "common\updater\updater.csproj", "{197F0E7C-BDFA-4FB8-BD88-19A3B36E65A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
