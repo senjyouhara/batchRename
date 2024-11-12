@@ -1,0 +1,177 @@
+@font-face {
+  font-family: "iconfont"; /* Project id  */
+  src: url('iconfont.ttf?t=1730989080502') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Stop:before {
+  content: "\e661";
+}
+
+.icon-MusicNotes:before {
+  content: "\e66a";
+}
+
+.icon-Play:before {
+  content: "\e66b";
+}
+
+.icon-Pause:before {
+  content: "\e66c";
+}
+
+.icon-Repeat:before {
+  content: "\e66d";
+}
+
+.icon-Medium:before {
+  content: "\e669";
+}
+
+.icon-ShuffleAngular:before {
+  content: "\e66e";
+}
+
+.icon-RepeatOnce:before {
+  content: "\e66f";
+}
+
+.icon-SkipBack:before {
+  content: "\e670";
+}
+
+.icon-ShuffleSimple:before {
+  content: "\e671";
+}
+
+.icon-SkipForward:before {
+  content: "\e672";
+}
+
+.icon-bofangliebiao:before {
+  content: "\e86a";
+}
+
+.icon-media_vol_default:before {
+  content: "\e831";
+}
+
+.icon-media_vol_mute:before {
+  content: "\e830";
+}
+
+.icon-media_vol_llower:before {
+  content: "\e832";
+}
+
+.icon-arrow-back:before {
+  content: "\e63e";
+}
+
+.icon-arrow-down:before {
+  content: "\e63f";
+}
+
+.icon-arrow-fold:before {
+  content: "\e640";
+}
+
+.icon-arrow-right:before {
+  content: "\e641";
+}
+
+.icon-arrow-expand:before {
+  content: "\e642";
+}
+
+.icon-arrow-left:before {
+  content: "\e643";
+}
+
+.icon-arrow-up:before {
+  content: "\e644";
+}
+
+.icon-arrow-restitute:before {
+  content: "\e645";
+}
+
+.icon-arrow-download:before {
+  content: "\e646";
+}
+
+.icon-arrow-repeal:before {
+  content: "\e647";
+}
+
+.icon-arrow-upload:before {
+  content: "\e648";
+}
+
+.icon-arrow-top:before {
+  content: "\e649";
+}
+
+.icon-system-cut:before {
+  content: "\e64a";
+}
+
+.icon-system-circle-close:before {
+  content: "\e64b";
+}
+
+.icon-media-pause:before {
+  content: "\e64c";
+}
+
+.icon-system-edit-pen:before {
+  content: "\e64d";
+}
+
+.icon-system-close:before {
+  content: "\e64e";
+}
+
+.icon-system-add:before {
+  content: "\e64f";
+}
+
+.icon-system-minus:before {
+  content: "\e650";
+}
+
+.icon-system-more:before {
+  content: "\e651";
+}
+
+.icon-system-plus:before {
+  content: "\e652";
+}
+
+.icon-system-refresh:before {
+  content: "\e653";
+}
+
+.icon-system-setting:before {
+  content: "\e654";
+}
+
+.icon-system-view:before {
+  content: "\e655";
+}
+
+.icon-system-hide:before {
+  content: "\e656";
+}
+
+.icon-system-select:before {
+  content: "\e657";
+}
+

@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <LangVersion>11</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="HandyControl" Version="3.5.1"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <Resource Include="Assets\Fonts\iconfont.ttf"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\Senjyouhara.Common\Senjyouhara.Common.csproj" />
+    </ItemGroup>
+</Project>
