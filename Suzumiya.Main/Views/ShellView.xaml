@@ -1,0 +1,124 @@
+﻿<Window
+    x:Class="Suzumiya.Main.Views.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:Suzumiya.Main"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="clr-namespace:Suzumiya.UI.Controls;assembly=Suzumiya.UI"
+    xmlns:config="clr-namespace:Suzumiya.Main.Config"
+    xmlns:viewModels="clr-namespace:Suzumiya.Main.ViewModels"
+    Title="{x:Static config:AppConfig.Title}"
+    d:DataContext="{viewModels:ShellViewModel}"
+    Width="800"
+    Height="450"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ResizeMode="CanMinimize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskBarInfo" />
+    </Window.TaskbarItemInfo>
+
+    <Window.Resources>
+        
+    </Window.Resources>
+
+    <Border>
+        <Grid Background="#FFF" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <ui:TitleBar
+            Title="{Binding Title}"
+            Icon="/icon.png"
+            Height="35"
+            Padding="16,4,0,5"
+            VerticalAlignment="Top"
+            Background="#0074ff"
+            FontSize="15"
+            Foreground="#fff"
+            ShowMaxBtn="False">
+                <!--<ui:TitleBar.OverrideTitle>
+                <TextBlock Padding="16 0"  Text="12345676"></TextBlock>
+            </ui:TitleBar.OverrideTitle>-->
+                <ui:TitleBar.ExtendButtons>
+                    <ToggleButton
+                    Height="35"
+                    hc:IconElement.Geometry="{StaticResource InfoGeometry}"
+                    Background="#0074ff"
+                    BorderBrush="#0074ff"
+                    FontSize="99"
+                    IsChecked="{Binding IsOpen, ElementName=DrawerLeft}" />
+                </ui:TitleBar.ExtendButtons>
+            </ui:TitleBar>
+
+            <ContentControl Grid.Row="1" cm:View.Model="{Binding ActiveItem}" />
+            <Grid Grid.Row="1" x:Name="dialog"></Grid>
+            <Grid Grid.Row="1">
+                <hc:Drawer
+                Name="DrawerLeft"
+                Dock="Left"
+                ShowMode="Push">
+                    <Border
+                    Width="300"
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                            Margin="10,0,0,0"
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource TextBlockTitle}"
+                            Text="提示" />
+                            <Button
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                            Command="hc:ControlCommands.Close"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
+                            Style="{StaticResource ButtonIcon}" />
+
+                            <Grid Grid.Row="1" Margin="6,12">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                                    <TextBlock FontSize="14" TextWrapping="Wrap">
+                                    命名序号为#，可以替代每次递增<LineBreak />
+                                    命名序号从1开始，每次+1,会根据需要命名的文件数量来自动补齐前面的0<LineBreak /><LineBreak />
+                                    例：[Moozzi2] Bakemonogatari - # (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    将会生成如下文件：<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 01 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 02 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 03 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 04 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    ......<LineBreak />
+                                    ......<LineBreak />
+                                    ......<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 13 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 14 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+                                    [Moozzi2] Bakemonogatari - 15 (BD 1920x1080 x.264 FLACx2)<LineBreak />
+
+                                    </TextBlock>
+                                </ScrollViewer>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </hc:Drawer>
+            </Grid>
+        </Grid>
+    </Border>
+    
+</Window>

@@ -1,0 +1,83 @@
+﻿<Window
+    x:Class="Suzumiya.Main.Views.StartLoadingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Suzumiya.Main.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="http://www.caliburnproject.org"
+    x:Name="win"
+    Title="StartLoading"
+    Width="854"
+    Height="480"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Loaded="Window_Loaded"
+    Background="Transparent"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <!--<WindowChrome.WindowChrome>
+        <WindowChrome
+            GlassFrameThickness="-1"
+            NonClientFrameEdges="None"
+            ResizeBorderThickness="0" />
+    </WindowChrome.WindowChrome>-->
+    <Window.Resources>
+        <LinearGradientBrush x:Key="ClosedBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#FF000000" Offset="0"/>
+            <GradientStop Color="#FF000000" Offset="1"/>
+            <GradientStop Color="#FF000000" Offset="1"/>
+        </LinearGradientBrush>
+        <Storyboard x:Key="hideMe" Storyboard.TargetName="win">
+            <DoubleAnimation From="1" To="0" Duration="0:0:1" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[1].Offset"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.7" BeginTime="0:0:0.4" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Offset"/>
+            <ColorAnimation To="#00000000" Duration="0" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Color"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Window.OpacityMask>
+        <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+            <GradientStop Color="#00000000" Offset="0"/>
+            <GradientStop Color="#00000000" Offset="1"/>
+            <GradientStop Color="#00000000" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.OpacityMask>
+    
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation From="1" To="0" Duration="0:0:1" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[1].Offset"/>
+                    <DoubleAnimation From="1" To="0" Duration="0:0:0.7" BeginTime="0:0:0.4" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Offset"/>
+                    <ColorAnimation To="#FF000000" Duration="0" Storyboard.TargetProperty="OpacityMask.(GradientBrush.GradientStops)[2].Color"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+
+
+    <Grid x:Name="mainPanel">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Image Source="/Resources/loading.png" x:Name="img"
+               Margin="20"
+               Loaded="MediaLoaded"
+               >
+            <Image.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0.15" Color="DimGray" Opacity="0.5"></DropShadowEffect>
+            </Image.Effect>
+        </Image>
+
+        <!--<MediaElement
+            x:Name="video"
+            LoadedBehavior="Manual"
+            cal:Message.Attach="[Event MediaOpened] = [Action VideoMediaOpened($source, $eventArgs)];
+            [Event MediaEnded] = [Action VideoMediaEnded($source, $eventArgs)]"
+            Stretch="Fill" />-->
+    </Grid>
+</Window>
